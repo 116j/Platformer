@@ -31,13 +31,15 @@ public class PlayerController : MonoBehaviour
     readonly int m_HashWall = Animator.StringToHash("Wall");
 
 
-    public float m_runSpeed = 5f;
+    public float m_runSpeed = 7f;
     public float m_dashPower = 8;
-    public float m_jumpPower = 15f;
+    public float m_jumpPower = 12f;
     public float m_fallMultiplier = 6f;
     public float m_junpMultiplier = 4f;
     public float m_jumpTime = 0.4f;
+    //distance to detect wall
     readonly float m_wallHitDist = 0.2f;
+    //distance to detect ground
     readonly float m_groundHitDist = 0.05f;
 
     bool m_dead = false;
@@ -86,13 +88,16 @@ public class PlayerController : MonoBehaviour
             {
                 m_anim.SetTrigger(m_HashDash);
                 m_anim.SetBool(m_HashDashing, true);
+                //remove garvity
                 m_rb.gravityScale = 0f;
                 m_dashing = true;
+                // moves horizontly with dash power
                 m_rb.velocity = new Vector2(m_dashPower * m_currentDir, 0f);
             }
 
             if (m_input.Attack)
             {
+                //if is not attacking -  remove gravity(for jump), remove movement
                 if (!m_attacking)
                 {
                     m_anim.SetBool(m_HashAttacking, true);
@@ -100,28 +105,30 @@ public class PlayerController : MonoBehaviour
                     m_rb.velocity = new Vector2(0f, 0f);
                     m_rb.gravityScale = 0;
                 }
+                //if is attacking - go to another animation
                 m_anim.SetTrigger(m_HashAttack);
             }
-
+            // if dash animation is over - set gravity, start falling if air dash
             if (m_dashing && !m_anim.GetBool(m_HashDashing))
             {
-                m_falling = true;
+               if(m_jumping)
+                    m_falling = true;
                 m_rb.gravityScale = m_gravityScale;
                 m_dashing = false;
             }
-
+            // when jump button is up - start falling
             if (m_jump && !m_input.Jump)
             {
                 m_falling = true;
                 m_jump = false;
             }
-
+            // when attack animation is over - set back gravity 
             if (m_attacking && !m_anim.GetBool(m_HashAttacking))
             {
                 m_rb.gravityScale = m_gravityScale;
                 m_attacking = false;
             }
-
+            
             if(!Mathf.Approximately(m_input.Move.x, 0f)&&!m_blockMove&&IsWalls() && !m_onWall)
             {
                 m_falling = false;
@@ -152,17 +159,18 @@ public class PlayerController : MonoBehaviour
     {
         if (!m_dead)
         {
+            // turn around
             if (!m_blockMove&&m_currentDir * m_input.Move.x < 0)
             {
                 m_currentDir *= -1;
                 transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
             }
-
+            // if is not in attack or dash - move
             if (!m_dashing && !m_attacking && !m_blockMove)
             {
                 m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, m_rb.velocity.y);
             }
-
+            // if is not in attack or dash  - start jump
             if (!m_dashing && !m_attacking && m_input.Jump && !m_jump && (IsGrounded() || m_onWall))
             {
                 m_jump = true;
@@ -177,7 +185,7 @@ public class PlayerController : MonoBehaviour
                     m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower);
                 return;
             }
-
+            // if is not in attack or dash and is jumping - make double jump 
             if (!m_dashing && !m_attacking && m_jumping && m_input.Jump && !m_jump && !m_doubleJump)
             {
                 m_jump = true;
@@ -185,7 +193,7 @@ public class PlayerController : MonoBehaviour
                 m_anim.SetTrigger(m_HashDoubleJump);
                 m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower + 5f);
             }
-
+            // if jumping and moving up - add vertical velocity for m_jumpTime or until jump button is up
             if (!m_dashing && !m_attacking && m_rb.velocity.y > 0f && m_jumping && !m_falling)
             {
                 m_jumpCounter += Time.fixedDeltaTime;
@@ -195,13 +203,13 @@ public class PlayerController : MonoBehaviour
                 }
                 m_rb.velocity += m_junpMultiplier * Time.fixedDeltaTime * m_gravity;
             }
-
+            // if moving down - set falling and substract vertical velocity
             if (!m_dashing && !m_attacking && m_rb.velocity.y < 0f)
             {
                 m_falling = true;
                 m_rb.velocity -= m_fallMultiplier * Time.fixedDeltaTime * m_gravity;
             }
-
+            //if is in air and reaches the ground - reset falling and jumping
             if ((m_jumping || m_falling) && IsGrounded())
             {
                 Debug.Log("OnGround");
@@ -226,6 +234,7 @@ public class PlayerController : MonoBehaviour
     {
         m_anim.SetTrigger(m_HashHit);
         m_rb.velocity += Vector2.left * m_currentDir;
+        // if player fell down - reset camera
         if (m_reload)
         {
             yield return new WaitForSeconds(1f);
@@ -249,17 +258,18 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //if player fell down - move to checkpoint and reset camera
         if (collision.gameObject.CompareTag("bounds"))
         {
             Debug.Log("Bounds");
-            transform.position = m_checkpoint;
-            transform.rotation = Quaternion.identity;
+            transform.SetPositionAndRotation(m_checkpoint, Quaternion.identity);
             m_transposer.m_DeadZoneWidth = 0f;
             m_transposer.m_DeadZoneHeight = 0f;
             m_currentDir = 1;
             m_reload = true;
             StartCoroutine(Hit());
         }
+        //reset checkpoint
         else if (collision.gameObject.CompareTag("checkpoint"))
         {
             m_checkpoint = collision.transform.position;
