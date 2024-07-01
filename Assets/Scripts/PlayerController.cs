@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour
     readonly int m_HashAttacking = Animator.StringToHash("Attacking");
     readonly int m_HashDashing = Animator.StringToHash("Dashing");
     readonly int m_HashHeavyAttack = Animator.StringToHash("HeavyAttack");
-    readonly int m_HashWall = Animator.StringToHash("Wall");
 
 
     public float m_runSpeed = 7f;
@@ -51,8 +50,6 @@ public class PlayerController : MonoBehaviour
     bool m_doubleJump = false;
     bool m_falling = false;
     bool m_attacking = false;
-    bool m_onWall = false;
-    bool m_blockMove = false;
 
     int m_currentDir = 1;
     float m_jumpCounter = 0f;
@@ -128,29 +125,12 @@ public class PlayerController : MonoBehaviour
                 m_rb.gravityScale = m_gravityScale;
                 m_attacking = false;
             }
-            
-            if(!Mathf.Approximately(m_input.Move.x, 0f)&&!m_blockMove&&IsWalls() && !m_onWall)
-            {
-                m_falling = false;
-                m_doubleJump = true;
-                m_jumping = false;
-                m_onWall = true;
-                m_rb.velocity = new Vector2(m_rb.velocity.x, 0f);
-                m_rb.gravityScale = 0f;
-            }
-            else if(m_onWall&&(!IsWalls() || Mathf.Approximately(m_input.Move.x,0f)))
-            {
-                m_falling = true;
-                m_onWall = false;
-                m_rb.gravityScale = m_gravityScale;
-            }
 
             m_anim.SetBool(m_HashHeavyAttack, m_input.HeavyAttack);
             m_anim.SetFloat(m_HashAnimationTime, Mathf.Repeat(m_anim.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
             m_anim.SetFloat(m_HashHorizontal, Mathf.Abs(m_input.Move.x));
             m_anim.SetBool(m_HashJump, m_jumping);
             m_anim.SetBool(m_HashFalling, m_falling);
-            m_anim.SetBool(m_HashWall, m_onWall);
         }
     }
 
@@ -160,29 +140,29 @@ public class PlayerController : MonoBehaviour
         if (!m_dead)
         {
             // turn around
-            if (!m_blockMove&&m_currentDir * m_input.Move.x < 0)
+            if (m_currentDir * m_input.Move.x < 0)
             {
                 m_currentDir *= -1;
                 transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
             }
+            if (IsWalls() && (m_jumping || m_falling))
+            {
+                Debug.Log("OnWall");
+                m_rb.velocity = new Vector2(0f, m_rb.velocity.y);
+            }
             // if is not in attack or dash - move
-            if (!m_dashing && !m_attacking && !m_blockMove)
+            else if (!m_dashing && !m_attacking)
             {
                 m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, m_rb.velocity.y);
             }
             // if is not in attack or dash  - start jump
-            if (!m_dashing && !m_attacking && m_input.Jump && !m_jump && (IsGrounded() || m_onWall))
+            if (!m_dashing && !m_attacking && m_input.Jump && !m_jump && IsGrounded())
             {
                 m_jump = true;
                 m_jumping = true;
                 m_jumpCounter = 0f;
                 m_falling = false;
-                if (m_onWall)
-                {
-                    StartCoroutine(WallJump());
-                }
-                else
-                    m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower);
+                m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower);
                 return;
             }
             // if is not in attack or dash and is jumping - make double jump 
@@ -242,18 +222,6 @@ public class PlayerController : MonoBehaviour
             m_transposer.m_DeadZoneHeight = 0.32f;
             m_reload = false;
         }
-    }
-
-    IEnumerator WallJump()
-    {
-        m_onWall = false;
-        m_currentDir *= -1;
-        m_rb.gravityScale = m_gravityScale;
-        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
-        m_rb.velocity = new Vector2(5f * m_currentDir, m_jumpPower);
-        m_blockMove = true;
-        yield return new WaitForSeconds(m_jumpTime);
-        m_blockMove = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
