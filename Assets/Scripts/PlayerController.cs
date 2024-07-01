@@ -1,0 +1,268 @@
+using Cinemachine;
+using System.Collections;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    [SerializeField]
+    ContactFilter2D m_groundCastFilter;
+    [SerializeField]
+    ContactFilter2D m_wallCastFilter;
+    [SerializeField]
+    CinemachineVirtualCamera m_playerCam;
+
+    Rigidbody2D m_rb;
+    PlayerInput m_input;
+    BoxCollider2D m_col;
+    Animator m_anim;
+
+    readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
+    readonly int m_HashHit = Animator.StringToHash("Hit");
+    readonly int m_HashDie = Animator.StringToHash("Die");
+    readonly int m_HashJump = Animator.StringToHash("Jump");
+    readonly int m_HashFalling = Animator.StringToHash("Falling");
+    readonly int m_HashDoubleJump = Animator.StringToHash("DoubleJump");
+    readonly int m_HashDash = Animator.StringToHash("Dash");
+    readonly int m_HashAnimationTime = Animator.StringToHash("AnimationTime");
+    readonly int m_HashAttack = Animator.StringToHash("Attack");
+    readonly int m_HashAttacking = Animator.StringToHash("Attacking");
+    readonly int m_HashDashing = Animator.StringToHash("Dashing");
+    readonly int m_HashHeavyAttack = Animator.StringToHash("HeavyAttack");
+    readonly int m_HashWall = Animator.StringToHash("Wall");
+
+
+    public float m_runSpeed = 5f;
+    public float m_dashPower = 8;
+    public float m_jumpPower = 15f;
+    public float m_fallMultiplier = 6f;
+    public float m_junpMultiplier = 4f;
+    public float m_jumpTime = 0.4f;
+    readonly float m_wallHitDist = 0.2f;
+    readonly float m_groundHitDist = 0.05f;
+
+    bool m_dead = false;
+    bool m_jump = false;
+    bool m_reload = false;
+
+    bool m_dashing = false;
+    bool m_jumping = false;
+    bool m_doubleJump = false;
+    bool m_falling = false;
+    bool m_attacking = false;
+    bool m_onWall = false;
+    bool m_blockMove = false;
+
+    int m_currentDir = 1;
+    float m_jumpCounter = 0f;
+    Vector2 m_gravity;
+    float m_gravityScale;
+    Vector3 m_checkpoint;
+    CinemachineFramingTransposer m_transposer;
+
+    RaycastHit2D[] m_colHits = new RaycastHit2D[5];
+    // Start is called before the first frame update
+    void Start()
+    {
+        m_anim = GetComponent<Animator>();
+        m_input = GetComponent<PlayerInput>();
+        m_rb = GetComponent<Rigidbody2D>();
+        m_col = GetComponent<BoxCollider2D>();
+
+        m_gravityScale = m_rb.gravityScale;
+        m_gravity = new Vector2(0f, -Physics2D.gravity.y);
+        m_checkpoint = transform.position;
+        m_transposer = m_playerCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (!m_dead)
+        {
+            m_anim.ResetTrigger(m_HashAttack);
+            m_anim.ResetTrigger(m_HashDash);
+
+            if (m_input.Dash)
+            {
+                m_anim.SetTrigger(m_HashDash);
+                m_anim.SetBool(m_HashDashing, true);
+                m_rb.gravityScale = 0f;
+                m_dashing = true;
+                m_rb.velocity = new Vector2(m_dashPower * m_currentDir, 0f);
+            }
+
+            if (m_input.Attack)
+            {
+                if (!m_attacking)
+                {
+                    m_anim.SetBool(m_HashAttacking, true);
+                    m_attacking = true;
+                    m_rb.velocity = new Vector2(0f, 0f);
+                    m_rb.gravityScale = 0;
+                }
+                m_anim.SetTrigger(m_HashAttack);
+            }
+
+            if (m_dashing && !m_anim.GetBool(m_HashDashing))
+            {
+                m_falling = true;
+                m_rb.gravityScale = m_gravityScale;
+                m_dashing = false;
+            }
+
+            if (m_jump && !m_input.Jump)
+            {
+                m_falling = true;
+                m_jump = false;
+            }
+
+            if (m_attacking && !m_anim.GetBool(m_HashAttacking))
+            {
+                m_rb.gravityScale = m_gravityScale;
+                m_attacking = false;
+            }
+
+            if(!Mathf.Approximately(m_input.Move.x, 0f)&&!m_blockMove&&IsWalls() && !m_onWall)
+            {
+                m_falling = false;
+                m_doubleJump = true;
+                m_jumping = false;
+                m_onWall = true;
+                m_rb.velocity = new Vector2(m_rb.velocity.x, 0f);
+                m_rb.gravityScale = 0f;
+            }
+            else if(m_onWall&&(!IsWalls() || Mathf.Approximately(m_input.Move.x,0f)))
+            {
+                m_falling = true;
+                m_onWall = false;
+                m_rb.gravityScale = m_gravityScale;
+            }
+
+            m_anim.SetBool(m_HashHeavyAttack, m_input.HeavyAttack);
+            m_anim.SetFloat(m_HashAnimationTime, Mathf.Repeat(m_anim.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
+            m_anim.SetFloat(m_HashHorizontal, Mathf.Abs(m_input.Move.x));
+            m_anim.SetBool(m_HashJump, m_jumping);
+            m_anim.SetBool(m_HashFalling, m_falling);
+            m_anim.SetBool(m_HashWall, m_onWall);
+        }
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (!m_dead)
+        {
+            if (!m_blockMove&&m_currentDir * m_input.Move.x < 0)
+            {
+                m_currentDir *= -1;
+                transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
+            }
+
+            if (!m_dashing && !m_attacking && !m_blockMove)
+            {
+                m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, m_rb.velocity.y);
+            }
+
+            if (!m_dashing && !m_attacking && m_input.Jump && !m_jump && (IsGrounded() || m_onWall))
+            {
+                m_jump = true;
+                m_jumping = true;
+                m_jumpCounter = 0f;
+                m_falling = false;
+                if (m_onWall)
+                {
+                    StartCoroutine(WallJump());
+                }
+                else
+                    m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower);
+                return;
+            }
+
+            if (!m_dashing && !m_attacking && m_jumping && m_input.Jump && !m_jump && !m_doubleJump)
+            {
+                m_jump = true;
+                m_doubleJump = true;
+                m_anim.SetTrigger(m_HashDoubleJump);
+                m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower + 5f);
+            }
+
+            if (!m_dashing && !m_attacking && m_rb.velocity.y > 0f && m_jumping && !m_falling)
+            {
+                m_jumpCounter += Time.fixedDeltaTime;
+                if (m_jumpCounter > m_jumpTime)
+                {
+                    m_falling = true;
+                }
+                m_rb.velocity += m_junpMultiplier * Time.fixedDeltaTime * m_gravity;
+            }
+
+            if (!m_dashing && !m_attacking && m_rb.velocity.y < 0f)
+            {
+                m_falling = true;
+                m_rb.velocity -= m_fallMultiplier * Time.fixedDeltaTime * m_gravity;
+            }
+
+            if ((m_jumping || m_falling) && IsGrounded())
+            {
+                Debug.Log("OnGround");
+                 m_falling = false;
+                m_jumping = false;
+                m_doubleJump = false;
+            }
+        }
+    }
+
+    bool IsGrounded()
+    {
+        return m_col.Cast(-transform.up, m_groundCastFilter, m_colHits, m_groundHitDist) > 0;
+    }
+
+    bool IsWalls()
+    {
+        return m_col.Cast(transform.right, m_wallCastFilter, m_colHits, m_wallHitDist) > 0;
+    }
+
+    IEnumerator Hit()
+    {
+        m_anim.SetTrigger(m_HashHit);
+        m_rb.velocity += Vector2.left * m_currentDir;
+        if (m_reload)
+        {
+            yield return new WaitForSeconds(1f);
+            m_transposer.m_DeadZoneWidth = 0.083f;
+            m_transposer.m_DeadZoneHeight = 0.32f;
+            m_reload = false;
+        }
+    }
+
+    IEnumerator WallJump()
+    {
+        m_onWall = false;
+        m_currentDir *= -1;
+        m_rb.gravityScale = m_gravityScale;
+        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
+        m_rb.velocity = new Vector2(5f * m_currentDir, m_jumpPower);
+        m_blockMove = true;
+        yield return new WaitForSeconds(m_jumpTime);
+        m_blockMove = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("bounds"))
+        {
+            Debug.Log("Bounds");
+            transform.position = m_checkpoint;
+            transform.rotation = Quaternion.identity;
+            m_transposer.m_DeadZoneWidth = 0f;
+            m_transposer.m_DeadZoneHeight = 0f;
+            m_currentDir = 1;
+            m_reload = true;
+            StartCoroutine(Hit());
+        }
+        else if (collision.gameObject.CompareTag("checkpoint"))
+        {
+            m_checkpoint = collision.transform.position;
+        }
+    }
+}
