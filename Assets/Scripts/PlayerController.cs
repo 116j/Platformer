@@ -2,7 +2,7 @@ using Cinemachine;
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IBoolReceiver
 {
     [SerializeField]
     ContactFilter2D m_groundCastFilter;
@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     public float m_fallMultiplier = 6f;
     public float m_junpMultiplier = 4f;
     public float m_jumpTime = 0.4f;
+    readonly float m_dashCooldown = 2f;
     //distance to detect wall
     readonly float m_wallHitDist = 0.2f;
     //distance to detect ground
@@ -43,16 +44,17 @@ public class PlayerController : MonoBehaviour
 
     bool m_dead = false;
     bool m_jump = false;
-    bool m_reload = false;
 
     bool m_dashing = false;
     bool m_jumping = false;
     bool m_doubleJump = false;
     bool m_falling = false;
     bool m_attacking = false;
+    bool m_canDash = true;
 
     int m_currentDir = 1;
     float m_jumpCounter = 0f;
+    float m_dashTimer = 0f;
     Vector2 m_gravity;
     float m_gravityScale;
     Vector3 m_checkpoint;
@@ -76,27 +78,44 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        m_anim.SetBool(m_HashDie,m_dead);
         if (!m_dead)
         {
             m_anim.ResetTrigger(m_HashAttack);
             m_anim.ResetTrigger(m_HashDash);
 
-            if (m_input.Dash)
+            if (m_input.Dash&&m_canDash&&!m_attacking)
             {
+                Debug.Log("Start dashing");
+                m_anim.SetFloat(m_HashHorizontal, 0f);
+
                 m_anim.SetTrigger(m_HashDash);
                 m_anim.SetBool(m_HashDashing, true);
                 //remove garvity
                 m_rb.gravityScale = 0f;
                 m_dashing = true;
                 // moves horizontly with dash power
-                m_rb.velocity = new Vector2(m_dashPower * m_currentDir, 0f);
+                m_rb.AddForce(Vector2.right*m_currentDir * m_dashPower,ForceMode2D.Impulse);
             }
 
-            if (m_input.Attack)
+            if (!m_canDash)
+            {
+                m_dashTimer +=Time.deltaTime;
+                if(m_dashTimer >= m_dashCooldown)
+                {
+                    m_canDash = true;
+                    m_dashTimer = 0f;
+                }
+            }
+
+            if (m_input.Attack&&!m_dashing)
             {
                 //if is not attacking -  remove gravity(for jump), remove movement
                 if (!m_attacking)
                 {
+                    Debug.Log("Start attacking");
+                    m_anim.SetFloat(m_HashHorizontal, 0f);
+
                     m_anim.SetBool(m_HashAttacking, true);
                     m_attacking = true;
                     m_rb.velocity = new Vector2(0f, 0f);
@@ -105,13 +124,24 @@ public class PlayerController : MonoBehaviour
                 //if is attacking - go to another animation
                 m_anim.SetTrigger(m_HashAttack);
             }
+
+            if (m_input.HeavyAttack&&!m_attacking)
+            {
+                m_anim.SetBool(m_HashAttacking, true);
+                m_attacking = true;
+                m_rb.velocity = new Vector2(0f, 0f);
+            }
+
             // if dash animation is over - set gravity, start falling if air dash
             if (m_dashing && !m_anim.GetBool(m_HashDashing))
             {
-               if(m_jumping)
+                Debug.Log("Stop dashing");
+
+                if (m_jumping)
                     m_falling = true;
                 m_rb.gravityScale = m_gravityScale;
                 m_dashing = false;
+                m_canDash = false;
             }
             // when jump button is up - start falling
             if (m_jump && !m_input.Jump)
@@ -122,10 +152,11 @@ public class PlayerController : MonoBehaviour
             // when attack animation is over - set back gravity 
             if (m_attacking && !m_anim.GetBool(m_HashAttacking))
             {
+                Debug.Log("Stop attacking");
+
                 m_rb.gravityScale = m_gravityScale;
                 m_attacking = false;
             }
-
             m_anim.SetBool(m_HashHeavyAttack, m_input.HeavyAttack);
             m_anim.SetFloat(m_HashAnimationTime, Mathf.Repeat(m_anim.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
             m_anim.SetFloat(m_HashHorizontal, Mathf.Abs(m_input.Move.x));
@@ -147,7 +178,6 @@ public class PlayerController : MonoBehaviour
             }
             if (IsWalls() && (m_jumping || m_falling))
             {
-                Debug.Log("OnWall");
                 m_rb.velocity = new Vector2(0f, m_rb.velocity.y);
             }
             // if is not in attack or dash - move
@@ -189,11 +219,10 @@ public class PlayerController : MonoBehaviour
                 m_falling = true;
                 m_rb.velocity -= m_fallMultiplier * Time.fixedDeltaTime * m_gravity;
             }
-            //if is in air and reaches the ground - reset falling and jumping
-            if ((m_jumping || m_falling) && IsGrounded())
+            //if is in air and reaches the ground and not touching wall (or touching and standing on the ground) - reset falling and jumping
+            if ((m_jumping || m_falling) && IsGrounded() && (!IsWalls()|| Mathf.Approximately(m_rb.velocity.y,0f)))
             {
-                Debug.Log("OnGround");
-                 m_falling = false;
+                m_falling = false;
                 m_jumping = false;
                 m_doubleJump = false;
             }
@@ -210,18 +239,15 @@ public class PlayerController : MonoBehaviour
         return m_col.Cast(transform.right, m_wallCastFilter, m_colHits, m_wallHitDist) > 0;
     }
 
-    IEnumerator Hit()
+    IEnumerator Reload()
     {
         m_anim.SetTrigger(m_HashHit);
-        m_rb.velocity += Vector2.left * m_currentDir;
+        m_rb.velocity += Vector2.left*0.1f * m_currentDir;
         // if player fell down - reset camera
-        if (m_reload)
-        {
             yield return new WaitForSeconds(1f);
             m_transposer.m_DeadZoneWidth = 0.083f;
             m_transposer.m_DeadZoneHeight = 0.32f;
-            m_reload = false;
-        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -234,13 +260,25 @@ public class PlayerController : MonoBehaviour
             m_transposer.m_DeadZoneWidth = 0f;
             m_transposer.m_DeadZoneHeight = 0f;
             m_currentDir = 1;
-            m_reload = true;
-            StartCoroutine(Hit());
+            StartCoroutine(Reload());
         }
         //reset checkpoint
         else if (collision.gameObject.CompareTag("checkpoint"))
         {
             m_checkpoint = collision.transform.position;
+        }
+    }
+
+    public void ReceiveBool(bool value)
+    {
+        if (value)
+        {
+            m_dead = true;
+        }
+        else
+        {
+            m_anim.SetTrigger(m_HashHit);
+            m_rb.velocity += Vector2.left * 0.1f * m_currentDir;
         }
     }
 }

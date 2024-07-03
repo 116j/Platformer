@@ -7,6 +7,11 @@ TagManager:
   - Enemy
   - bounds
   - checkpoint
+  - lightAttack
+  - heavyAttack
+  - enemyCheckpoint
+  - enemyAttack
+  - enemyBounds
   layers:
   - Default
   - TransparentFX
@@ -15,10 +20,10 @@ TagManager:
   - Water
   - UI
   - Wall
-  - 
-  - 
-  - 
-  - 
+  - DetectZone
+  - Player
+  - Enemy
+  - EnemyBounds
   - 
   - 
   - 
