@@ -14,10 +14,11 @@ GameObject:
   - component: {fileID: 1042249075365334452}
   - component: {fileID: 5245661398080103323}
   - component: {fileID: 8174218926635030679}
+  - component: {fileID: 3650420355258721004}
   - component: {fileID: 6230351899595666638}
   - component: {fileID: 1085217618323219388}
   - component: {fileID: 8212309826062894424}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -39,7 +40,7 @@ Transform:
   - {fileID: 3362973976816872639}
   - {fileID: 6280773689903922602}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1107239528939950938
 SpriteRenderer:
@@ -168,6 +169,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93d4ac700b6d9164a8428efab9358350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_playerCam: {fileID: 0}
+  m_runSpeed: 7
+  m_dashPower: 8
+  m_jumpPower: 12
+  m_fallMultiplier: 6
+  m_junpMultiplier: 4
+  m_jumpTime: 0.4
+--- !u!114 &3650420355258721004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880834243166009998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0c7ca9f12a7f6847a1bc744e41e2bc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_groundCastFilter:
     useTriggers: 0
     useLayerMask: 1
@@ -191,18 +211,11 @@ MonoBehaviour:
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 72
+      m_Bits: 200
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
-  m_playerCam: {fileID: 0}
-  m_runSpeed: 7
-  m_dashPower: 8
-  m_jumpPower: 12
-  m_fallMultiplier: 6
-  m_junpMultiplier: 4
-  m_jumpTime: 0.4
 --- !u!114 &6230351899595666638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,6 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_health: 6
+  m_recoverTime: 4
   m_receiver: {fileID: 8174218926635030679}
 --- !u!50 &1085217618323219388
 Rigidbody2D:
@@ -256,7 +270,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 1024
@@ -302,7 +316,7 @@ GameObject:
   - component: {fileID: 240851315185987103}
   m_Layer: 0
   m_Name: attack
-  m_TagString: lightAttack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -334,7 +348,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -393,7 +407,7 @@ GameObject:
   - component: {fileID: 2413492397089494967}
   m_Layer: 0
   m_Name: heavyAttack
-  m_TagString: heavyAttack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -425,7 +439,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

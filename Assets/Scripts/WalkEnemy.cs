@@ -11,10 +11,11 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
     [SerializeField]
     protected DetectZone m_detectZone;
     [SerializeField]
-    GameObject[] m_checkpoints;
+    protected DetectZone m_groundZone;
 
     Animator m_anim;
     Rigidbody2D m_rb;
+    TouchingCheck m_touchings;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -24,26 +25,36 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
 
     bool m_dead = false;
     bool m_waiting = false;
-    bool m_chasing = true;
-    bool m_bounds = false;
+    bool m_notAttacking = false;
 
     readonly float m_waitTime = 3f;
     readonly int m_attackCount = 3;
+    readonly float m_attackCooldownTime = 1.5f;
 
     int m_currentDir = 1;
     float m_speed = 0f;
     float m_waitTimer;
-    int m_currentCheckpoint;
+    float m_attackCooldown;
 
 
     private void Start()
     {
         m_anim = GetComponent<Animator>();
         m_rb = GetComponent<Rigidbody2D>();
+        m_touchings = GetComponent<TouchingCheck>();
     }
 
     protected virtual void Update()
     { 
+        if(m_notAttacking)
+        {
+            m_attackCooldown += Time.deltaTime;
+            if (m_attackCooldown > m_attackCooldownTime)
+            {
+                m_attackCooldown = 0f;
+                m_notAttacking= false;
+            }
+        }
         m_anim.SetBool(m_HashDie, m_dead);
         m_anim.SetFloat(m_HashHorizontal, m_speed);
     }
@@ -54,11 +65,11 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         {
             m_rb.velocity = m_currentDir * m_speed * Vector2.right;
 
-            if (m_attackZone.PlayerDetected)
+            if (m_attackZone.TargetDetected)
             {
                 Attack();
             }
-            else if (m_detectZone.PlayerDetected&&!m_bounds)
+            else if (m_detectZone.TargetDetected&&m_groundZone.TargetDetected&&!m_touchings.IsWalls())
             {
                 Chase();
             }
@@ -71,11 +82,16 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
 
     void Potrol()
     {
-        m_bounds = false;
         if (!m_waiting)
         {
-            m_chasing = false;
             m_speed = m_walkSpeed;
+
+            if (!m_groundZone.TargetDetected|| m_touchings.IsWalls())
+            {
+                m_speed = 0f;
+                m_waitTimer = 0f;
+                m_waiting = true;
+            }
         }
         else
         {
@@ -90,13 +106,8 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
 
     void Chase()
     {
-        if (Vector2.Dot(transform.right, (m_detectZone.PlayerLocation - transform.position).normalized) < 0f)
-        {
-            TurnAround();
-        }
         m_waiting = false;
         m_speed = m_runSpeed;
-        m_chasing = true;
     }
 
     void TurnAround()
@@ -105,38 +116,12 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(!m_dead)
-        {
-            if (collision.CompareTag("enemyCheckpoint") && collision.gameObject.Equals(m_checkpoints[m_currentCheckpoint]))
-            {
-                m_currentCheckpoint = (m_currentCheckpoint + 1) % m_checkpoints.Length;
-                if(!m_chasing)
-                {
-                    m_waitTimer = 0f;
-                    m_rb.velocity = Vector2.zero;
-                    m_speed = 0f;
-                    m_waiting = true;
-                }
-            }
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("enemyBounds"))
-        {
-            m_bounds = true;
-            m_chasing = false;
-            TurnAround();
-        }
-    }
-
     protected virtual void Attack()
     {
+        if (m_notAttacking) return;
         m_speed = 0f;
         m_waiting = false;
+        m_notAttacking = true;
         m_rb.velocity = Vector2.zero;
         m_anim.SetTrigger(m_HashAttack);
         m_anim.SetInteger(m_HashAttackNum, Random.Range(0, m_attackCount));
@@ -152,7 +137,7 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         }
         else
         {
-            if (Vector2.Dot(transform.right, (m_detectZone.PlayerLocation - transform.position).normalized) < 0f)
+            if ((m_detectZone.TargetLocation.x - transform.position.x)*m_currentDir < 0f)
             {
                 TurnAround();
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class CollisionListener : MonoBehaviour
+public class AttackListener : MonoBehaviour
 {
     [SerializeField]
     float m_damage = 1;
