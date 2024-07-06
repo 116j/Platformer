@@ -13,14 +13,15 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
     [SerializeField]
     protected DetectZone m_groundZone;
 
-    Animator m_anim;
-    Rigidbody2D m_rb;
-    TouchingCheck m_touchings;
+    protected Animator m_anim;
+    protected Rigidbody2D m_rb;
+    protected TouchingCheck m_touchings;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
     readonly int m_HashDie = Animator.StringToHash("Die");
     readonly int m_HashAttack = Animator.StringToHash("Attack");
+    readonly int m_HashCanMove = Animator.StringToHash("CanMove");
     readonly int m_HashAttackNum = Animator.StringToHash("AttackNum");
 
     bool m_dead = false;
@@ -31,8 +32,8 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
     readonly int m_attackCount = 3;
     readonly float m_attackCooldownTime = 1.5f;
 
-    int m_currentDir = 1;
-    float m_speed = 0f;
+    protected int m_currentDir = 1;
+    protected float m_speed = 0f;
     float m_waitTimer;
     float m_attackCooldown;
 
@@ -45,14 +46,14 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
     }
 
     protected virtual void Update()
-    { 
-        if(m_notAttacking)
+    {
+        if (m_notAttacking)
         {
             m_attackCooldown += Time.deltaTime;
             if (m_attackCooldown > m_attackCooldownTime)
             {
                 m_attackCooldown = 0f;
-                m_notAttacking= false;
+                m_notAttacking = false;
             }
         }
         m_anim.SetBool(m_HashDie, m_dead);
@@ -69,11 +70,11 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
             {
                 Attack();
             }
-            else if (m_detectZone.TargetDetected&&m_groundZone.TargetDetected&&!m_touchings.IsWalls())
+            else if (m_detectZone.TargetDetected && m_groundZone.TargetDetected && !m_touchings.IsWalls() && m_anim.GetBool(m_HashCanMove))
             {
                 Chase();
             }
-            else
+            else if (m_anim.GetBool(m_HashCanMove))
             {
                 Potrol();
             }
@@ -86,7 +87,7 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         {
             m_speed = m_walkSpeed;
 
-            if (!m_groundZone.TargetDetected|| m_touchings.IsWalls())
+            if (!m_groundZone.TargetDetected || m_touchings.IsWalls())
             {
                 m_speed = 0f;
                 m_waitTimer = 0f;
@@ -106,6 +107,10 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
 
     void Chase()
     {
+        if ((m_detectZone.TargetLocation.x - transform.position.x) * m_currentDir < 0f)
+        {
+            TurnAround();
+        }
         m_waiting = false;
         m_speed = m_runSpeed;
     }
@@ -137,7 +142,7 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         }
         else
         {
-            if ((m_detectZone.TargetLocation.x - transform.position.x)*m_currentDir < 0f)
+            if ((m_detectZone.TargetLocation.x - transform.position.x) * m_currentDir < 0f)
             {
                 TurnAround();
             }

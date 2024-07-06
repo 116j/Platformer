@@ -5,7 +5,7 @@ public class Damagable : MonoBehaviour
 {
     [SerializeField]
     float m_health = 6f;
-    [SerializeField] 
+    [SerializeField]
     float m_recoverTime = 2f;
     [SerializeField]
     MonoBehaviour m_receiver;

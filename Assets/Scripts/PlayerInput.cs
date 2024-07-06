@@ -24,12 +24,13 @@ public class PlayerInput : MonoBehaviour
                 return false;
         }
     }
-    public bool Attack {
+    public bool Attack
+    {
         get
         {
-            if(m_attack)
-            { 
-            m_attack = false;
+            if (m_attack)
+            {
+                m_attack = false;
                 return !m_inputLocked && !m_attack;
             }
             else
@@ -42,7 +43,7 @@ public class PlayerInput : MonoBehaviour
 
     public void LockInput()
     {
-        m_inputLocked = !m_inputLocked;        
+        m_inputLocked = !m_inputLocked;
     }
 
     void OnMove(InputValue value)
