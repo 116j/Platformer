@@ -353,9 +353,16 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 1.2
-    functionName: SpawnArrow
+    functionName: SpawnShell
     data: 
     objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.2
+    functionName: PlaySound
+    data: 
+    objectReferenceParameter: {fileID: 8300000, guid: 0635f1487356684449fc5670e29847bb, type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0

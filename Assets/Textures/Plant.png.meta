@@ -294,8 +294,8 @@ TextureImporter:
       name: Plant_8
       rect:
         serializedVersion: 2
-        x: 300
-        y: 608
+        x: 552
+        y: 577
         width: 7
         height: 18
       alignment: 0
@@ -1176,7 +1176,7 @@ TextureImporter:
       name: Plant_54
       rect:
         serializedVersion: 2
-        x: 383
+        x: 382
         y: 422
         width: 96
         height: 86
@@ -1197,7 +1197,7 @@ TextureImporter:
       name: Plant_55
       rect:
         serializedVersion: 2
-        x: 479
+        x: 478
         y: 422
         width: 96
         height: 86
@@ -1218,7 +1218,7 @@ TextureImporter:
       name: Plant_56
       rect:
         serializedVersion: 2
-        x: 575
+        x: 574
         y: 422
         width: 96
         height: 86
@@ -1239,7 +1239,7 @@ TextureImporter:
       name: Plant_57
       rect:
         serializedVersion: 2
-        x: 671
+        x: 670
         y: 422
         width: 96
         height: 86
@@ -1260,7 +1260,7 @@ TextureImporter:
       name: Plant_58
       rect:
         serializedVersion: 2
-        x: 767
+        x: 766
         y: 422
         width: 96
         height: 86
@@ -1281,7 +1281,7 @@ TextureImporter:
       name: Plant_59
       rect:
         serializedVersion: 2
-        x: 863
+        x: 862
         y: 422
         width: 96
         height: 86
@@ -1302,7 +1302,7 @@ TextureImporter:
       name: Plant_60
       rect:
         serializedVersion: 2
-        x: 959
+        x: 958
         y: 422
         width: 96
         height: 86
@@ -1533,9 +1533,9 @@ TextureImporter:
       name: Plant_71
       rect:
         serializedVersion: 2
-        x: 992
+        x: 990
         y: 347
-        width: 30
+        width: 32
         height: 44
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

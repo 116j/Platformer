@@ -7,8 +7,9 @@ TagManager:
   - Enemy
   - bounds
   - checkpoint
-  - enemyAttack
   - ground
+  - wall
+  - cat
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Enemy
   - Player
   - DetectZone
-  - EnemyBounds
+  - 
   - 
   - 
   - 

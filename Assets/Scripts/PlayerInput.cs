@@ -8,6 +8,7 @@ public class PlayerInput : MonoBehaviour
     bool m_heavyAttack;
     bool m_jump;
     bool m_dash;
+    bool m_pet;
 
     public Vector2 Move => m_inputLocked ? Vector2.zero : m_move;
     public bool Jump => !m_inputLocked && m_jump;
@@ -37,6 +38,20 @@ public class PlayerInput : MonoBehaviour
                 return false;
         }
     }
+    public bool Pet
+    {
+        get
+        {
+            if (m_pet)
+            {
+                m_pet = false;
+                return !m_inputLocked && !m_pet;
+            }
+            else
+                return false;
+        }
+    }
+
     public bool HeavyAttack => !m_inputLocked && m_heavyAttack;
 
     bool m_inputLocked = false;
@@ -69,5 +84,10 @@ public class PlayerInput : MonoBehaviour
     void OnDash(InputValue value)
     {
         m_dash = value.isPressed;
+    }
+
+    void OnPet(InputValue value)
+    {
+        m_pet = value.isPressed;
     }
 }

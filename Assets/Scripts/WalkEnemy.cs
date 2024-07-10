@@ -1,61 +1,56 @@
 using UnityEngine;
 
-public class WalkEnemy : MonoBehaviour, IBoolReceiver
+public class WalkEnemy : MonoBehaviour
 {
     [SerializeField]
     float m_walkSpeed = 1.5f;
     [SerializeField]
+    bool m_canRun = true;
+    [SerializeField]
     float m_runSpeed = 2f;
+    [SerializeField]
+    AttackScript m_attackScript;
     [SerializeField]
     protected DetectZone m_attackZone;
     [SerializeField]
     protected DetectZone m_detectZone;
     [SerializeField]
     protected DetectZone m_groundZone;
+    [SerializeField]
+    Transform m_spawnPosition;
 
     protected Animator m_anim;
     protected Rigidbody2D m_rb;
     protected TouchingCheck m_touchings;
+    Collider2D m_col;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
     readonly int m_HashDie = Animator.StringToHash("Die");
-    readonly int m_HashAttack = Animator.StringToHash("Attack");
     readonly int m_HashCanMove = Animator.StringToHash("CanMove");
     readonly int m_HashAttackNum = Animator.StringToHash("AttackNum");
 
     bool m_dead = false;
-    bool m_waiting = false;
-    bool m_notAttacking = false;
+    protected bool m_waiting = false;
 
     readonly float m_waitTime = 3f;
     readonly int m_attackCount = 3;
-    readonly float m_attackCooldownTime = 1.5f;
 
     protected int m_currentDir = 1;
     protected float m_speed = 0f;
     float m_waitTimer;
-    float m_attackCooldown;
+    public Vector2 SpawnOffset => -m_spawnPosition.localPosition;
 
-
-    private void Start()
+    protected virtual void Start()
     {
         m_anim = GetComponent<Animator>();
         m_rb = GetComponent<Rigidbody2D>();
         m_touchings = GetComponent<TouchingCheck>();
+        m_col = GetComponent<Collider2D>();
     }
 
     protected virtual void Update()
     {
-        if (m_notAttacking)
-        {
-            m_attackCooldown += Time.deltaTime;
-            if (m_attackCooldown > m_attackCooldownTime)
-            {
-                m_attackCooldown = 0f;
-                m_notAttacking = false;
-            }
-        }
         m_anim.SetBool(m_HashDie, m_dead);
         m_anim.SetFloat(m_HashHorizontal, m_speed);
     }
@@ -64,11 +59,18 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
     {
         if (!m_dead)
         {
-            m_rb.velocity = m_currentDir * m_speed * Vector2.right;
 
             if (m_attackZone.TargetDetected)
             {
-                Attack();
+                if (!m_attackScript.EnableAttack)
+                {
+                    m_attackScript.EnableAttack = true;
+                    m_speed = 0f;
+                    m_rb.velocity = Vector2.zero;
+                    m_waiting = false;
+                }
+                m_anim.SetInteger(m_HashAttackNum, Random.Range(0, m_attackCount));
+                return;
             }
             else if (m_detectZone.TargetDetected && m_groundZone.TargetDetected && !m_touchings.IsWalls() && m_anim.GetBool(m_HashCanMove))
             {
@@ -78,11 +80,14 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
             {
                 Potrol();
             }
+            m_rb.velocity = m_currentDir * m_speed * Vector2.right;
         }
     }
 
     void Potrol()
     {
+        m_attackScript.EnableAttack = false;
+
         if (!m_waiting)
         {
             m_speed = m_walkSpeed;
@@ -111,8 +116,9 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         {
             TurnAround();
         }
+        m_attackScript.EnableAttack = false;
         m_waiting = false;
-        m_speed = m_runSpeed;
+        m_speed = m_canRun ? m_runSpeed : m_walkSpeed;
     }
 
     void TurnAround()
@@ -121,24 +127,14 @@ public class WalkEnemy : MonoBehaviour, IBoolReceiver
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
     }
 
-    protected virtual void Attack()
-    {
-        if (m_notAttacking) return;
-        m_speed = 0f;
-        m_waiting = false;
-        m_notAttacking = true;
-        m_rb.velocity = Vector2.zero;
-        m_anim.SetTrigger(m_HashAttack);
-        m_anim.SetInteger(m_HashAttackNum, Random.Range(0, m_attackCount));
-    }
-
-    public void ReceiveBool(bool value)
+    public virtual void ReceiveDamage(int damage)
     {
         m_rb.velocity = Vector2.zero;
         m_speed = 0f;
-        if (value)
+        if (damage == 0)
         {
             m_dead = true;
+            m_col.isTrigger = true;
         }
         else
         {

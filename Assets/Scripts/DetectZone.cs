@@ -4,12 +4,12 @@ using UnityEngine;
 public class DetectZone : MonoBehaviour
 {
     [SerializeField]
-    string m_tag;
+    protected string m_tag;
     public bool TargetDetected { get; private set; }
-    public Vector3 TargetLocation { get; private set; }
+    public Vector3 TargetLocation { get; protected set; }
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(m_tag))
         {
@@ -18,15 +18,16 @@ public class DetectZone : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    protected virtual void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag(m_tag))
         {
             TargetLocation = collision.transform.position;
+            TargetDetected = true;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    protected virtual void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag(m_tag))
             TargetDetected = false;

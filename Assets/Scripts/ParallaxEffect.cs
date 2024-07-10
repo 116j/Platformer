@@ -2,39 +2,37 @@ using UnityEngine;
 
 public class ParallaxEffect : MonoBehaviour
 {
-    Camera m_cam;
-    Transform m_followTarget;
+    [SerializeField]
+    float m_parallaxMultiplier;
 
-    public Vector3 StartPosition { get; private set; }
-    float m_offset = 0f;
-    float m_startZ;
-    //Distance between camera and obj start pos
-    Vector3 CameraMoveSinceStart => m_cam.transform.position - StartPosition;
-    // z distance between obj and target
-    float ZDistanceFromTarget => transform.position.z - m_followTarget.position.z;
-    // If obj is in front of target, use near clip plane, if is behind - use far clip plane
-    float ClippingPlane => m_cam.transform.position.z + (ZDistanceFromTarget > 0 ? m_cam.farClipPlane : m_cam.nearClipPlane);
-    //The further the obj from target, the faster it will move
-    float PallaraxFactor => Mathf.Abs(ZDistanceFromTarget) / ClippingPlane;
-    // Start is called before the first frame update
+    Transform m_cam;
+
+    Vector3 m_lastCameraPosition;
+    float m_textureUnitSizeX;
+    Vector3 m_deltaCamMove;
+
     void Start()
     {
-        m_cam = Camera.main;
-        m_followTarget = GameObject.FindGameObjectWithTag("Player").transform;
+        m_cam = Camera.main.transform;
+        m_lastCameraPosition = m_cam.position;
 
-        StartPosition = transform.position;
-        m_startZ = transform.position.z;
+        Sprite sprite = GetComponent<SpriteRenderer>().sprite;
+        Texture2D texture = sprite.texture;
+        m_textureUnitSizeX = texture.width / sprite.pixelsPerUnit;
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        Vector3 newPosition = StartPosition - Vector3.right*m_offset + CameraMoveSinceStart * PallaraxFactor;
-        transform.position = new Vector3(newPosition.x, transform.position.y, m_startZ);
-    }
+        m_deltaCamMove = m_cam.position - m_lastCameraPosition;
+        transform.position += m_deltaCamMove.x * m_parallaxMultiplier * Vector3.left;
+        m_lastCameraPosition = m_cam.position;
 
-    public void SetStartPosition(float offset)
-    {
-        m_offset = offset;
+        if (Mathf.Abs(m_cam.position.x - transform.position.x) >= m_textureUnitSizeX)
+        {
+            float offsetX = (m_cam.position.x - transform.position.x) % m_textureUnitSizeX;
+            transform.position = new Vector3(m_cam.position.x + offsetX, transform.position.y);
+        }
+
     }
 }

@@ -4,13 +4,17 @@ using UnityEngine;
 public class AttackListener : MonoBehaviour
 {
     [SerializeField]
-    float m_damage = 1;
+    int m_damage = 1;
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Damagable>(out var damagable))
         {
-            Debug.Log(gameObject.name + " collided with " + collision.name);
-            damagable.ApplyDamage(m_damage);
+            Debug.Log(gameObject.name);
+            if (!damagable.Invinsible || damagable.Invinsible && (Vector2.Dot(collision.transform.right, transform.right) == 1))
+            {
+                damagable.ApplyDamage(m_damage);
+
+            }
         }
     }
 }
