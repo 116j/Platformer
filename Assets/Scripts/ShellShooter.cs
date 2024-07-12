@@ -27,6 +27,7 @@ public class ShellShooter : MonoBehaviour
     public void SpawnShell()
     {
         GameObject shell = Instantiate(m_shell, m_shellSpawn.position, m_shellSpawn.rotation);
+        shell.name = m_shell.name;
         shell.transform.localScale = m_shellSpawn.localScale;
         shell.GetComponent<Rigidbody2D>().velocity = shell.transform.right *m_shootPower;
     }

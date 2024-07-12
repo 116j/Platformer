@@ -38,10 +38,21 @@ public class Damagable : MonoBehaviour
         m_recovering = true;
         m_health -= damage;
 
-        m_receiver.Invoke(damage);
+        m_receiver.Invoke(-damage);
         if (m_health <= 0)
         {
             m_dead = true;
+            m_receiver.Invoke(0);
+        }
+    }
+
+    public void ApplyHeal(int healPoints)
+    {
+        m_health += healPoints;
+        m_receiver.Invoke(healPoints);
+        if (m_health <= 0)
+        {
+            m_dead = false;
             m_receiver.Invoke(0);
         }
     }

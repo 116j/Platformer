@@ -5,14 +5,15 @@ public class Cat : MonoBehaviour
 {
     [SerializeField]
     DetectZone m_groundZone;
-    public Transform PetPlayerLocation;
     [SerializeField]
-    UnityEvent<int> m_addHeart;
+    Transform m_spawnOffset;
+    public Transform PetPlayerLocation;
     public bool CanPet { get; private set; } = true;
 
     Animator m_anim;
     TouchingCheck m_touchings;
     Rigidbody2D m_rb;
+    readonly UnityEvent<int> m_addHeart = new();
 
     readonly int m_HashWalk = Animator.StringToHash("Walk");
     readonly int m_HashSleep = Animator.StringToHash("Sleep");
@@ -46,6 +47,8 @@ public class Cat : MonoBehaviour
         m_touchings = GetComponent<TouchingCheck>();
         m_rb = GetComponent<Rigidbody2D>();
         m_walkTime = Random.Range(m_walkRecoverTimeMin, m_walkRecoverTimeMax);
+        transform.position -= m_spawnOffset.localPosition;
+        m_addHeart.AddListener(GameObject.FindGameObjectWithTag("Player").GetComponent<Damagable>().ApplyHeal);
     }
 
     // Update is called once per frame

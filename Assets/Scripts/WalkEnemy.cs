@@ -17,7 +17,7 @@ public class WalkEnemy : MonoBehaviour
     [SerializeField]
     protected DetectZone m_groundZone;
     [SerializeField]
-    Transform m_spawnPosition;
+    Transform m_spawnOffset;
 
     protected Animator m_anim;
     protected Rigidbody2D m_rb;
@@ -39,7 +39,6 @@ public class WalkEnemy : MonoBehaviour
     protected int m_currentDir = 1;
     protected float m_speed = 0f;
     float m_waitTimer;
-    public Vector2 SpawnOffset => -m_spawnPosition.localPosition;
 
     protected virtual void Start()
     {
@@ -47,6 +46,7 @@ public class WalkEnemy : MonoBehaviour
         m_rb = GetComponent<Rigidbody2D>();
         m_touchings = GetComponent<TouchingCheck>();
         m_col = GetComponent<Collider2D>();
+        transform.position -= m_spawnOffset.localPosition;
     }
 
     protected virtual void Update()
@@ -59,7 +59,7 @@ public class WalkEnemy : MonoBehaviour
     {
         if (!m_dead)
         {
-
+            // if the target is in the attack zone - enable attack, stop moving
             if (m_attackZone.TargetDetected)
             {
                 if (!m_attackScript.EnableAttack)
@@ -72,6 +72,7 @@ public class WalkEnemy : MonoBehaviour
                 m_anim.SetInteger(m_HashAttackNum, Random.Range(0, m_attackCount));
                 return;
             }
+            // if the target is in the detect zone, not touching walls and touching ground, and can move - chase the target
             else if (m_detectZone.TargetDetected && m_groundZone.TargetDetected && !m_touchings.IsWalls() && m_anim.GetBool(m_HashCanMove))
             {
                 Chase();
@@ -86,12 +87,13 @@ public class WalkEnemy : MonoBehaviour
 
     void Potrol()
     {
+        // disable attack
         m_attackScript.EnableAttack = false;
 
         if (!m_waiting)
         {
             m_speed = m_walkSpeed;
-
+            // if cant move further - stop
             if (!m_groundZone.TargetDetected || m_touchings.IsWalls())
             {
                 m_speed = 0f;
@@ -102,6 +104,7 @@ public class WalkEnemy : MonoBehaviour
         else
         {
             m_waitTimer += Time.deltaTime;
+            // if wait time is over - turn around and move
             if (m_waitTimer >= m_waitTime)
             {
                 TurnAround();
@@ -112,6 +115,7 @@ public class WalkEnemy : MonoBehaviour
 
     void Chase()
     {
+        // if the target is behind - turn around
         if ((m_detectZone.TargetLocation.x - transform.position.x) * m_currentDir < 0f)
         {
             TurnAround();

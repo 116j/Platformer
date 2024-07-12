@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,30 +24,25 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
 
-    public void RemoveHeart(int damage)
-    {
-        for (int i = 0; i<damage; i++)
-        {
-            if (m_currentHeart >= 0)
-            {
-                m_hearts[m_currentHeart].sprite = m_emptyHeart;
-                m_currentHeart--;
-            }
-        }
     }
-
-    public void RecoverHeart(int healPoints)
+    /// <summary>
+    /// Add or remove hearts
+    /// </summary>
+    /// <param name="damage">damage points</param>
+    public void ChangeHearts(int damage)
     {
-        for (int i = 0; i < healPoints; i++)
+        for (int i = 0; i < Math.Abs(damage); i++)
         {
-            if (m_currentHeart != m_hearts.Length - 1)
+            if (m_currentHeart < m_hearts.Length && damage > 0)
             {
                 m_currentHeart++;
                 m_hearts[m_currentHeart].sprite = m_fullHeart;
-
+            }
+            else if (damage < 0 && m_currentHeart >= 0)
+            {
+                m_hearts[m_currentHeart].sprite = m_emptyHeart;
+                m_currentHeart--;
             }
         }
     }

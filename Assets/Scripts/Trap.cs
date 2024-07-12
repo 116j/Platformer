@@ -26,14 +26,17 @@ public class Trap : MonoBehaviour
         SetAnimations(m_trapNumber);
     }
 
-
+    /// <summary>
+    /// Set animatioms for trap override controller
+    /// </summary>
+    /// <param name="animNum"></param>
     void SetAnimations(int animNum)
     {
         AnimatorOverrideController aoc = new(m_anim.runtimeAnimatorController);
         var anims = new List<KeyValuePair<AnimationClip, AnimationClip>>(2)
         {
             new(aoc.animationClips[0], m_attacks[animNum]),
-            new(aoc.animationClips[1], m_transitions.Length - 1 < animNum? null: m_transitions[animNum])
+            new(aoc.animationClips[1], m_transitions[animNum])
         };
         aoc.ApplyOverrides(anims);
         m_anim.runtimeAnimatorController = aoc;
