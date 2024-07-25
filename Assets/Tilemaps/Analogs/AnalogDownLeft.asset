@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76a9c1026d1e654cb9e3c2daaf25f6c, type: 3}
+  m_Name: AnalogDownLeft
+  m_EditorClassIdentifier: 
+  dark:
+  - {fileID: 11400000, guid: 3675e784902efe849adbcd0365ccc032, type: 2}
+  bright:
+  - {fileID: 11400000, guid: 1c03de00d8c6aac458a33ceb8e4c8251, type: 2}
+  - {fileID: 11400000, guid: 24d5fd6e6ee32f34e819d195ddade372, type: 2}
+  - {fileID: 11400000, guid: da321dbf6af709f41bac35b142b91b23, type: 2}
+  - {fileID: 11400000, guid: 58fa3bf6ca8a29341967bba62b1da315, type: 2}
+  calm:
+  - {fileID: 11400000, guid: 9b0ba3061b3623d48a48019c633fc606, type: 2}
+  tilemapTag: wall
+  surroundings: 01000100

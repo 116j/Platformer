@@ -379,6 +379,8 @@ AnimationClip:
       value: {fileID: -1922415547, guid: d417416640c600c409614d6346612e7d, type: 3}
     - time: 0.81666666
       value: {fileID: -1349170264, guid: d417416640c600c409614d6346612e7d, type: 3}
+    - time: 0.9
+      value: {fileID: -1924717768, guid: d417416640c600c409614d6346612e7d, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -456,12 +458,13 @@ AnimationClip:
     - {fileID: 1983842265, guid: d417416640c600c409614d6346612e7d, type: 3}
     - {fileID: -1922415547, guid: d417416640c600c409614d6346612e7d, type: 3}
     - {fileID: -1349170264, guid: d417416640c600c409614d6346612e7d, type: 3}
+    - {fileID: -1924717768, guid: d417416640c600c409614d6346612e7d, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.8333333
+    m_StopTime: 0.9166666
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -819,4 +822,18 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.26666668
+    functionName: PlaySoundLoop
+    data: 
+    objectReferenceParameter: {fileID: 8300000, guid: 3e6ee6242a2a8d1408a5ceaf687c9975, type: 3}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.76666665
+    functionName: StopSound
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

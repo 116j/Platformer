@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dde0306715dcda4986246d4ecf86f75, type: 3}
+  m_Name: WaterLeft
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 9f22783b6f707854f881bf8620f07e26, type: 2}
+  - {fileID: 11400000, guid: 03667717d637fd648bda528d7196e534, type: 2}
+  - {fileID: 11400000, guid: 4693cc004375bee43885756928098511, type: 2}
+  - {fileID: 11400000, guid: 77312943b7518a148947385137c16ccf, type: 2}

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,16 +23,25 @@ public class SoundController : MonoBehaviour
     public void PlaySoundLoop(AudioClip clip)
     {
         m_audio.loop = true;
-        if(!m_audio.isPlaying&&m_audio.clip != clip)
+        if (m_audio.clip != clip)
         {
             m_audio.Stop();
             m_audio.clip = clip;
+        }
+        if(!m_audio.isPlaying)
+        {
             m_audio.Play();
         }
     }
 
     public void PlaySound(string sound)
     {
-        m_audio.PlayOneShot(m_sounds.Find(s =>s.name == sound));
+        m_audio.PlayOneShot(m_sounds.Find(s => s.name == sound));
+    }
+
+    public void StopSound()
+    {
+        m_audio.loop = false;
+        m_audio.Stop();
     }
 }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerMiddleFullUpRightDownLeft
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 9b43c37f171f8744ca854f974bc3fc3e, type: 2}
+  - {fileID: 11400000, guid: 278f67fb38a3c4246a5be274f3b71fbd, type: 2}
+  analogTiles: {fileID: 11400000, guid: 2752b35f9abd0c74db94b29005349d49, type: 2}
+  destroy: 0
+  checkMoreSurroundings: 1
+  changeTiles:
+  - {fileID: 11400000, guid: c8847bc1fa4e8234f96bfbd7fc420cf2, type: 2}
+  - {fileID: 11400000, guid: b6bf69814b266c644bbc66c31fb2da92, type: 2}
+  - {fileID: 11400000, guid: 350729f559b14534a9f4f903da8183fc, type: 2}
+  - {fileID: 11400000, guid: 18fadc9892ff02445b795b143184228a, type: 2}

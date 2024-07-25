@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dde0306715dcda4986246d4ecf86f75, type: 3}
+  m_Name: GroupGrassStraight
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 7e91f9b0f3f27e44f8c574cc4f07a364, type: 2}
+  - {fileID: 11400000, guid: 1555e1424e4b21f449caa8d56bcc6eb3, type: 2}
+  - {fileID: 11400000, guid: 46590372db5d27e48874afb23f16f326, type: 2}
+  - {fileID: 11400000, guid: 9c577ca6aa2b16b4c8168d9174e849f5, type: 2}
+  - {fileID: 11400000, guid: e942fad4f996c5e4bbb7a68207431a42, type: 2}
+  - {fileID: 11400000, guid: d696f14d70d84734792c5961b662de42, type: 2}

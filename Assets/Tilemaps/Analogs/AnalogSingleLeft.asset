@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76a9c1026d1e654cb9e3c2daaf25f6c, type: 3}
+  m_Name: AnalogSingleLeft
+  m_EditorClassIdentifier: 
+  dark:
+  - {fileID: 11400000, guid: 4d1278626c37cb94dab3eab29e15930e, type: 2}
+  bright:
+  - {fileID: 11400000, guid: 7e91f9b0f3f27e44f8c574cc4f07a364, type: 2}
+  - {fileID: 11400000, guid: f92ede610cd1fdb4abe25071ea607ef1, type: 2}
+  - {fileID: 11400000, guid: 99b650adf47cf114abd1622f3abd4288, type: 2}
+  - {fileID: 11400000, guid: d779f18ffdd81494ab614c7109fc46f3, type: 2}
+  calm:
+  - {fileID: 11400000, guid: 9c577ca6aa2b16b4c8168d9174e849f5, type: 2}
+  - {fileID: 11400000, guid: f25515f0a869d8340a868e289393bc50, type: 2}
+  - {fileID: 11400000, guid: f9c6d7b3d591fc341a9d4974760bb4e5, type: 2}
+  tilemapTag: ground
+  surroundings: 01000000

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerGrassJuggedMiddle
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: d5c4d6b9b8cc5074d904e43a663ff2fb, type: 2}
+  - {fileID: 11400000, guid: c4bfe48e134efa547a5def592b923d5c, type: 2}
+  analogTiles: {fileID: 11400000, guid: 308033384cc91f249856925dfb75e2ba, type: 2}
+  destroy: 0
+  changeTiles:
+  - {fileID: 11400000, guid: b8f424cbf103c364192921ad51416e8d, type: 2}
+  - {fileID: 11400000, guid: b8f424cbf103c364192921ad51416e8d, type: 2}

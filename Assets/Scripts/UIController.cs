@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    static UIController m_instance;
+    public static UIController Instance => m_instance;
+
     [Header("Health")]
     [SerializeField]
     Image[] m_hearts;
@@ -12,13 +15,25 @@ public class UIController : MonoBehaviour
     [SerializeField]
     Sprite m_emptyHeart;
 
+    [Header("Dash")]
+    [SerializeField]
+    Image m_dashBar;
+    [SerializeField]
+    Sprite[] m_dashSprites;
+
     int m_currentHeart;
+
+    private void Awake()
+    {
+        if (m_instance == null)
+        {
+            m_instance = this;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
         m_currentHeart = m_hearts.Length - 1;
-
-
     }
 
     // Update is called once per frame
@@ -45,5 +60,10 @@ public class UIController : MonoBehaviour
                 m_currentHeart--;
             }
         }
+    }
+
+    public void SetDashSprite(float fill)
+    {
+        m_dashBar.sprite = m_dashSprites[Mathf.FloorToInt(fill * (m_dashSprites.Length - 1))];
     }
 }

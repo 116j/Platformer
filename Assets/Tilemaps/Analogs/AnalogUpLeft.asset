@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76a9c1026d1e654cb9e3c2daaf25f6c, type: 3}
+  m_Name: AnalogUpLeft
+  m_EditorClassIdentifier: 
+  dark:
+  - {fileID: 11400000, guid: a37b68fa7d830794baaccad59a6180d2, type: 2}
+  - {fileID: 11400000, guid: 26632c626b8fab34d9fcf1dbb9690576, type: 2}
+  bright:
+  - {fileID: 11400000, guid: 211783185a598e847bd9b983c6138407, type: 2}
+  - {fileID: 11400000, guid: 39aee6b162890ae419bacd81908f3f07, type: 2}
+  - {fileID: 11400000, guid: 2e22d875325c7f64281ebb4f3bfb676e, type: 2}
+  calm:
+  - {fileID: 11400000, guid: 3fa7b751a05b4aa4b813ee4bc8c242a5, type: 2}
+  tilemapTag: ground
+  surroundings: 01000101

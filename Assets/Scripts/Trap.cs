@@ -12,7 +12,7 @@ public class Trap : MonoBehaviour
     [SerializeField]
     int m_trapNumber;
 
-    Animator m_anim;
+    protected Animator m_anim;
 
     Vector3 m_currentOffset;
 

@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_transitions.Array.data[2]
       value: 
       objectReference: {fileID: 7400000, guid: 91c4d386c37e7af4690e0efaee8de939, type: 2}
+    - target: {fileID: 5654566351847324843, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_attackCooldownTime
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_Size.x
       value: 3

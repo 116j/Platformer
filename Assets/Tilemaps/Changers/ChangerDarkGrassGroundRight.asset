@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerDarkGrassGroundRight
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 9b757e05df75e694eb6cd921bc7126d7, type: 2}
+  analogTiles: {fileID: 11400000, guid: 0a38f17d55f31dc4a9bf034406ff6be1, type: 2}
+  destroy: 0
+  changeTiles:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: ab39d6574754337449dae0ac9d9202c7, type: 2}
+  - {fileID: 11400000, guid: 4194219ee57c0f14e9b57ed7a51574aa, type: 2}
+  - {fileID: 11400000, guid: 5836f2350d16c3e4087161287738a9ac, type: 2}

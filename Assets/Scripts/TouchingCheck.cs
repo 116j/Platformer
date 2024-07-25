@@ -10,7 +10,7 @@ public class TouchingCheck : MonoBehaviour
     Collider2D m_col;
 
     //distance to detect wall
-    readonly float m_wallHitDist = 0.2f;
+    readonly float m_wallHitDist = 0.1f;
     //distance to detect ground
     readonly float m_groundHitDist = 0.05f;
 

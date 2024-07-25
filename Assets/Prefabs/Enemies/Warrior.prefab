@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.781
+      value: -1.954
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.y
@@ -173,6 +173,11 @@ PrefabInstance:
       insertIndex: 5
       addedObject: {fileID: 1028847002878107856}
   m_SourcePrefab: {fileID: 100100000, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+--- !u!4 &1729697184069345071 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+  m_PrefabInstance: {fileID: 3601816919805062983}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3310668667958876611 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2021521375965787780, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
@@ -208,7 +213,7 @@ MonoBehaviour:
   m_attackZone: {fileID: 3310668667958876611}
   m_detectZone: {fileID: 4785939226791503309}
   m_groundZone: {fileID: 8439426872049761071}
-  m_spawnOffset: {fileID: 0}
+  m_spawnOffset: {fileID: 1729697184069345071}
 --- !u!114 &4785939226791503309 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8329173561461377674, guid: 7589c4885b0e16045bc336705bf112db, type: 3}

@@ -152,7 +152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.784
+      value: -1.955
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.y
@@ -369,6 +369,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b96dc3ef4efb8145ab5d23f1db327a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &6043237139159525057 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+  m_PrefabInstance: {fileID: 8800248229901342377}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7362578179812958253 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2021521375965787780, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
@@ -404,7 +409,7 @@ MonoBehaviour:
   m_attackZone: {fileID: 7362578179812958253}
   m_detectZone: {fileID: 700283468767861795}
   m_groundZone: {fileID: 4522216845412270785}
-  m_spawnOffset: {fileID: 0}
+  m_spawnOffset: {fileID: 6043237139159525057}
   m_shootScript: {fileID: -8490034976026399493}
   m_shootZone: {fileID: 4669128548453486737}
 --- !u!114 &-8490034976026399493

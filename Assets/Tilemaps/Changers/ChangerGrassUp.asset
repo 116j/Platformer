@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerGrassUp
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 6fd05fb62db2fdb4f95779e1cd2ee3f4, type: 2}
+  analogTiles: {fileID: 11400000, guid: eeb1217ef3b3a424ba0a87aac0591c51, type: 2}
+  destroy: 0
+  changeTiles:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 238b4eff01cf6fb47affffbc7ea5fca1, type: 2}

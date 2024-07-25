@@ -45,7 +45,7 @@ Transform:
   - {fileID: 6132449907414876550}
   - {fileID: 6350651510031812783}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1107239528939950938
 SpriteRenderer:
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_playerCam: {fileID: 0}
   m_catZone: {fileID: 6226799942729865244}
   m_runSpeed: 7
-  m_dashPower: 12
+  m_dashPower: 10
   m_jumpPower: 12
   m_fallMultiplier: 6
   m_junpMultiplier: 4
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53a46ea2d2c72e14fa87c3185e7dea17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 4
+  m_health: 100
   m_recoverTime: 4
   m_receiver:
     m_PersistentCalls:
@@ -253,7 +253,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: RemoveHeart
+        m_MethodName: ChangeHearts
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -322,7 +322,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.065552205, y: 0.6981399}
+  m_Offset: {x: -0.065552205, y: 0.7027034}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -333,7 +333,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.6669045, y: 1.4065766}
+  m_Size: {x: 0.6669045, y: 1.4157037}
   m_EdgeRadius: 0
 --- !u!114 &349729031436747073
 MonoBehaviour:

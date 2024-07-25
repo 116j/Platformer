@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerGrassJuggedRight
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 8c9c63f8f7f75f545ab504d6b5a8b8ff, type: 2}
+  - {fileID: 11400000, guid: ec054efcfee69794982d290c8c1746c4, type: 2}
+  - {fileID: 11400000, guid: e8bb7a2489e915140a2eae8dba7cc1d7, type: 2}
+  analogTiles: {fileID: 11400000, guid: 8dd81046c30630e47b9b1b1453c38abb, type: 2}
+  destroy: 0
+  changeTiles:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: b8f424cbf103c364192921ad51416e8d, type: 2}

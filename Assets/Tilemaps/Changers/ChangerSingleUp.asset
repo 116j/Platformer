@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerSingleUp
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 7cb15d6e8dc39944db782c92f199c5c2, type: 2}
+  - {fileID: 11400000, guid: db896790a227dab4eb6b79799c5c7f9e, type: 2}
+  - {fileID: 11400000, guid: 73e4959af3c8ef146a03ccff028dafa2, type: 2}
+  analogTiles: {fileID: 11400000, guid: eeb1217ef3b3a424ba0a87aac0591c51, type: 2}
+  destroy: 0
+  changeTiles:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 2f2a5e2c45944184db613c8679e70993, type: 2}

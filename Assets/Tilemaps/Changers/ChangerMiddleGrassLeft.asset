@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerMiddleGrassLeft
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: da432a8cdc6ffab46bba1c13b783c747, type: 2}
+  analogTiles: {fileID: 11400000, guid: 2752b35f9abd0c74db94b29005349d49, type: 2}
+  destroy: 0
+  checkMoreSurroundings: 0
+  changeTiles:
+  - {fileID: 11400000, guid: 18b6b9e851620e04cbc52322e71a4597, type: 2}
+  - {fileID: 11400000, guid: 367b6017e0da48e4ca8a83c6c272fc6c, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
