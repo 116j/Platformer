@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f1ef280bb3ef489665b05cf04460a, type: 3}
+  m_Name: ChangerSingleMiddleHor
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: fd6a5b6f207566a40aafd3343004e382, type: 2}
+  - {fileID: 11400000, guid: 5c357b930d84ec84ea5438c4dd5cb63f, type: 2}
+  - {fileID: 11400000, guid: e942fad4f996c5e4bbb7a68207431a42, type: 2}
+  analogTiles: {fileID: 11400000, guid: 308033384cc91f249856925dfb75e2ba, type: 2}
+  addGrass: 0
+  checkMoreSurroundings: 0
+  changeTiles:
+  - {fileID: 11400000, guid: 2ce0ec9cfd854c34295000d6b8c0fbd1, type: 2}
+  - {fileID: 11400000, guid: 2ce0ec9cfd854c34295000d6b8c0fbd1, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}

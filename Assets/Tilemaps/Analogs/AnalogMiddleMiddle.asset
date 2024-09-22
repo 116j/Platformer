@@ -17,46 +17,23 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 47a81cccb01a4194bb25c944254ac205, type: 2}
   - {fileID: 11400000, guid: 7e4c9c3b2fed1654a80830d35c417bc7, type: 2}
   - {fileID: 11400000, guid: 329834fb3d393f34aaa3c9e896e755d4, type: 2}
-  - {fileID: 11400000, guid: 81e51932a927c9543993f21c64053ed6, type: 2}
-  - {fileID: 11400000, guid: 32b068a780e4eb14db091a43ef1048cd, type: 2}
   - {fileID: 11400000, guid: 4fa96312db3b559408495adb22a1845d, type: 2}
   - {fileID: 11400000, guid: 5f052c2cc057fc847bcc3f3496cb5673, type: 2}
-  - {fileID: 11400000, guid: f1caf1f0210ffca41be1bfdcfd82969e, type: 2}
-  - {fileID: 11400000, guid: f0ddcc8b553464040ad4e3dfd246e80b, type: 2}
   - {fileID: 11400000, guid: 6bb8506771e372d4199ffb3dc652adc7, type: 2}
   - {fileID: 11400000, guid: 9079b24edbede4f46b6d9353cfaa7346, type: 2}
   - {fileID: 11400000, guid: 278f67fb38a3c4246a5be274f3b71fbd, type: 2}
   - {fileID: 11400000, guid: f2cab227418e80e489e627caebeee065, type: 2}
-  bright:
-  - {fileID: 11400000, guid: b8f4d9e5dd1d92e4cbe4008e22b6b382, type: 2}
-  - {fileID: 11400000, guid: 3a963dd0b4e44814ea052d5067d6f20e, type: 2}
-  - {fileID: 11400000, guid: 70a2c1d3abe78884994a5212f05b3bf8, type: 2}
-  - {fileID: 11400000, guid: 17b93c4aaf1ab4041a880741a43d9cca, type: 2}
-  - {fileID: 11400000, guid: af3c1ac14b47e0a4f9b1a8047e246e35, type: 2}
-  - {fileID: 11400000, guid: d330e275228638149a9f51460334a3f3, type: 2}
-  - {fileID: 11400000, guid: 257501f433ffbc347b60549595ed7e7e, type: 2}
-  - {fileID: 11400000, guid: da432a8cdc6ffab46bba1c13b783c747, type: 2}
-  - {fileID: 11400000, guid: 772ef02465c7e194287b5e72856df6e2, type: 2}
-  - {fileID: 11400000, guid: 8a029b28ceab66a4f9d78a8eefcac262, type: 2}
-  - {fileID: 11400000, guid: cfdefd64194bf9d43a6214e6860ff883, type: 2}
-  - {fileID: 11400000, guid: de5a643b27ba82c42b7457329731c2cb, type: 2}
-  - {fileID: 11400000, guid: 976603ba78a14c8459e19fddafa82310, type: 2}
-  - {fileID: 11400000, guid: d29b0d1cf8309354b94f1e7614f83af0, type: 2}
   calm:
   - {fileID: 11400000, guid: 2bc0738f55811674aae65c9028cb1021, type: 2}
   - {fileID: 11400000, guid: 1723f1b0df034834c99727981f02a8e5, type: 2}
   - {fileID: 11400000, guid: cf8f8416e6f501d43862d1775a9c7de7, type: 2}
   - {fileID: 11400000, guid: eb391e2d7389bea4c901902254027c77, type: 2}
-  - {fileID: 11400000, guid: d15a18be83a287f46bc8c1f568175c9e, type: 2}
-  - {fileID: 11400000, guid: 3bf4b276095d6a1429759cf2fb17d1f9, type: 2}
   - {fileID: 11400000, guid: 05911e4a06dd3ca4eab9a3008a403042, type: 2}
   - {fileID: 11400000, guid: 027a852e260a2ef4bbf758bc4c7125ad, type: 2}
   - {fileID: 11400000, guid: a5704f772b3a57d4eb9340d99d6db672, type: 2}
-  - {fileID: 11400000, guid: 9745c4c6148a23940a812344faaf4e76, type: 2}
-  - {fileID: 11400000, guid: 10bc83a96b914104c8a94d0ef6332af4, type: 2}
   - {fileID: 11400000, guid: 9b43c37f171f8744ca854f974bc3fc3e, type: 2}
-  - {fileID: 11400000, guid: 05cb1441b3706494c8fcd592e9b2f447, type: 2}
   - {fileID: 11400000, guid: cb022187d0455f0438dfe4d3289a798d, type: 2}
   - {fileID: 11400000, guid: 1aabc11b44c69ae438a402609440f531, type: 2}
   tilemapTag: wall
   surroundings: 01010101
+  placeAnalog: {fileID: 0}

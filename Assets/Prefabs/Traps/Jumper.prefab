@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 501641818361002154}
   - component: {fileID: 8334699401100075492}
-  - component: {fileID: 9060158485804682776}
   - component: {fileID: 4680571526423195490}
+  - component: {fileID: 9060158485804682776}
   - component: {fileID: 100902789317546965}
   - component: {fileID: 2974322080845502438}
   m_Layer: 3
@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8334699401100075492
 SpriteRenderer:
@@ -74,9 +74,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 135074155
+  m_SortingLayer: 4
+  m_SortingOrder: 2
   m_Sprite: {fileID: 228820393, guid: ce724f5c241096f4ca33bc7af6f95899, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -88,26 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &9060158485804682776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4518538118436424141}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 255c5479f1b31974e9c58eb1ce0a1a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_transitions:
-  - {fileID: 7400000, guid: f6c3b6c576b7ec64f8b84f5d8cbb70f3, type: 2}
-  m_attacks:
-  - {fileID: 7400000, guid: b89c07d35e8869640b22e5e3cd0eabb9, type: 2}
-  m_offsets:
-  - {x: 0, y: 0.5, z: 0}
-  m_trapNumber: 0
-  m_jumpPower: 15
 --- !u!95 &4680571526423195490
 Animator:
   serializedVersion: 5
@@ -129,6 +109,52 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9060158485804682776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4518538118436424141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255c5479f1b31974e9c58eb1ce0a1a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transitions:
+  - {fileID: 7400000, guid: f6c3b6c576b7ec64f8b84f5d8cbb70f3, type: 2}
+  m_attacks:
+  - {fileID: 7400000, guid: b89c07d35e8869640b22e5e3cd0eabb9, type: 2}
+  m_offsets:
+  - {x: -1, y: 1.5, z: 0}
+  m_metrics:
+  - {x: -0.69, y: 0.625, z: 0.625}
+  m_attackDirections: []
+  m_trapNumber: 0
+  m_spawnChances:
+  - serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!61 &100902789317546965
 BoxCollider2D:
   m_ObjectHideFlags: 0

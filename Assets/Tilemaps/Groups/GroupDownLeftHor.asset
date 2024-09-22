@@ -16,13 +16,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1723f1b0df034834c99727981f02a8e5, type: 2}
   - {fileID: 11400000, guid: 329834fb3d393f34aaa3c9e896e755d4, type: 2}
   - {fileID: 11400000, guid: 278f67fb38a3c4246a5be274f3b71fbd, type: 2}
-  - {fileID: 11400000, guid: 70a2c1d3abe78884994a5212f05b3bf8, type: 2}
-  - {fileID: 11400000, guid: 43212b1bd809366478d4ab34051d8c88, type: 2}
-  - {fileID: 11400000, guid: 414673365bbddcc4c866f8611de6fb6f, type: 2}
   - {fileID: 11400000, guid: 9b43c37f171f8744ca854f974bc3fc3e, type: 2}
-  - {fileID: 11400000, guid: 3bf4b276095d6a1429759cf2fb17d1f9, type: 2}
-  - {fileID: 11400000, guid: 772ef02465c7e194287b5e72856df6e2, type: 2}
-  - {fileID: 11400000, guid: 8a029b28ceab66a4f9d78a8eefcac262, type: 2}
-  - {fileID: 11400000, guid: f1caf1f0210ffca41be1bfdcfd82969e, type: 2}
   tileGroups:
   - {fileID: 11400000, guid: 1eddc2220ca13cc4da499925d447329e, type: 2}

@@ -16,9 +16,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a58bee533e74caf45816559b29a37f5e, type: 2}
   - {fileID: 11400000, guid: 7c9d19b583b76f84cb564b7c47542ded, type: 2}
   - {fileID: 11400000, guid: a247ecbba480f494a8de5e6317d35357, type: 2}
-  - {fileID: 11400000, guid: 4c23ef8daf1174545b11479349ca6245, type: 2}
   analogTiles: {fileID: 11400000, guid: 403032a5ad19da048b1e334874a8c97a, type: 2}
   destroy: 0
+  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 11400000, guid: 18b6b9e851620e04cbc52322e71a4597, type: 2}
   - {fileID: 0}

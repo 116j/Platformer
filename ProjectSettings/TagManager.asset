@@ -10,6 +10,8 @@ TagManager:
   - ground
   - wall
   - cat
+  - enemyAttack
+  - slope
   layers:
   - Default
   - TransparentFX
@@ -18,11 +20,11 @@ TagManager:
   - Water
   - UI
   - Wall
+  - Slope
   - Enemy
   - Player
   - DetectZone
-  - 
-  - 
+  - Enviroment
   - 
   - 
   - 
@@ -49,4 +51,31 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Wall
+    uniqueID: 2822699755
+    locked: 0
+  - name: Slope
+    uniqueID: 3647215437
+    locked: 0
+  - name: Ground
+    uniqueID: 2173594025
+    locked: 0
+  - name: Enviroment
+    uniqueID: 135074155
+    locked: 0
+  - name: Cat
+    uniqueID: 62707019
+    locked: 0
+  - name: Player
+    uniqueID: 4103403249
+    locked: 0
+  - name: Enemy
+    uniqueID: 1034187679
+    locked: 0
+  - name: Grass
+    uniqueID: 227588397
+    locked: 0
+  - name: UI
+    uniqueID: 3847754775
     locked: 0

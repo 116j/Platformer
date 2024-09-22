@@ -16,10 +16,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9b43c37f171f8744ca854f974bc3fc3e, type: 2}
   - {fileID: 11400000, guid: 278f67fb38a3c4246a5be274f3b71fbd, type: 2}
   analogTiles: {fileID: 11400000, guid: 2752b35f9abd0c74db94b29005349d49, type: 2}
-  destroy: 0
-  checkMoreSurroundings: 1
+  addGrass: 0
+  checkMoreSurroundings: 0
   changeTiles:
-  - {fileID: 11400000, guid: c8847bc1fa4e8234f96bfbd7fc420cf2, type: 2}
-  - {fileID: 11400000, guid: b6bf69814b266c644bbc66c31fb2da92, type: 2}
-  - {fileID: 11400000, guid: 350729f559b14534a9f4f903da8183fc, type: 2}
-  - {fileID: 11400000, guid: 18fadc9892ff02445b795b143184228a, type: 2}
+  - {fileID: 11400000, guid: 89f32a011feec58498b01d0b46a7fa85, type: 2}
+  - {fileID: 11400000, guid: 1eddc2220ca13cc4da499925d447329e, type: 2}
+  - {fileID: 11400000, guid: c9238d442e790f9498ac82ca5d30be0a, type: 2}
+  - {fileID: 11400000, guid: fc5ba4afa6b3bdd49a10502b6279926f, type: 2}

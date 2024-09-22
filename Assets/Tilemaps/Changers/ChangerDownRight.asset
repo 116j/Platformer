@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: ChangerDownRight
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: f297ac5d459b4864f8a136e5773035a0, type: 2}
+  - {fileID: 11400000, guid: 52ac045ba5c69a74e970c9daee78a538, type: 2}
+  - {fileID: 11400000, guid: cf536055d334e4040b1add3b70cc7e9c, type: 2}
   analogTiles: {fileID: 11400000, guid: c4d98fcf4d680af45b5e51cb737bb996, type: 2}
-  destroy: 0
+  addGrass: 0
+  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: b6bf69814b266c644bbc66c31fb2da92, type: 2}
   - {fileID: 11400000, guid: 350729f559b14534a9f4f903da8183fc, type: 2}
+  - {fileID: 0}

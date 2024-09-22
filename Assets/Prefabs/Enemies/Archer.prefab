@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3635720825517689650}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: arrowSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 6139426424306670922}
   - component: {fileID: 5350703294844727025}
   - component: {fileID: 4669128548453486737}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: shootZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,6 +146,10 @@ PrefabInstance:
       propertyPath: m_attackSound
       value: 
       objectReference: {fileID: 8300000, guid: f6bbd3fedd1a81c479122c4610a8be35, type: 3}
+    - target: {fileID: 2723400605716207923, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.128
@@ -153,6 +157,10 @@ PrefabInstance:
     - target: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_LocalPosition.y
       value: -1.955
+      objectReference: {fileID: 0}
+    - target: {fileID: 3217112982265686577, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.y
@@ -202,6 +210,10 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 3.5555556
       objectReference: {fileID: 0}
+    - target: {fileID: 6989559736407005144, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7909010669126650959, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.x
       value: 0.9865668
@@ -233,6 +245,26 @@ PrefabInstance:
     - target: {fileID: 7957385533479943860, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Offset.y
       value: -0.8430373
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_metric.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_metric.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_metric.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_spawnOffset.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_spawnOffset.y
+      value: 1.955
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_receiver
@@ -369,11 +401,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b96dc3ef4efb8145ab5d23f1db327a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &6043237139159525057 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
-  m_PrefabInstance: {fileID: 8800248229901342377}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7362578179812958253 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2021521375965787780, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
@@ -409,7 +436,12 @@ MonoBehaviour:
   m_attackZone: {fileID: 7362578179812958253}
   m_detectZone: {fileID: 700283468767861795}
   m_groundZone: {fileID: 4522216845412270785}
-  m_spawnOffset: {fileID: 6043237139159525057}
+  m_spawnChance:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   m_shootScript: {fileID: -8490034976026399493}
   m_shootZone: {fileID: 4669128548453486737}
 --- !u!114 &-8490034976026399493

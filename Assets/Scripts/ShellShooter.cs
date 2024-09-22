@@ -5,24 +5,12 @@ using UnityEngine;
 public class ShellShooter : MonoBehaviour
 {
     [SerializeField]
-    string m_shootDirectionString;
-    [SerializeField]
     float m_shootPower;
     [SerializeField]
     GameObject m_shell;
     [SerializeField]
     Transform m_shellSpawn;
 
-    Animator m_anim;
-
-    void Start()
-    {
-        m_anim = GetComponent<Animator>();
-        if (!string.IsNullOrEmpty(m_shootDirectionString))
-        {
-            m_anim.SetBool(Animator.StringToHash(m_shootDirectionString), true);
-        }
-    }
 
     public void SpawnShell()
     {

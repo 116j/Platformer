@@ -15,9 +15,6 @@ MonoBehaviour:
   dark:
   - {fileID: 11400000, guid: 8d48214542deeac43a940ccb1d026c65, type: 2}
   - {fileID: 11400000, guid: 45439a34c8f8ae44e94dbf820cf69ac2, type: 2}
-  bright:
-  - {fileID: 0}
-  - {fileID: 0}
   calm:
   - {fileID: 0}
   - {fileID: 0}

@@ -695,7 +695,6 @@ AnimatorState:
   - {fileID: 5080765897232851211}
   m_StateMachineBehaviours:
   - {fileID: 9012071774132317805}
-  - {fileID: 1236267243334007046}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1035,7 +1034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parameterName: Dashing
+  m_parameterName: CantMove
   m_value: 0
   m_stateMachine: 0
   m_state: 1
@@ -1080,79 +1079,73 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Hit
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Die
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Dash
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Jump
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: DoubleJump
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: HeavyAttack
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: AnimationTime
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Attack
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Falling
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Pet
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Dashing
+    m_Controller: {fileID: 0}
+  - m_Name: CantMove
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Attacking
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -1308,24 +1301,6 @@ AnimatorTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 1
---- !u!114 &1236267243334007046
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_parameterName: Dashing
-  m_value: 0
-  m_stateMachine: 0
-  m_state: 1
-  m_onExit: 0
-  m_onEnter: 1
 --- !u!1107 &1633096506541069357
 AnimatorStateMachine:
   serializedVersion: 6
@@ -1347,7 +1322,7 @@ AnimatorStateMachine:
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 9130461552277273720}
-    m_Position: {x: 630, y: 290, z: 0}
+    m_Position: {x: 600, y: 330, z: 0}
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions:
@@ -1519,7 +1494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parameterName: Attacking
+  m_parameterName: CantMove
   m_value: 0
   m_stateMachine: 0
   m_state: 1
@@ -1586,7 +1561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parameterName: Attacking
+  m_parameterName: CantMove
   m_value: 0
   m_stateMachine: 1
   m_state: 0
@@ -1776,7 +1751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parameterName: Dashing
+  m_parameterName: CantMove
   m_value: 0
   m_stateMachine: 0
   m_state: 1
@@ -1895,7 +1870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parameterName: Attacking
+  m_parameterName: CantMove
   m_value: 0
   m_stateMachine: 1
   m_state: 0
@@ -2094,7 +2069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b290cf03129e94e84604afaca916e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parameterName: Attacking
+  m_parameterName: CantMove
   m_value: 0
   m_stateMachine: 0
   m_state: 1

@@ -6,6 +6,8 @@ public class TouchingCheck : MonoBehaviour
     ContactFilter2D m_groundCastFilter;
     [SerializeField]
     ContactFilter2D m_wallCastFilter;
+    [SerializeField]
+    ContactFilter2D m_slopeCastFilter;
 
     Collider2D m_col;
 
@@ -13,6 +15,8 @@ public class TouchingCheck : MonoBehaviour
     readonly float m_wallHitDist = 0.1f;
     //distance to detect ground
     readonly float m_groundHitDist = 0.05f;
+    //distance to detect slope
+    readonly float m_slopeHitDist = 0.2f;
 
     RaycastHit2D[] m_colHits = new RaycastHit2D[5];
 
@@ -30,5 +34,18 @@ public class TouchingCheck : MonoBehaviour
     public bool IsWalls()
     {
         return m_col.Cast(transform.right, m_wallCastFilter, m_colHits, m_wallHitDist) > 0;
+    }
+
+    public bool IsSlopeUp()
+    {
+        return m_col.Cast(transform.right, m_slopeCastFilter, m_colHits, m_slopeHitDist) > 0 &&
+        m_col.Cast(-transform.up, m_groundCastFilter, m_colHits, m_groundHitDist) > 0;
+    }
+
+    public bool IsSlopeDown()
+    {
+        return m_col.Cast(-transform.right, m_slopeCastFilter, m_colHits, m_slopeHitDist) > 0 &&
+        !Physics2D.Raycast(new Vector2(m_col.bounds.max.x, m_col.bounds.min.y), -transform.up, m_groundHitDist, m_groundCastFilter.layerMask)&&
+        m_col.Cast(-transform.up, m_groundCastFilter, m_colHits, m_groundHitDist) > 0;
     }
 }

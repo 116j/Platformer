@@ -5,8 +5,7 @@ public class Cat : MonoBehaviour
 {
     [SerializeField]
     DetectZone m_groundZone;
-    [SerializeField]
-    Transform m_spawnOffset;
+
     public Transform PetPlayerLocation;
     public bool CanPet { get; private set; } = true;
 
@@ -47,13 +46,13 @@ public class Cat : MonoBehaviour
         m_touchings = GetComponent<TouchingCheck>();
         m_rb = GetComponent<Rigidbody2D>();
         m_walkTime = Random.Range(m_walkRecoverTimeMin, m_walkRecoverTimeMax);
-        transform.position -= m_spawnOffset.localPosition;
-        m_addHeart.AddListener(GameObject.FindGameObjectWithTag("Player").GetComponent<Damagable>().ApplyHeal);
+        m_addHeart.AddListener(GameObject.FindGameObjectWithTag("Player").GetComponent<Damagable>().ApplyHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // stop and turn around if cant go further
         if (!m_groundZone.TargetDetected || m_touchings.IsWalls())
         {
             m_walkTimer = 0f;
@@ -61,14 +60,17 @@ public class Cat : MonoBehaviour
             m_speed = 0f;
             TurnAround();
         }
+        //if is not petting - walk
         if (!m_petting && CanPet)
             Walk();
         m_anim.SetBool(m_HashWalk, m_walking && !m_petting);
+        // is not triggered - trigger
         if (!m_petting && !m_triggered)
         {
             m_anim.SetTrigger(m_triggers[Random.Range(0, m_triggers.Length)]);
             m_triggered = true;
         }
+        // if triggered - set trigger cooldown
         if (m_triggered)
         {
             m_triggerTimer += Time.deltaTime;
@@ -85,6 +87,9 @@ public class Cat : MonoBehaviour
         m_rb.velocity = transform.right * (m_anim.GetBool(m_HashCanMove) ? m_speed : 0f);
     }
 
+    /// <summary>
+    /// Walk for walktime, than stop
+    /// </summary>
     void Walk()
     {
         m_walkTimer += Time.deltaTime;
@@ -102,7 +107,10 @@ public class Cat : MonoBehaviour
         m_currentDir *= -1;
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
     }
-
+    /// <summary>
+    /// Stop when start pettng and sleep when end
+    /// </summary>
+    /// <param name="pet"></param>
     public void Pet(bool pet)
     {
         if (pet)

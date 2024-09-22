@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WalkEnemy : MonoBehaviour
+public class WalkEnemy : MonoBehaviour, ISpawnChance
 {
     [SerializeField]
     float m_walkSpeed = 1.5f;
@@ -17,7 +17,7 @@ public class WalkEnemy : MonoBehaviour
     [SerializeField]
     protected DetectZone m_groundZone;
     [SerializeField]
-    Transform m_spawnOffset;
+    AnimationCurve m_spawnChance;
 
     protected Animator m_anim;
     protected Rigidbody2D m_rb;
@@ -46,7 +46,6 @@ public class WalkEnemy : MonoBehaviour
         m_rb = GetComponent<Rigidbody2D>();
         m_touchings = GetComponent<TouchingCheck>();
         m_col = GetComponent<Collider2D>();
-        transform.position -= m_spawnOffset.localPosition;
     }
 
     protected virtual void Update()
@@ -148,5 +147,10 @@ public class WalkEnemy : MonoBehaviour
             }
             m_anim.SetTrigger(m_HashHit);
         }
+    }
+
+    public float GetSpawnChance()
+    {
+        return m_spawnChance.Evaluate(GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().PlayedTime);
     }
 }

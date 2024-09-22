@@ -17,23 +17,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f74b50138ba89fc479673492dee92eea, type: 2}
   - {fileID: 11400000, guid: 28eccd4ce0374d548a01f65da2657079, type: 2}
   - {fileID: 11400000, guid: 323a5cc907b69e440b3f3f82292d45d9, type: 2}
-  bright:
-  - {fileID: 11400000, guid: 1ab2ca8e1fcf95d4195c3c913116702c, type: 2}
-  - {fileID: 11400000, guid: d1ae9133656413743a3b6cee963bfcd2, type: 2}
-  - {fileID: 11400000, guid: 7610e820b5f65af40a4d297158aa08e9, type: 2}
-  - {fileID: 11400000, guid: 630347d7267921a4c90e8dc755cc5319, type: 2}
-  - {fileID: 11400000, guid: 35f1ac2609f7bba449848a1101a89a6a, type: 2}
   calm:
   - {fileID: 11400000, guid: 34548b25dd23aba48a1451aaddf6c74f, type: 2}
-  - {fileID: 11400000, guid: e82fbc52445db544f909d397f7a55764, type: 2}
-  - {fileID: 11400000, guid: 4693cc004375bee43885756928098511, type: 2}
   - {fileID: 11400000, guid: 6f72b58065abb8a43a3807d2ab0993b7, type: 2}
-  - {fileID: 11400000, guid: 77312943b7518a148947385137c16ccf, type: 2}
-  - {fileID: 11400000, guid: 9f22783b6f707854f881bf8620f07e26, type: 2}
-  - {fileID: 11400000, guid: c9491ca1a896cc04291816700dffe35d, type: 2}
-  - {fileID: 11400000, guid: 8ee547b657ef3f948bf746ca0271561f, type: 2}
-  - {fileID: 11400000, guid: 1671e2997bc3c2347a3adf9895c45d33, type: 2}
-  - {fileID: 11400000, guid: cc0cdec4b55a383488c69cb4d7725b6d, type: 2}
-  - {fileID: 11400000, guid: 03667717d637fd648bda528d7196e534, type: 2}
   tilemapTag: ground
-  surroundings: 01010101
+  surroundings: 01010001
+  placeAnalog: {fileID: 0}

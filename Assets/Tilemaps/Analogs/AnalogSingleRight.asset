@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dark:
   - {fileID: 11400000, guid: 69cf0c9c9cf353e4b87163162d895fc2, type: 2}
-  bright:
-  - {fileID: 11400000, guid: 46590372db5d27e48874afb23f16f326, type: 2}
-  - {fileID: 11400000, guid: f6c15510a23743443b0a76079d1def8f, type: 2}
-  - {fileID: 11400000, guid: 927dc37cba8293c47856407ee7110dd2, type: 2}
-  - {fileID: 11400000, guid: 8c9c63f8f7f75f545ab504d6b5a8b8ff, type: 2}
   calm:
   - {fileID: 11400000, guid: d696f14d70d84734792c5961b662de42, type: 2}
   - {fileID: 11400000, guid: ec054efcfee69794982d290c8c1746c4, type: 2}
   - {fileID: 11400000, guid: e8bb7a2489e915140a2eae8dba7cc1d7, type: 2}
   tilemapTag: ground
   surroundings: 00010000
+  surroundingAnalogs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &235357672171887178
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5097389698874563824}
-  m_Layer: 0
-  m_Name: spawnPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5097389698874563824
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 235357672171887178}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.534, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6737260541226661004}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &974641576092722108
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3303960529137479627}
+  - component: {fileID: 1049969890167758504}
   m_Layer: 0
   m_Name: PetPlayerLocation
-  m_TagString: Untagged
+  m_TagString: cat
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,13 +25,58 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 974641576092722108}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.469, y: -0.52, z: 0}
+  m_LocalPosition: {x: 0.186, y: -0.52, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6737260541226661004}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!61 &1049969890167758504
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974641576092722108}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.45}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.1, y: 0.8960464}
+  m_EdgeRadius: 0
 --- !u!1 &2477990939742587090
 GameObject:
   m_ObjectHideFlags: 0
@@ -73,7 +88,7 @@ GameObject:
   - component: {fileID: 787406950665801746}
   - component: {fileID: 1908283446498092778}
   - component: {fileID: 9095456533484423442}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: groundZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,6 +182,7 @@ GameObject:
   - component: {fileID: 6487548484840236495}
   - component: {fileID: 2429217428316977769}
   - component: {fileID: 8080555173816573192}
+  - component: {fileID: 4055731176202934183}
   - component: {fileID: 2336935378641655310}
   - component: {fileID: 6980500002964624293}
   - component: {fileID: 3362722972867013770}
@@ -191,9 +207,8 @@ Transform:
   m_Children:
   - {fileID: 3303960529137479627}
   - {fileID: 787406950665801746}
-  - {fileID: 5097389698874563824}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!212 &7352029824868991766
 SpriteRenderer:
@@ -233,8 +248,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 62707019
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 2014080374, guid: df515e546532e0545a2a462eafad4f3a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -353,23 +368,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_groundZone: {fileID: 9095456533484423442}
-  m_spawnOffset: {fileID: 5097389698874563824}
   PetPlayerLocation: {fileID: 3303960529137479627}
-  m_addHeart:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Damagable, Assembly-CSharp
-        m_MethodName: ApplyDamage
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+--- !u!114 &4055731176202934183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4678968611558213490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnOffset: {x: 0, y: 0.535, z: 0}
+  m_metric: {x: 0, y: 0, z: 0}
 --- !u!114 &2336935378641655310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,6 +423,20 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
+  m_slopeCastFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!114 &6980500002964624293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,8 +470,8 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 90
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 15
+  MinDistance: 2
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0

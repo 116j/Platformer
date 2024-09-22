@@ -16,12 +16,13 @@ GameObject:
   - component: {fileID: 8174218926635030679}
   - component: {fileID: 3650420355258721004}
   - component: {fileID: 6230351899595666638}
+  - component: {fileID: -4007617514770243653}
   - component: {fileID: 1085217618323219388}
   - component: {fileID: 8212309826062894424}
   - component: {fileID: 349729031436747073}
   - component: {fileID: 725559614674730786}
   - component: {fileID: 1921623980975281193}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -45,7 +46,7 @@ Transform:
   - {fileID: 6132449907414876550}
   - {fileID: 6350651510031812783}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1107239528939950938
 SpriteRenderer:
@@ -85,8 +86,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -191564047
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 8b3fe96480fdb3b488ce1bb877fb5546, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -176,12 +177,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playerCam: {fileID: 0}
   m_catZone: {fileID: 6226799942729865244}
+  m_resetEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6230351899595666638}
+        m_TargetAssemblyTypeName: Damagable, Assembly-CSharp
+        m_MethodName: ApplyDamage
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_runSpeed: 7
   m_dashPower: 10
   m_jumpPower: 12
   m_fallMultiplier: 6
   m_junpMultiplier: 4
   m_jumpTime: 0.4
+  m_dashCooldownTime: 1.5
 --- !u!114 &3650420355258721004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,6 +235,20 @@ MonoBehaviour:
     layerMask:
       serializedVersion: 2
       m_Bits: 72
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  m_slopeCastFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
@@ -263,6 +294,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &-4007617514770243653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880834243166009998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnOffset: {x: 0, y: 0, z: 0}
+  m_metric: {x: -0.4, y: 1.4, z: 0.4}
 --- !u!50 &1085217618323219388
 Rigidbody2D:
   serializedVersion: 4
@@ -275,7 +320,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 0.9441391
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 5
@@ -286,7 +331,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 1024
-  m_Interpolate: 1
+  m_Interpolate: 2
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -362,7 +407,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.8
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -499,7 +544,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 256
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -556,7 +601,7 @@ GameObject:
   - component: {fileID: 6350651510031812783}
   - component: {fileID: 5303345537953516680}
   - component: {fileID: 6226799942729865244}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: catZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -652,8 +697,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
+        m_TargetAssemblyTypeName: FloatingText, Assembly-CSharp
+        m_MethodName: ShowText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -799,7 +844,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 256
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

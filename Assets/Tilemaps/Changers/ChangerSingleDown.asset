@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tiles:
   - {fileID: 11400000, guid: 9ee8f3fbc4b48d646aabe2610ec383e8, type: 2}
-  - {fileID: 11400000, guid: 9065e2139dee36b4dbae54f6f0c33214, type: 2}
   - {fileID: 11400000, guid: 11fde51217d80bf4da7db1ccd257ec17, type: 2}
-  - {fileID: 11400000, guid: dac33d9cd7499a2468d544ceed9381d7, type: 2}
   analogTiles: {fileID: 11400000, guid: 526b381b11f0dd347a7b3558aeb72a91, type: 2}
-  destroy: 0
+  addGrass: 0
+  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 11400000, guid: 2f2a5e2c45944184db613c8679e70993, type: 2}
+  - {fileID: 0}

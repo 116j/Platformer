@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: ChangerRightMiddle
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: 361b288c410ca7c48abd8de706d8b689, type: 2}
   - {fileID: 11400000, guid: 9103ef169c389dd46aa8290c0b1ac19e, type: 2}
   - {fileID: 11400000, guid: 104e15e2b0b54bf42bf44b867dc46599, type: 2}
   - {fileID: 11400000, guid: 19a371da26f53774eaf004758248b423, type: 2}
   analogTiles: {fileID: 11400000, guid: 7bdd92ef441336f4dbb851b5b1e62db9, type: 2}
   destroy: 0
+  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 0}
   - {fileID: 11400000, guid: 79c17b4a9fa151641b1e57bdc0a2d07a, type: 2}

@@ -15,9 +15,9 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: 3fa7b751a05b4aa4b813ee4bc8c242a5, type: 2}
   - {fileID: 11400000, guid: a37b68fa7d830794baaccad59a6180d2, type: 2}
-  - {fileID: 11400000, guid: 39aee6b162890ae419bacd81908f3f07, type: 2}
   analogTiles: {fileID: 11400000, guid: 4aa6134e898fc354b90ac5d0c011e074, type: 2}
   destroy: 0
+  checkMoreSurroundings: 1
   changeTiles:
   - {fileID: 11400000, guid: c8847bc1fa4e8234f96bfbd7fc420cf2, type: 2}
   - {fileID: 0}

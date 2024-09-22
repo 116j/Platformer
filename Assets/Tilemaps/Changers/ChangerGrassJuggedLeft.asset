@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: ChangerGrassJuggedLeft
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: 99b650adf47cf114abd1622f3abd4288, type: 2}
   - {fileID: 11400000, guid: f25515f0a869d8340a868e289393bc50, type: 2}
   - {fileID: 11400000, guid: f9c6d7b3d591fc341a9d4974760bb4e5, type: 2}
   analogTiles: {fileID: 11400000, guid: c559eddf8a7bdd1418f23ffea5903872, type: 2}
-  destroy: 0
+  addGrass: 0
+  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 11400000, guid: b8f424cbf103c364192921ad51416e8d, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

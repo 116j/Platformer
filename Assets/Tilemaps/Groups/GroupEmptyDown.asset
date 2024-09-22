@@ -13,31 +13,14 @@ MonoBehaviour:
   m_Name: GroupEmptyDown
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: 17b93c4aaf1ab4041a880741a43d9cca, type: 2}
-  - {fileID: 11400000, guid: af3c1ac14b47e0a4f9b1a8047e246e35, type: 2}
-  - {fileID: 11400000, guid: 32b068a780e4eb14db091a43ef1048cd, type: 2}
   - {fileID: 11400000, guid: 5f052c2cc057fc847bcc3f3496cb5673, type: 2}
   - {fileID: 11400000, guid: 4fa96312db3b559408495adb22a1845d, type: 2}
   - {fileID: 11400000, guid: 027a852e260a2ef4bbf758bc4c7125ad, type: 2}
   - {fileID: 11400000, guid: a5704f772b3a57d4eb9340d99d6db672, type: 2}
-  - {fileID: 11400000, guid: 8a029b28ceab66a4f9d78a8eefcac262, type: 2}
-  - {fileID: 11400000, guid: 976603ba78a14c8459e19fddafa82310, type: 2}
   - {fileID: 11400000, guid: 6bb8506771e372d4199ffb3dc652adc7, type: 2}
   - {fileID: 11400000, guid: 9079b24edbede4f46b6d9353cfaa7346, type: 2}
-  - {fileID: 11400000, guid: d29b0d1cf8309354b94f1e7614f83af0, type: 2}
-  - {fileID: 11400000, guid: cfdefd64194bf9d43a6214e6860ff883, type: 2}
-  - {fileID: 11400000, guid: 10bc83a96b914104c8a94d0ef6332af4, type: 2}
   - {fileID: 11400000, guid: cb022187d0455f0438dfe4d3289a798d, type: 2}
   - {fileID: 11400000, guid: 1aabc11b44c69ae438a402609440f531, type: 2}
-  - {fileID: 11400000, guid: 630347d7267921a4c90e8dc755cc5319, type: 2}
-  - {fileID: 11400000, guid: 35f1ac2609f7bba449848a1101a89a6a, type: 2}
-  - {fileID: 11400000, guid: 257501f433ffbc347b60549595ed7e7e, type: 2}
-  - {fileID: 11400000, guid: da432a8cdc6ffab46bba1c13b783c747, type: 2}
-  - {fileID: 11400000, guid: 772ef02465c7e194287b5e72856df6e2, type: 2}
-  - {fileID: 11400000, guid: 3a963dd0b4e44814ea052d5067d6f20e, type: 2}
-  - {fileID: 11400000, guid: 70a2c1d3abe78884994a5212f05b3bf8, type: 2}
   tileGroups:
   - {fileID: 11400000, guid: 8b2460be079e12142ae6448bc193a3a6, type: 2}
   - {fileID: 11400000, guid: 89f32a011feec58498b01d0b46a7fa85, type: 2}
-  - {fileID: 11400000, guid: 8c86f9a85970a834a9abf21369ba874d, type: 2}
-  - {fileID: 11400000, guid: f87903377438dc04db9d2140cec4d4df, type: 2}

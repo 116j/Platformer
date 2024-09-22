@@ -15,7 +15,8 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: 9b757e05df75e694eb6cd921bc7126d7, type: 2}
   analogTiles: {fileID: 11400000, guid: 0a38f17d55f31dc4a9bf034406ff6be1, type: 2}
-  destroy: 0
+  addGrass: 1
+  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 0}
   - {fileID: 11400000, guid: ab39d6574754337449dae0ac9d9202c7, type: 2}

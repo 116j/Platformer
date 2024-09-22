@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dark:
   - {fileID: 11400000, guid: e7960015f634b864e8ac73e27ac0f572, type: 2}
-  bright:
-  - {fileID: 11400000, guid: a32b3c36a4c3ef0488b475878049e2d3, type: 2}
-  - {fileID: 11400000, guid: 34d5615b09f00054dbf42af27b73e94c, type: 2}
   calm:
   - {fileID: 11400000, guid: 2c529ccd7c168a245921a4b91910ba69, type: 2}
   tilemapTag: wall
   surroundings: 00000101
+  surroundingAnalogs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

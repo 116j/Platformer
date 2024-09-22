@@ -46,7 +46,7 @@ public class Damagable : MonoBehaviour
         }
     }
 
-    public void ApplyHeal(int healPoints)
+    public void ApplyHealth(int healPoints)
     {
         m_health += healPoints;
         m_receiver.Invoke(healPoints);

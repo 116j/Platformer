@@ -15,13 +15,13 @@ MonoBehaviour:
   dark:
   - {fileID: 11400000, guid: fd6a5b6f207566a40aafd3343004e382, type: 2}
   - {fileID: 11400000, guid: 5c357b930d84ec84ea5438c4dd5cb63f, type: 2}
-  bright:
-  - {fileID: 11400000, guid: 1555e1424e4b21f449caa8d56bcc6eb3, type: 2}
-  - {fileID: 11400000, guid: 0883b084e5e1fba40901aba305be9f89, type: 2}
-  - {fileID: 11400000, guid: 1bf4cf4a0c025b64ba4981964c54b555, type: 2}
-  - {fileID: 11400000, guid: d5c4d6b9b8cc5074d904e43a663ff2fb, type: 2}
   calm:
   - {fileID: 11400000, guid: c4bfe48e134efa547a5def592b923d5c, type: 2}
   - {fileID: 11400000, guid: e942fad4f996c5e4bbb7a68207431a42, type: 2}
   tilemapTag: ground
   surroundings: 01010000
+  surroundingAnalogs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

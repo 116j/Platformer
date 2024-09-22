@@ -15,10 +15,12 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: 3a8db64a0b5b5644fbaaef182512feca, type: 2}
   - {fileID: 11400000, guid: eb18ca52adcfe034db0816da61752877, type: 2}
-  - {fileID: 11400000, guid: 47025e531a371d54094e8a52c52ee3ec, type: 2}
-  - {fileID: 11400000, guid: 7829df42b28080a4e8d9dd3fe8e62a1c, type: 2}
   - {fileID: 11400000, guid: 201a9bc8a8b59d547ba3ef666070ff35, type: 2}
-  - {fileID: 11400000, guid: 2cd0ccb376a6d524584789b0eeea012b, type: 2}
   analogTiles: {fileID: 11400000, guid: 9b2a7f69106725346abb96208f22c305, type: 2}
-  destroy: 0
-  changeTiles: []
+  addGrass: 0
+  checkMoreSurroundings: 0
+  changeTiles:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

@@ -11,9 +11,9 @@ public class CatDetectZone : DetectZone
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-        if (collision.CompareTag(m_tag))
+        //Get cat component and position
+        if (collision.CompareTag(m_tag)&& collision.TryGetComponent<Cat>(out m_cat))
         {
-            m_cat = collision.GetComponent<Cat>();
             if(m_cat.CanPet)
                 m_onTrigger.Invoke(true);
             TargetLocation = m_cat.PetPlayerLocation.position;
@@ -22,7 +22,8 @@ public class CatDetectZone : DetectZone
 
     protected override void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag(m_tag))
+        // update position
+        if (collision.CompareTag(m_tag)&&m_cat)
         {
             TargetLocation = m_cat.PetPlayerLocation.position;
         }
@@ -37,7 +38,7 @@ public class CatDetectZone : DetectZone
             m_cat = null;
         }
     }
-
+    // start and end of petting
     public void ApplyPet(bool pet)
     {
         if(m_cat != null)

@@ -14,24 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tiles:
   - {fileID: 11400000, guid: 027a852e260a2ef4bbf758bc4c7125ad, type: 2}
-  - {fileID: 11400000, guid: 17b93c4aaf1ab4041a880741a43d9cca, type: 2}
-  - {fileID: 11400000, guid: af3c1ac14b47e0a4f9b1a8047e246e35, type: 2}
   - {fileID: 11400000, guid: 9079b24edbede4f46b6d9353cfaa7346, type: 2}
   - {fileID: 11400000, guid: 4fa96312db3b559408495adb22a1845d, type: 2}
-  - {fileID: 11400000, guid: f6b4131cd02853c45a5c95d93918116c, type: 2}
-  - {fileID: 11400000, guid: 86a7d2bd269d9704695fc6cb62d5760b, type: 2}
-  - {fileID: 11400000, guid: d3c1bad9b2f48c2459e4314cbbf6bcab, type: 2}
-  - {fileID: 11400000, guid: e43b8986523227b48a818af4b866a847, type: 2}
   - {fileID: 11400000, guid: 1aabc11b44c69ae438a402609440f531, type: 2}
-  - {fileID: 11400000, guid: c9491ca1a896cc04291816700dffe35d, type: 2}
-  - {fileID: 11400000, guid: cc0cdec4b55a383488c69cb4d7725b6d, type: 2}
-  - {fileID: 11400000, guid: 35f1ac2609f7bba449848a1101a89a6a, type: 2}
-  - {fileID: 11400000, guid: 976603ba78a14c8459e19fddafa82310, type: 2}
   - {fileID: 11400000, guid: 9b43c37f171f8744ca854f974bc3fc3e, type: 2}
-  - {fileID: 11400000, guid: 10bc83a96b914104c8a94d0ef6332af4, type: 2}
-  - {fileID: 11400000, guid: 772ef02465c7e194287b5e72856df6e2, type: 2}
-  - {fileID: 11400000, guid: f2cab227418e80e489e627caebeee065, type: 2}
-  - {fileID: 11400000, guid: 32b068a780e4eb14db091a43ef1048cd, type: 2}
-  - {fileID: 11400000, guid: 8a029b28ceab66a4f9d78a8eefcac262, type: 2}
+  - {fileID: 11400000, guid: 278f67fb38a3c4246a5be274f3b71fbd, type: 2}
+  - {fileID: 11400000, guid: 9720ff2db2af5384eaa8f3e0ee192823, type: 2}
+  - {fileID: 11400000, guid: a7605f062b331c0489921147ee57c3a7, type: 2}
   tileGroups:
   - {fileID: 11400000, guid: 89f32a011feec58498b01d0b46a7fa85, type: 2}

@@ -104,6 +104,26 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: -0.46112043
       objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_metric.x
+      value: -0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_metric.y
+      value: 2.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_metric.z
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_spawnOffset.x
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_spawnOffset.y
+      value: 1.465
+      objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_receiver.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -185,11 +205,6 @@ PrefabInstance:
       insertIndex: 5
       addedObject: {fileID: 3252930624660545889}
   m_SourcePrefab: {fileID: 100100000, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
---- !u!4 &1986380534758184455 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
-  m_PrefabInstance: {fileID: 3633329134543414895}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3342180418849149163 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2021521375965787780, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
@@ -225,7 +240,30 @@ MonoBehaviour:
   m_attackZone: {fileID: 3342180418849149163}
   m_detectZone: {fileID: 4754401117695290597}
   m_groundZone: {fileID: 8542988711583298055}
-  m_spawnOffset: {fileID: 1986380534758184455}
+  m_spawnChance:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 10000
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &4754401117695290597 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8329173561461377674, guid: 7589c4885b0e16045bc336705bf112db, type: 3}

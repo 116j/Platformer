@@ -41,6 +41,7 @@ public class UIController : MonoBehaviour
     {
 
     }
+
     /// <summary>
     /// Add or remove hearts
     /// </summary>
@@ -49,7 +50,7 @@ public class UIController : MonoBehaviour
     {
         for (int i = 0; i < Math.Abs(damage); i++)
         {
-            if (m_currentHeart < m_hearts.Length && damage > 0)
+            if (m_currentHeart < m_hearts.Length - 1 && damage > 0)
             {
                 m_currentHeart++;
                 m_hearts[m_currentHeart].sprite = m_fullHeart;
@@ -61,7 +62,10 @@ public class UIController : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Dash sprite fill
+    /// </summary>
+    /// <param name="fill">fill amount</param>
     public void SetDashSprite(float fill)
     {
         m_dashBar.sprite = m_dashSprites[Mathf.FloorToInt(fill * (m_dashSprites.Length - 1))];

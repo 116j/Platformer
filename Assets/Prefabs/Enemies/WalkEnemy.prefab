@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &491265171642188882
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3025617454799433832}
-  m_Layer: 7
-  m_Name: spawnPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3025617454799433832
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491265171642188882}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.43, y: -1.52, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 9025997474191189473}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &548330582605977599
 GameObject:
   m_ObjectHideFlags: 0
@@ -48,9 +17,10 @@ GameObject:
   - component: {fileID: 8493135385743088861}
   - component: {fileID: 7223046348222108839}
   - component: {fileID: 5901932265902264129}
+  - component: {fileID: 8183254454711484530}
   - component: {fileID: 2306069385823091734}
   - component: {fileID: 1818020100778903183}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: WalkEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -73,7 +43,6 @@ Transform:
   - {fileID: 2029662004504321121}
   - {fileID: 5299832498248565117}
   - {fileID: 6030628016457017003}
-  - {fileID: 3025617454799433832}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -115,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1034187679
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -241,7 +210,12 @@ MonoBehaviour:
   m_attackZone: {fileID: 2021521375965787780}
   m_detectZone: {fileID: 8329173561461377674}
   m_groundZone: {fileID: 4963784145035695208}
-  m_spawnOffset: {fileID: 3025617454799433832}
+  m_spawnChance:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &8493135385743088861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +285,20 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
+  m_slopeCastFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!114 &5901932265902264129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,6 +313,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_animAttackParameter: Attack
   m_attackCooldownTime: 1.5
+--- !u!114 &8183254454711484530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 548330582605977599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnOffset: {x: 0, y: 0, z: 0}
+  m_metric: {x: 0, y: 0, z: 0}
 --- !u!114 &2306069385823091734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,7 +447,7 @@ GameObject:
   - component: {fileID: 5299832498248565117}
   - component: {fileID: 7957385533479943860}
   - component: {fileID: 8329173561461377674}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: detectZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -536,7 +538,7 @@ GameObject:
   - component: {fileID: 6030628016457017003}
   - component: {fileID: 3642224594297375866}
   - component: {fileID: 4963784145035695208}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: groundZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -627,7 +629,7 @@ GameObject:
   - component: {fileID: 2029662004504321121}
   - component: {fileID: 7909010669126650959}
   - component: {fileID: 2021521375965787780}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: attackZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -752,7 +754,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
