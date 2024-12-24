@@ -4,7 +4,9 @@ using UnityEngine.Events;
 public class Damagable : MonoBehaviour
 {
     [SerializeField]
-    int m_health = 6;
+    int m_maxHealth = 4;
+    [SerializeField]
+    int m_health = 4;
     [SerializeField]
     float m_recoverTime = 2f;
     [SerializeField]
@@ -48,6 +50,9 @@ public class Damagable : MonoBehaviour
 
     public void ApplyHealth(int healPoints)
     {
+        if (m_health >= m_maxHealth)
+            return;
+
         m_health += healPoints;
         m_receiver.Invoke(healPoints);
         if (m_health <= 0)
@@ -57,4 +62,9 @@ public class Damagable : MonoBehaviour
         }
     }
 
+    public void IncreaseHealth()
+    {
+        m_maxHealth++;
+        ApplyHealth(1);
+    }
 }

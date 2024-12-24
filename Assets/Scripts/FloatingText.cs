@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,9 +10,9 @@ public class FloatingText : MonoBehaviour
     [SerializeField]
     Transform m_player;
     [SerializeField]
-    Text m_playerText;
+    TextMeshProUGUI m_playerText;
     [SerializeField]
-    Text m_shopText;
+    TextMeshProUGUI m_shopText;
 
     bool m_showPlayerText;
     bool m_showShopText;

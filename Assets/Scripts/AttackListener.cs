@@ -17,4 +17,9 @@ public class AttackListener : MonoBehaviour
             }
         }
     }
+
+    public void IncreaseDamage()
+    {
+        m_damage++;
+    }
 }

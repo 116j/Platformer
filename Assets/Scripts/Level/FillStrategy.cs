@@ -18,7 +18,7 @@ public class FillStrategy
     // min width of staright ground
     protected readonly int m_minStraightSection = 6;
     // min width for a section where wnwmy can walk
-    protected readonly int m_minEnemyWidth = 8;
+    protected readonly int m_minEnemyWidth = 6;
     protected readonly int m_maxSlopeHeight = 7;
 
     protected MovingPlatform m_movingPlatform;

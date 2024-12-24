@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     public float m_junpMultiplier = 4f;
     public float m_jumpTime = 0.4f;
     public float m_dashCooldownTime = 1.5f;
+    int m_jumpsCount = 2;
 
     bool m_dead = false;
     bool m_jump = false;
@@ -49,13 +50,13 @@ public class PlayerController : MonoBehaviour
     bool m_blockMove = false;
 
     bool m_jumping = false;
-    bool m_doubleJump = false;
     bool m_falling = false;
     bool m_canDash = true;
     bool m_isHit = false;
     bool m_canPet = false;
     bool m_onSlope = false;
 
+    int m_currentJumps=0;
     int m_currentDir = 1;
     float m_jumpCounter = 0f;
     float m_dashCooldown = 0f;
@@ -257,13 +258,15 @@ public class PlayerController : MonoBehaviour
                 m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower);
                 m_jump = true;
                 Jump();
+                m_currentJumps++;
                 return;
             }
             // if is not in attack or dash and is jumping - make double jump 
-            if (!m_blockMove && m_jumping && m_input.Jump && !m_jump && !m_doubleJump)
+            if (!m_blockMove && m_jumping && m_input.Jump && !m_jump && m_currentJumps<m_jumpsCount)
             {
                 m_sound.PlaySound("Jump");
-                m_jump = m_doubleJump = true;
+                m_jump = true;
+                m_currentJumps++;
                 m_anim.SetTrigger(m_HashDoubleJump);
                 m_jumpCounter = 0f;
                 m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower + 5f);
@@ -288,7 +291,8 @@ public class PlayerController : MonoBehaviour
             if ((m_falling && !m_touchings.IsSlopeDown()&& m_touchings.IsGrounded() && (!m_touchings.IsWalls() || Mathf.Approximately(m_rb.velocity.y, 0f)))|| (m_touchings.IsSlopeDown() || m_touchings.IsSlopeUp())&&m_jumping)
             {
                 m_sound.PlaySound("Land");
-                m_falling = m_jumping = m_doubleJump = false;
+                m_falling = m_jumping = false;
+                m_currentJumps=0;
             }
         }
         //stop moving if is dead
@@ -372,5 +376,15 @@ public class PlayerController : MonoBehaviour
     public void ChangeTransposerHeight(bool down)
     {
         m_baseTransposer += 3f * (down ? -1 : 1);
+    }
+
+    public void AddJump()
+    {
+        m_jumpsCount++;
+    }
+
+    public void DecreaseDashCooldown()
+    {
+        m_dashCooldown -= 0.5f;
     }
 }

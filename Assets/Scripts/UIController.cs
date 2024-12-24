@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,7 +28,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     GameObject m_moneyLayout;
     [SerializeField]
-    Text m_moneyText;
+    TextMeshProUGUI m_moneyText;
 
     [Header("Shop")]
     [SerializeField]

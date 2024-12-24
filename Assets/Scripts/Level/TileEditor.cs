@@ -30,10 +30,7 @@ public class TileEditor : MonoBehaviour
         {
             Instance = this;
         }
-    }
 
-    private void Start()
-    {
         m_ground = transform.GetChild(0).GetComponent<Tilemap>();
         m_slope = transform.GetChild(1).GetComponent<Tilemap>();
         m_walls = transform.GetChild(2).GetComponent<Tilemap>();
@@ -46,7 +43,12 @@ public class TileEditor : MonoBehaviour
             {
                 m_tileToChanger.Add(tile, changer);
             }
-        }  
+        }
+    }
+
+    private void Start()
+    {
+ 
     }
 
     public void SetTheme(int num)
