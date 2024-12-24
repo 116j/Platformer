@@ -9,15 +9,15 @@ public class PlayerController : MonoBehaviour
     CinemachineVirtualCamera m_playerCam;
     [SerializeField]
     CatDetectZone m_catZone;
-    [SerializeField]
-    UnityEvent m_resetEvent;
 
     Rigidbody2D m_rb;
     PlayerInput m_input;
     BoxCollider2D m_col;
     Animator m_anim;
     TouchingCheck m_touchings;
+    SpawnValues m_values;
     SoundController m_sound;
+    CinemachineFramingTransposer m_transposer;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     readonly int m_HashFalling = Animator.StringToHash("Falling");
     readonly int m_HashDoubleJump = Animator.StringToHash("DoubleJump");
     readonly int m_HashDash = Animator.StringToHash("Dash");
+    readonly int m_HashDodge = Animator.StringToHash("Dodge");
     readonly int m_HashAnimationTime = Animator.StringToHash("AnimationTime");
     readonly int m_HashAttack = Animator.StringToHash("Attack");
     readonly int m_HashPet = Animator.StringToHash("Pet");
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour
     public float m_runSpeed = 7f;
     public float m_dashPower = 8;
     public float m_jumpPower = 12f;
-    public float m_fallMultiplier = 6f;
+    public float m_fallMultiplier = 3f;
     public float m_junpMultiplier = 4f;
     public float m_jumpTime = 0.4f;
     public float m_dashCooldownTime = 1.5f;
@@ -58,11 +59,12 @@ public class PlayerController : MonoBehaviour
     int m_currentDir = 1;
     float m_jumpCounter = 0f;
     float m_dashCooldown = 0f;
+    float m_baseTransposer = 2.5f;
     Vector2 m_gravity;
     float m_gravityScale;
-    Vector3 m_checkpoint;
+    Vector3 m_fallCheckpoint;
+    Vector3 m_rebornCheckpoint;
 
-    public float PlayedTime { get; private set; }
     // Start is called before the first frame update
     void Start()
     {
@@ -72,10 +74,11 @@ public class PlayerController : MonoBehaviour
         m_col = GetComponent<BoxCollider2D>();
         m_touchings = GetComponent<TouchingCheck>();
         m_sound = GetComponent<SoundController>();
+        m_values = GetComponent<SpawnValues>();
 
         m_gravityScale = m_rb.gravityScale;
         m_gravity = new Vector2(0f, -Physics2D.gravity.y);
-        m_checkpoint = transform.position;
+        m_transposer = m_playerCam.GetCinemachineComponent<CinemachineFramingTransposer>();
     }
 
     // Update is called once per frame
@@ -111,19 +114,23 @@ public class PlayerController : MonoBehaviour
             // dash
             if (m_input.Dash && m_canDash && !m_blockMove && !m_isHit)
             {
-                m_anim.SetBool(m_HashCantMove, true);
+                m_blockMove = true;               
                 m_anim.SetTrigger(m_HashDash);
                 UIController.Instance.SetDashSprite(0f);
                 //remove garvity
                 m_rb.gravityScale = 0f;
                 m_dash = true;
                 // moves horizontly with dash power
-                if (m_jumping || m_falling)
-                {
-                    m_rb.velocity = new Vector2(m_rb.velocity.x, 0f);
-                }
+                m_rb.velocity = new Vector2(m_rb.velocity.x, 0f);
                 m_rb.AddForce(Vector2.right * m_currentDir * m_dashPower, ForceMode2D.Impulse);
             }
+            if (m_input.Dodge && !m_blockMove && !m_isHit)
+            {
+                m_blockMove = true;
+                m_anim.SetTrigger(m_HashDodge);
+                m_rb.velocity = new Vector2(-m_currentDir * m_dashPower, 0f);
+            }
+
             // dash cooldown after dash
             if (!m_canDash)
             {
@@ -141,12 +148,12 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (m_input.Attack && !m_blockMove && !m_isHit)
+            if (m_input.Attack && !m_isHit)
             {
                 //if is not attacking -  remove gravity(for jump), remove movement
                 if (!m_blockMove)
                 {
-                    m_anim.SetBool(m_HashCantMove, true);
+                    m_blockMove = true;
                     m_attack = true;
                     m_rb.velocity = new Vector2(0f, 0f);
                     m_rb.gravityScale = 0;
@@ -157,19 +164,18 @@ public class PlayerController : MonoBehaviour
 
             if (m_input.HeavyAttack && !m_blockMove && !m_isHit && !m_jumping && !m_falling)
             {
-                m_anim.SetBool(m_HashCantMove, true);
+                m_blockMove = true;
                 m_attack = true;
                 m_rb.velocity = new Vector2(0f, 0f);
             }
 
             if (m_canPet && m_input.Pet)
             {
-                m_input.LockInput();
                 m_catZone.ApplyPet(true);
                 m_pet = true;
             }
-            PlayedTime += Mathf.Abs(m_input.Move.x) < 0.1 ? 0 : Time.deltaTime;
 
+            m_anim.SetBool(m_HashCantMove, m_blockMove);
             m_anim.SetBool(m_HashHeavyAttack, m_input.HeavyAttack);
             m_anim.SetFloat(m_HashAnimationTime, Mathf.Repeat(m_anim.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
             m_anim.SetFloat(m_HashHorizontal, Mathf.Abs(m_rb.velocity.x));
@@ -178,8 +184,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void FixedUpdate()
     {
+
+        if(m_falling&&m_fallCheckpoint.y-transform.position.y>200)
+        {
+            DestroyableTile.Instance.Restart(m_fallCheckpoint);
+            transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
+            m_currentDir = 1;
+        }
+        //camera offset 
+        m_transposer.m_TrackedObjectOffset = new Vector3(m_transposer.m_TrackedObjectOffset.x, Mathf.Lerp(m_transposer.m_TrackedObjectOffset.y, m_baseTransposer, Time.fixedDeltaTime), m_transposer.m_TrackedObjectOffset.z);
+
         if (!m_dead)
         {
             //
@@ -212,13 +229,13 @@ public class PlayerController : MonoBehaviour
                 if (m_touchings.IsSlopeUp())
                 {
                     m_onSlope = m_rb.isKinematic = true;
-                    m_rb.velocity = Vector2.LerpUnclamped(m_rb.velocity, new Vector2(m_input.Move.x * m_runSpeed, Mathf.Abs(m_input.Move.x) * m_runSpeed), 0.7f);
+                    m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, Mathf.Abs(m_input.Move.x) * m_runSpeed);
                 }
                 else if (m_touchings.IsSlopeDown())
                 {
                     m_falling  = false;
                     m_onSlope = m_rb.isKinematic = true;
-                    m_rb.velocity = Vector2.LerpUnclamped(m_rb.velocity, new Vector2(m_input.Move.x * m_runSpeed, -Mathf.Abs(m_input.Move.x) * m_runSpeed), 0.7f);
+                    m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, -Mathf.Abs(m_input.Move.x) * m_runSpeed);
                 }
                 else
                 {
@@ -226,7 +243,7 @@ public class PlayerController : MonoBehaviour
                     {
                         m_onSlope = m_rb.isKinematic = false;
                     }
-                    m_rb.velocity = Vector2.LerpUnclamped(m_rb.velocity, new Vector2(m_input.Move.x * m_runSpeed, m_rb.velocity.y), 0.7f);
+                    m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, m_rb.velocity.y);
                 }
             }
             // if is not in attack or dash  - start jump
@@ -288,15 +305,9 @@ public class PlayerController : MonoBehaviour
         //if player fell down - move to checkpoint and reset camera
         if (collision.gameObject.CompareTag("bounds"))
         {
-            DestroyableTile.Instance.Restart(m_checkpoint);
-            transform.SetPositionAndRotation(m_checkpoint, Quaternion.identity);
+            DestroyableTile.Instance?.Restart(m_fallCheckpoint);
+            transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
             m_currentDir = 1;
-            m_resetEvent.Invoke();
-        }
-        //reset checkpoint
-        else if (collision.gameObject.CompareTag("checkpoint"))
-        {
-            m_checkpoint = collision.transform.position;
         }
         else if (collision.gameObject.CompareTag("cat") && m_pet)
         {
@@ -315,6 +326,9 @@ public class PlayerController : MonoBehaviour
         {
             m_rb.velocity = Vector2.zero;
             m_dead = !m_dead;
+            transform.SetPositionAndRotation(m_rebornCheckpoint, Quaternion.identity);
+            m_currentDir = 1;
+            
         }
         else if (damage < 0)
         {
@@ -341,8 +355,22 @@ public class PlayerController : MonoBehaviour
 
     public void StopPetting()
     {
-        m_input.LockInput();
         m_anim.ResetTrigger(m_HashPet);
         m_catZone.ApplyPet(false);
+    }
+
+    public void SetRebornCheckpoint(Vector3 checkpoint)
+    {
+        m_rebornCheckpoint = checkpoint+ m_values.GetOffset();
+    }
+
+    public void SetLevelCheckpoint(Vector3 checkpoint)
+    {
+        m_fallCheckpoint = checkpoint+ m_values.GetOffset().y*Vector3.up;
+    }
+
+    public void ChangeTransposerHeight(bool down)
+    {
+        m_baseTransposer += 3f * (down ? -1 : 1);
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IMetrics
@@ -23,17 +21,13 @@ public class SpawnValues : MonoBehaviour, IMetrics
     Vector3 m_spawnOffset;
     [SerializeField]
     Vector3 m_metric;
+    [SerializeField]
+    bool m_setOffset;
 
-    // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
-        transform.position += m_spawnOffset;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        if (m_setOffset)
+            SetOffset();
     }
 
     public float GetHeight()
@@ -43,12 +37,12 @@ public class SpawnValues : MonoBehaviour, IMetrics
 
     public float GetRightBorder()
     {
-        return  m_metric.z;
+        return m_metric.z;
     }
 
     public float GetLeftBorder()
     {
-        return  m_metric.x;
+        return m_metric.x;
     }
 
     public Vector3 GetOffset()

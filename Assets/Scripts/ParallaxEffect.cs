@@ -5,24 +5,21 @@ public class ParallaxEffect : MonoBehaviour
     [SerializeField]
     float m_parallaxMultiplier;
 
+    readonly float m_textureUnitSizeX = 19.615f;
+
     Transform m_cam;
 
     Vector3 m_lastCameraPosition;
-    float m_textureUnitSizeX;
     Vector3 m_deltaCamMove;
 
     void Start()
     {
-        m_cam = Camera.main.transform;
+        m_cam = Camera.main.transform;  
         m_lastCameraPosition = m_cam.position;
-
-        Sprite sprite = GetComponent<SpriteRenderer>().sprite;
-        Texture2D texture = sprite.texture;
-        m_textureUnitSizeX = texture.width / sprite.pixelsPerUnit;
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
         m_deltaCamMove = m_cam.position - m_lastCameraPosition;
         transform.position += m_deltaCamMove.x * m_parallaxMultiplier * Vector3.left;

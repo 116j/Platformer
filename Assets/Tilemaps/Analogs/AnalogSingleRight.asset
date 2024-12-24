@@ -17,11 +17,6 @@ MonoBehaviour:
   calm:
   - {fileID: 11400000, guid: d696f14d70d84734792c5961b662de42, type: 2}
   - {fileID: 11400000, guid: ec054efcfee69794982d290c8c1746c4, type: 2}
-  - {fileID: 11400000, guid: e8bb7a2489e915140a2eae8dba7cc1d7, type: 2}
   tilemapTag: ground
   surroundings: 00010000
-  surroundingAnalogs:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  placeAnalog: {fileID: 0}

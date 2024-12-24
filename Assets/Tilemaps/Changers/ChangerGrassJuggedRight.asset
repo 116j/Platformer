@@ -14,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tiles:
   - {fileID: 11400000, guid: ec054efcfee69794982d290c8c1746c4, type: 2}
-  - {fileID: 11400000, guid: e8bb7a2489e915140a2eae8dba7cc1d7, type: 2}
   analogTiles: {fileID: 11400000, guid: 8dd81046c30630e47b9b1b1453c38abb, type: 2}
   addGrass: 0
-  checkMoreSurroundings: 0
   changeTiles:
   - {fileID: 0}
   - {fileID: 11400000, guid: b8f424cbf103c364192921ad51416e8d, type: 2}

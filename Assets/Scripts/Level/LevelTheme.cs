@@ -6,9 +6,15 @@ using UnityEngine;
 [CreateAssetMenu]
 public class LevelTheme : ScriptableObject
 {
-    public EnviromentObject[] m_grass;
-    public EnviromentObject[] m_bushes;
-    public EnviromentObject[] m_trees;
+    public GameObject[] backgrounds;
 
-    public int m_themeNum;
+    public EnviromentObject[] grass;
+    public EnviromentObject[] bushes;
+    public EnviromentObject[] trees;
+
+    public SpawnValues[] enemies;
+    public Trap[] ceilTraps;
+    public Trap[] floorTraps;
+    
+    public int themeNum;
 }

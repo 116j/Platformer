@@ -46,7 +46,7 @@ Transform:
   - {fileID: 6132449907414876550}
   - {fileID: 6350651510031812783}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1107239528939950938
 SpriteRenderer:
@@ -87,7 +87,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -191564047
-  m_SortingLayer: 6
+  m_SortingLayer: 5
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 8b3fe96480fdb3b488ce1bb877fb5546, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -177,25 +177,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playerCam: {fileID: 0}
   m_catZone: {fileID: 6226799942729865244}
-  m_resetEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6230351899595666638}
-        m_TargetAssemblyTypeName: Damagable, Assembly-CSharp
-        m_MethodName: ApplyDamage
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   m_runSpeed: 7
   m_dashPower: 10
   m_jumpPower: 12
-  m_fallMultiplier: 6
+  m_fallMultiplier: 3
   m_junpMultiplier: 4
   m_jumpTime: 0.4
   m_dashCooldownTime: 1.5
@@ -220,7 +205,7 @@ MonoBehaviour:
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 136
+      m_Bits: 392
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
@@ -241,14 +226,14 @@ MonoBehaviour:
     maxNormalAngle: 0
   m_slopeCastFilter:
     useTriggers: 0
-    useLayerMask: 0
+    useLayerMask: 1
     useDepth: 0
     useOutsideDepth: 0
     useNormalAngle: 0
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 128
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
@@ -265,7 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53a46ea2d2c72e14fa87c3185e7dea17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 100
+  m_health: 203
   m_recoverTime: 4
   m_receiver:
     m_PersistentCalls:
@@ -306,8 +291,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnOffset: {x: 0, y: 0, z: 0}
+  m_spawnOffset: {x: 2.4, y: 1, z: 0}
   m_metric: {x: -0.4, y: 1.4, z: 0.4}
+  m_setOffset: 1
 --- !u!50 &1085217618323219388
 Rigidbody2D:
   serializedVersion: 4
@@ -330,7 +316,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_Interpolate: 2
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -347,10 +333,10 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -404,10 +390,10 @@ AudioSource:
   m_GameObject: {fileID: 1880834243166009998}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5609437264129779904, guid: fec4151c0eb2b5444af142439c06bfcf, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.6
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -415,10 +401,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 60
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 50
+  MinDistance: 10
+  MaxDistance: 20
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -498,7 +484,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1880834243166009998}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!1 &2747755632101265252
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,7 +684,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FloatingText, Assembly-CSharp
-        m_MethodName: ShowText
+        m_MethodName: ShowPlayerText
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

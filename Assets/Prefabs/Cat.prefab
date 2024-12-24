@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3303960529137479627}
   - component: {fileID: 1049969890167758504}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PetPlayerLocation
-  m_TagString: cat
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 787406950665801746}
   - component: {fileID: 1908283446498092778}
   - component: {fileID: 9095456533484423442}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: groundZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 2336935378641655310}
   - component: {fileID: 6980500002964624293}
   - component: {fileID: 3362722972867013770}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cat
   m_TagString: cat
   m_Icon: {fileID: 0}
@@ -249,7 +249,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 62707019
-  m_SortingLayer: 5
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 2014080374, guid: df515e546532e0545a2a462eafad4f3a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -381,8 +381,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnOffset: {x: 0, y: 0.535, z: 0}
+  m_spawnOffset: {x: 0, y: 1.535, z: 0}
   m_metric: {x: 0, y: 0, z: 0}
+  m_setOffset: 1
 --- !u!114 &2336935378641655310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -459,7 +460,7 @@ AudioSource:
   m_GameObject: {fileID: 4678968611558213490}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5609437264129779904, guid: fec4151c0eb2b5444af142439c06bfcf, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -470,10 +471,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 90
   DopplerLevel: 1
-  MinDistance: 2
+  MinDistance: 10
   MaxDistance: 20
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0

@@ -3,6 +3,8 @@ using UnityEngine;
 public class WalkEnemy : MonoBehaviour, ISpawnChance
 {
     [SerializeField]
+    int m_cost;
+    [SerializeField]
     float m_walkSpeed = 1.5f;
     [SerializeField]
     bool m_canRun = true;
@@ -18,11 +20,14 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected DetectZone m_groundZone;
     [SerializeField]
     AnimationCurve m_spawnChance;
+    [SerializeField]
+    Coin m_coin;
 
     protected Animator m_anim;
     protected Rigidbody2D m_rb;
     protected TouchingCheck m_touchings;
     Collider2D m_col;
+    protected MovingPlatform m_platform;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -138,6 +143,16 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         {
             m_dead = true;
             m_col.isTrigger = true;
+            if (m_platform != null)
+            {
+                m_platform.StartMovement();
+            }
+
+            int coins = Random.Range(1, 6);
+            for (int i = 0; i < coins; i++)
+            {
+                Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(m_cost/coins* 1.0f);
+            }
         }
         else
         {
@@ -149,8 +164,13 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         }
     }
 
+    public void ConnectPlatform(MovingPlatform platform)
+    {
+        m_platform = platform;
+    }
+
     public float GetSpawnChance()
     {
-        return m_spawnChance.Evaluate(GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().PlayedTime);
+        return m_spawnChance.Evaluate(LevelBuilder.Instance.RoomsCount);
     }
 }

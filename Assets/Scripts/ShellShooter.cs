@@ -11,7 +11,7 @@ public class ShellShooter : MonoBehaviour
     [SerializeField]
     Transform m_shellSpawn;
 
-
+    public Vector3 m_direction => m_shellSpawn.forward;
     public void SpawnShell()
     {
         GameObject shell = Instantiate(m_shell, m_shellSpawn.position, m_shellSpawn.rotation);

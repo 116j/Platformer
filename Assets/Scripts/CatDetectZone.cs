@@ -14,8 +14,11 @@ public class CatDetectZone : DetectZone
         //Get cat component and position
         if (collision.CompareTag(m_tag)&& collision.TryGetComponent<Cat>(out m_cat))
         {
-            if(m_cat.CanPet)
+            if (m_cat.CanPet)
+            {
                 m_onTrigger.Invoke(true);
+                m_cat.Stop(true);
+            }
             TargetLocation = m_cat.PetPlayerLocation.position;
         }
     }
@@ -35,6 +38,8 @@ public class CatDetectZone : DetectZone
         if (collision.CompareTag(m_tag))
         {
             m_onTrigger.Invoke(false);
+            if (m_cat&&m_cat.CanPet)
+                m_cat.Stop(false);
             m_cat = null;
         }
     }

@@ -12,6 +12,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: CeillingTrap Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 877457081963139007, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_Size.x
+      value: 1.5223598
+      objectReference: {fileID: 0}
+    - target: {fileID: 877457081963139007, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 877457081963139007, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.0000009536743
+      objectReference: {fileID: 0}
     - target: {fileID: 2663350624533235289, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_Volume
       value: 0.4
@@ -50,35 +62,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_metrics.Array.data[0].x
-      value: -0.5
+      value: -1.3
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_metrics.Array.data[0].y
-      value: -2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_metrics.Array.data[0].z
-      value: 0.5
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_metrics.Array.data[1].x
-      value: -1.19
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_metrics.Array.data[1].y
-      value: -2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_metrics.Array.data[1].z
-      value: 1.19
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_offsets.Array.data[0].y
-      value: -1
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_offsets.Array.data[1].y
-      value: -0.5
+      value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_offsets.Array.data[2].y
@@ -142,11 +154,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_spawnChances.Array.data[0].m_Curve.Array.data[1].time
-      value: 10000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_spawnChances.Array.data[1].m_Curve.Array.data[1].time
-      value: 10000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_spawnChances.Array.data[0].m_Curve.Array.data[0].value
@@ -174,16 +186,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_Size.x
-      value: 2
+      value: 2.2857144
       objectReference: {fileID: 0}
     - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_Size.y
-      value: 2
+      value: 2.2857144
       objectReference: {fileID: 0}
     - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1891951109, guid: 138a47660cdd8e547a4009aa4e5959b0, type: 3}
+      objectReference: {fileID: 1627043757, guid: 1125b313eab19d842a66bf36c00b2ee6, type: 3}
     - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1

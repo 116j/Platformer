@@ -25,7 +25,7 @@ public class DefendingEnemy : WalkEnemy
         if (m_protecting)
         {
             m_protectCooldown += Time.deltaTime;
-            if (m_protectCooldown >= m_protectCooldownTime)
+            if (m_protectCooldown >= m_protectCooldownTime||!m_attackZone.TargetDetected)
             {
                 m_protectCooldown = 0;
                 m_protecting = false;

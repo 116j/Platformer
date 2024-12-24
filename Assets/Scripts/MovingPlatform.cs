@@ -4,29 +4,23 @@ using UnityEngine;
 public class MovingPlatform : MonoBehaviour
 {
     [SerializeField]
-    float m_speed = 3f;
+    float m_speed = 4f;
     [SerializeField]
-    float m_waitTime = 2f;
+    float m_waitTime = 0.5f;
 
     List<Vector3> m_checkpoints = new List<Vector3>();
+    List<bool> m_stops = new List<bool>();
     int m_currentCheckpoint;
     float m_waitTimer;
 
     bool m_waiting = false;
-    bool m_start = false;
-
-    float m_checkpointOffset = 0.21f;
-    SpawnValues m_spawnValues;
-    // Start is called before the first frame update
-    void Awake()
-    {
-        m_spawnValues = transform.GetComponent<SpawnValues>();
-    }
+    bool m_start = true;
+    bool m_moveWnenStand = false;
 
     private void Start()
     {
         m_checkpoints.Add(transform.position);
-
+        m_stops.Add(true);
     }
 
     // Update is called once per frame
@@ -44,11 +38,11 @@ public class MovingPlatform : MonoBehaviour
         }
         else if (m_start)
         {
-            transform.position = Vector2.MoveTowards(transform.position, m_checkpoints[m_currentCheckpoint], m_speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, m_checkpoints[m_currentCheckpoint], m_speed * Time.deltaTime);
 
             if (Vector3.Distance(m_checkpoints[m_currentCheckpoint], transform.position) < 0.02f)
             {
-                m_waiting = true;
+                m_waiting = true&m_stops[m_currentCheckpoint];
                 m_currentCheckpoint = (m_currentCheckpoint + 1) % m_checkpoints.Count;
             }
         }
@@ -58,6 +52,10 @@ public class MovingPlatform : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            if (m_moveWnenStand)
+            {
+                m_start = true;
+            }
             collision.transform.SetParent(transform);
         }
     }
@@ -75,20 +73,30 @@ public class MovingPlatform : MonoBehaviour
         m_waitTime = time;
     }
 
+    public float GetWaitTime() => m_waitTime;
+
     public void SetSpeed(float speed)
     {
         m_speed = speed;
     }
 
-    public void AddCheckpoint(Vector3 pos)
+    public float GetSpeed() => m_speed;
+
+    public void DisableAutoMovement()
     {
-        
-        m_checkpoints.Add(new Vector3(pos.x, pos.y - m_checkpointOffset));
+        m_moveWnenStand = true;
+        m_start = false;
     }
 
     public void StartMovement()
     {
+        m_moveWnenStand = false;
         m_start = true;
     }
 
+    public void AddCheckpoint(Vector3 pos, bool stop = true)
+    {       
+        m_checkpoints.Add(pos);
+        m_stops.Add(stop);
+    }
 }

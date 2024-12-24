@@ -22,18 +22,18 @@ public class Damagable : MonoBehaviour
         if (m_recovering)
         {
             m_recoverTimer += Time.deltaTime;
-            if (m_recoverTime >= m_recoverTimer)
+            if (m_recoverTimer >= m_recoverTime)
             {
                 m_recovering = false;
                 m_recoverTimer = 0f;
+                Invinsible = false;
             }
         }
     }
 
-
     public void ApplyDamage(int damage)
     {
-        if (m_dead || m_recovering) return;
+        if (m_dead) return;
 
         m_recovering = true;
         m_health -= damage;
@@ -56,4 +56,5 @@ public class Damagable : MonoBehaviour
             m_receiver.Invoke(0);
         }
     }
+
 }

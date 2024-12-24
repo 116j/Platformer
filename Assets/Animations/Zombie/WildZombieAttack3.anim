@@ -227,7 +227,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.3
-        value: 0.86952376
+        value: 0.83851147
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -257,7 +257,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.3
-        value: 0.6512742
+        value: 0.5892496
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -681,7 +681,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.3
-        value: 0.86952376
+        value: 0.83851147
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -711,7 +711,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.3
-        value: 0.6512742
+        value: 0.5892496
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -791,9 +791,9 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.3
-    functionName: PlayAttack
+    functionName: PlaySound
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 8300000, guid: 09e9878a836e780438ca7a7006d42046, type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0

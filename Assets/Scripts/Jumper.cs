@@ -24,14 +24,17 @@ public class Jumper : Trap
         {
             m_anim.ResetTrigger("Attack");
             m_target.transform.SetParent(null);
-           // m_target = null;
+            m_target = null;
         }
     }
 
     public void Jump()
     {
-        m_target.GetComponent<PlayerController>().Jump();
-        m_target.GetComponent<Rigidbody2D>().velocity = new Vector2(m_target.GetComponent<Rigidbody2D>().velocity.x, m_jumpPower * m_wallHeigh);
+        if (m_target != null)
+        {
+            m_target.GetComponent<PlayerController>().Jump();
+            m_target.GetComponent<Rigidbody2D>().velocity = new Vector2(m_target.GetComponent<Rigidbody2D>().velocity.x, m_jumpPower * m_wallHeigh);
+        }
     }
 
     public void SetWallHeight(int height)

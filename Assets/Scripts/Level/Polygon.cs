@@ -1,11 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class Polygon
 {
     List<Vector3Int> m_tilePositions = new List<Vector3Int>();
     List<Vector3Int> m_ground = new List<Vector3Int>();
+    Vector3Int m_start;
+
+    public Polygon(Vector3Int start)
+    {
+        m_start = start;
+    }
 
 
     public void DrawTiles()
@@ -22,17 +29,26 @@ public class Polygon
     {
         TileEditor.Instance.ClearTiles(m_tilePositions);
     }
-
-    public void AddTiles(int height, int width, Vector3Int startPosition)
+    /// <summary>
+    /// add tiles from startPosition to (startPosition.x+width,startPosition.y-height)
+    /// </summary>
+    /// <param name="height"></param>
+    /// <param name="width"></param>
+    /// <param name="startPosition"></param>
+    public void AddTiles(int height, int width, Vector3Int startPosition, bool ground = true)
     {
-        for (int i = 1; i <= height; i++)
+        for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                Vector3Int pos = new Vector3Int(startPosition.x + j, startPosition.y + i);
+                Vector3Int pos = new Vector3Int(startPosition.x + j, startPosition.y - i);
                 if (!m_tilePositions.Contains(pos))
                 {
                     m_tilePositions.Add(pos);
+                }
+                if (ground&& m_start.y < pos.y&& m_start.x== pos.x)
+                {
+                    Debug.Log(startPosition);
                 }
             }
         }
@@ -40,6 +56,10 @@ public class Polygon
 
     public void AddTile(Vector3Int tilePos)
     {
+        //if (m_start.x > tilePos.x || m_start.y > tilePos.y)
+        //{
+        //    Debug.Log(tilePos);
+        //}
         if (!m_tilePositions.Contains(tilePos))
         {
             m_tilePositions.Add(tilePos);

@@ -25,12 +25,20 @@ PrefabInstance:
       value: -1.466
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Size.x
+      value: 0.47292534
+      objectReference: {fileID: 0}
+    - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.y
-      value: 1.0412617
+      value: 0.53569114
+      objectReference: {fileID: 0}
+    - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.62
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Offset.y
-      value: -2.4052129
+      value: -2.0513122
       objectReference: {fileID: 0}
     - target: {fileID: 4869977044463228660, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.x
@@ -122,7 +130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y
-      value: 1.465
+      value: 2.465
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_receiver.m_PersistentCalls.m_Calls.Array.size
@@ -233,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea99df64c8cd570449153e3dcd2683af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cost: 100
   m_walkSpeed: 1.5
   m_canRun: 0
   m_runSpeed: 2
@@ -253,7 +262,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 10000
+      time: 100
       value: 1
       inSlope: 0
       outSlope: 0
@@ -264,6 +273,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_coin: {fileID: 406009481548944448, guid: 0e325bdf359636244a634ab84ce0c8f4, type: 3}
 --- !u!114 &4754401117695290597 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8329173561461377674, guid: 7589c4885b0e16045bc336705bf112db, type: 3}

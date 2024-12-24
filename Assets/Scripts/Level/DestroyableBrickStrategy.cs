@@ -8,6 +8,8 @@ public class DestroyableBrickStrategy : FillStrategy
     protected new int m_maxRoomWidth = 70;
     protected new int m_minRoomWidth = 20;
 
+    protected new int m_maxTransitionHeight = 30;
+
     TilePlaceAnalog m_destroyableTile;
 
     public DestroyableBrickStrategy(LevelTheme levelTheme, TilePlaceAnalog destroyableTile) : base(levelTheme)
@@ -15,13 +17,13 @@ public class DestroyableBrickStrategy : FillStrategy
         m_destroyableTile = destroyableTile;
     }
 
-    public override Room FillRoom(Room transition)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
-        return base.FillRoom(transition);
+        return base.FillRoom(prevRoom, transitionStrategy);
     }
 
-    public override Room FillTransition(Room previousRoom)
+    public override Room FillTransition(Room room)
     {
-        return base.FillTransition(previousRoom);
+        return base.FillTransition(room);
     }
 }

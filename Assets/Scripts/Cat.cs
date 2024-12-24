@@ -47,6 +47,7 @@ public class Cat : MonoBehaviour
         m_rb = GetComponent<Rigidbody2D>();
         m_walkTime = Random.Range(m_walkRecoverTimeMin, m_walkRecoverTimeMax);
         m_addHeart.AddListener(GameObject.FindGameObjectWithTag("Player").GetComponent<Damagable>().ApplyHealth);
+        m_addHeart.AddListener(LevelBuilder.Instance.CatPetted);
     }
 
     // Update is called once per frame
@@ -107,6 +108,13 @@ public class Cat : MonoBehaviour
         m_currentDir *= -1;
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
     }
+
+    public void Stop(bool stop)
+    {
+        m_walking = !stop;
+        m_speed = m_walking ? m_walkSpeed : 0f;
+        m_anim.SetBool(m_HashCanMove,!stop);
+    }
     /// <summary>
     /// Stop when start pettng and sleep when end
     /// </summary>
@@ -115,15 +123,21 @@ public class Cat : MonoBehaviour
     {
         if (pet)
         {
-            m_speed = 0f;
             m_petting = true;
-            m_walking = false;
         }
         else
         {
             m_addHeart.Invoke(1);
             m_anim.SetBool(m_HashSleep, true);
             CanPet = false;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (!m_anim.GetBool(m_HashSleep))
+        {
+            LevelBuilder.Instance.CatPetted(1);
         }
     }
 }

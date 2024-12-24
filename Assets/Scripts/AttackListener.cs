@@ -12,8 +12,8 @@ public class AttackListener : MonoBehaviour
             Debug.Log(gameObject.name);
             if (!damagable.Invinsible || damagable.Invinsible && (Vector2.Dot(collision.transform.right, transform.right) == 1))
             {
+                damagable.Invinsible = true;
                 damagable.ApplyDamage(m_damage);
-
             }
         }
     }

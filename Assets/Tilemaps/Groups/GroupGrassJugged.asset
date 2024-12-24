@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: GroupGrassJugged
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: f25515f0a869d8340a868e289393bc50, type: 2}
   - {fileID: 11400000, guid: f9c6d7b3d591fc341a9d4974760bb4e5, type: 2}
   - {fileID: 11400000, guid: c4bfe48e134efa547a5def592b923d5c, type: 2}
   - {fileID: 11400000, guid: ec054efcfee69794982d290c8c1746c4, type: 2}
-  - {fileID: 11400000, guid: e8bb7a2489e915140a2eae8dba7cc1d7, type: 2}

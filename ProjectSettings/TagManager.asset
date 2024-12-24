@@ -6,12 +6,12 @@ TagManager:
   tags:
   - Enemy
   - bounds
-  - checkpoint
   - ground
   - wall
   - cat
   - enemyAttack
   - slope
+  - shop
   layers:
   - Default
   - TransparentFX
@@ -64,9 +64,6 @@ TagManager:
   - name: Enviroment
     uniqueID: 135074155
     locked: 0
-  - name: Cat
-    uniqueID: 62707019
-    locked: 0
   - name: Player
     uniqueID: 4103403249
     locked: 0
@@ -75,6 +72,9 @@ TagManager:
     locked: 0
   - name: Grass
     uniqueID: 227588397
+    locked: 0
+  - name: Cat
+    uniqueID: 62707019
     locked: 0
   - name: UI
     uniqueID: 3847754775

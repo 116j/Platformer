@@ -8,6 +8,7 @@ public class PlayerInput : MonoBehaviour
     bool m_heavyAttack;
     bool m_jump;
     bool m_dash;
+    bool m_dodge;
     bool m_pet;
 
     public Vector2 Move => m_inputLocked ? Vector2.zero : m_move;
@@ -20,6 +21,19 @@ public class PlayerInput : MonoBehaviour
             {
                 m_dash = false;
                 return !m_inputLocked && !m_dash;
+            }
+            else
+                return false;
+        }
+    }
+    public bool Dodge
+    {
+        get
+        {
+            if (m_dodge)
+            {
+                m_dodge = false;
+                return !m_inputLocked && !m_dodge;
             }
             else
                 return false;
@@ -55,10 +69,25 @@ public class PlayerInput : MonoBehaviour
     public bool HeavyAttack => !m_inputLocked && m_heavyAttack;
 
     bool m_inputLocked = false;
+    bool m_shop = false;
+    bool m_pause = false;
 
     public void LockInput()
     {
         m_inputLocked = !m_inputLocked;
+    }
+
+    public void EnableShop()
+    {
+        m_shop=!m_shop;
+    }
+
+    public void OnPause()
+    {
+        m_pause = !m_pause;
+        Time.timeScale = m_pause?0:1;
+        LockInput();
+        Menu.Instance.Pause(m_pause);
     }
 
     void OnMove(InputValue value)
@@ -84,6 +113,11 @@ public class PlayerInput : MonoBehaviour
     void OnDash(InputValue value)
     {
         m_dash = value.isPressed;
+    }
+
+    void OnDodge(InputValue value)
+    {
+        m_dodge = value.isPressed;
     }
 
     void OnPet(InputValue value)

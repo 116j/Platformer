@@ -163,12 +163,20 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Size.x
+      value: 0.5487753
+      objectReference: {fileID: 0}
+    - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.y
-      value: 1.0222898
+      value: 0.6178324
+      objectReference: {fileID: 0}
+    - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.88
       objectReference: {fileID: 0}
     - target: {fileID: 3642224594297375866, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Offset.y
-      value: -2.6466763
+      value: -2.4444475
       objectReference: {fileID: 0}
     - target: {fileID: 4869977044463228660, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Sprite
@@ -264,7 +272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y
-      value: 1.955
+      value: 2.955
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_receiver
@@ -429,6 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18307c2d59f2a3341885fe924a175dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cost: 100
   m_walkSpeed: 1.5
   m_canRun: 1
   m_runSpeed: 3
@@ -438,10 +447,29 @@ MonoBehaviour:
   m_groundZone: {fileID: 4522216845412270785}
   m_spawnChance:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 100
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_coin: {fileID: 406009481548944448, guid: 0e325bdf359636244a634ab84ce0c8f4, type: 3}
   m_shootScript: {fileID: -8490034976026399493}
   m_shootZone: {fileID: 4669128548453486737}
 --- !u!114 &-8490034976026399493
@@ -470,7 +498,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53e1ce7db7e452947958be23656ba0d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_shootDirectionString: 
   m_shootPower: 10
   m_shell: {fileID: 1615154178282586223, guid: 9c00131f57569f64e94fffc77e4a0859, type: 3}
   m_shellSpawn: {fileID: 3635720825517689650}
