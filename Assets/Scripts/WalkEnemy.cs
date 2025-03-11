@@ -11,7 +11,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     [SerializeField]
     float m_runSpeed = 2f;
     [SerializeField]
-    AttackScript m_attackScript;
+    protected AttackScript m_attackScript;
     [SerializeField]
     protected DetectZone m_attackZone;
     [SerializeField]
@@ -26,7 +26,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected Animator m_anim;
     protected Rigidbody2D m_rb;
     protected TouchingCheck m_touchings;
-    Collider2D m_col;
+    protected Collider2D m_col;
     protected MovingPlatform m_platform;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
@@ -35,7 +35,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     readonly int m_HashCanMove = Animator.StringToHash("CanMove");
     readonly int m_HashAttackNum = Animator.StringToHash("AttackNum");
 
-    bool m_dead = false;
+    protected bool m_dead = false;
     protected bool m_waiting = false;
 
     readonly float m_waitTime = 3f;
@@ -85,7 +85,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
             {
                 Potrol();
             }
-            m_rb.velocity = m_currentDir * m_speed * Vector2.right;
+            m_rb.velocity = (m_anim.GetBool(m_HashCanMove)?1:0)*m_currentDir * m_speed * Vector2.right;
         }
     }
 
@@ -129,7 +129,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         m_speed = m_canRun ? m_runSpeed : m_walkSpeed;
     }
 
-    void TurnAround()
+    protected void TurnAround()
     {
         m_currentDir *= -1;
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
@@ -148,10 +148,13 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
                 m_platform.StartMovement();
             }
 
-            int coins = Random.Range(1, 6);
-            for (int i = 0; i < coins; i++)
+            if (m_coin != null)
             {
-                Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(m_cost/coins* 1.0f);
+                int coins = Random.Range(3, 7);
+                for (int i = 0; i < coins; i++)
+                {
+                    Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(m_cost / coins * 1.0f);
+                }
             }
         }
         else

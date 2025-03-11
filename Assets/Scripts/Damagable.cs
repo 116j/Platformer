@@ -16,8 +16,10 @@ public class Damagable : MonoBehaviour
     bool m_recovering = false;
 
     float m_recoverTimer = 0f;
+    float m_freezeTime = 0f;
 
     public bool Invinsible { get; set; } = false;
+    public bool Freezed { get; set; } = false;
 
     private void Update()
     {
@@ -29,6 +31,15 @@ public class Damagable : MonoBehaviour
                 m_recovering = false;
                 m_recoverTimer = 0f;
                 Invinsible = false;
+            }
+        }
+        else if (Freezed)
+        {
+            m_freezeTime -= Time.deltaTime;
+            if (m_freezeTime <= 0)
+            {
+                Freezed = false;
+                GetComponent<PlayerInput>().LockInput();
             }
         }
     }
@@ -46,6 +57,13 @@ public class Damagable : MonoBehaviour
             m_dead = true;
             m_receiver.Invoke(0);
         }
+    }
+
+    public void Freeze(float time)
+    {
+        Freezed = true;
+        GetComponent<PlayerInput>().LockInput();
+        m_freezeTime = time;
     }
 
     public void ApplyHealth(int healPoints)

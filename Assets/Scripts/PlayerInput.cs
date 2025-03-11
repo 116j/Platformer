@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerInput : MonoBehaviour
 {
     Vector2 m_move;
+    Vector2 m_moveCamera;
     bool m_attack;
     bool m_heavyAttack;
     bool m_jump;
@@ -12,6 +13,7 @@ public class PlayerInput : MonoBehaviour
     bool m_pet;
 
     public Vector2 Move => m_inputLocked ? Vector2.zero : m_move;
+    public Vector2 MoveCamera => m_inputLocked ? Vector2.zero : m_moveCamera;
     public bool Jump => !m_inputLocked && m_jump;
     public bool Dash
     {
@@ -79,13 +81,13 @@ public class PlayerInput : MonoBehaviour
 
     public void EnableShop()
     {
-        m_shop=!m_shop;
+        m_shop = !m_shop;
     }
 
     public void OnPause()
     {
         m_pause = !m_pause;
-        Time.timeScale = m_pause?0:1;
+        Time.timeScale = m_pause ? 0 : 1;
         LockInput();
         Menu.Instance.Pause(m_pause);
     }
@@ -93,6 +95,11 @@ public class PlayerInput : MonoBehaviour
     void OnMove(InputValue value)
     {
         m_move = value.Get<Vector2>();
+    }
+
+    void OnMoveCamera(InputValue value)
+    {
+        m_moveCamera = value.Get<Vector2>();
     }
 
     void OnAttack(InputValue value)
@@ -123,5 +130,14 @@ public class PlayerInput : MonoBehaviour
     void OnPet(InputValue value)
     {
         m_pet = value.isPressed;
+    }
+
+    void OnShop(InputValue value)
+    {
+        if (m_shop)
+        {
+            LockInput();
+            UIController.Instance.OpenShop();
+        }
     }
 }

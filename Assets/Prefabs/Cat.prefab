@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnOffset: {x: 0, y: 1.535, z: 0}
-  m_metric: {x: 0, y: 0, z: 0}
+  m_metric: {x: -0.165, y: 0.4, z: 0.235}
   m_setOffset: 1
 --- !u!114 &2336935378641655310
 MonoBehaviour:

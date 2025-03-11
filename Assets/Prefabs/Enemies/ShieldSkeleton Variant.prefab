@@ -90,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7909010669126650959, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.x
-      value: 1.1912277
+      value: 1.0791733
       objectReference: {fileID: 0}
     - target: {fileID: 7909010669126650959, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.y
@@ -98,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7909010669126650959, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Offset.x
-      value: 0.23414111
+      value: 0.178114
       objectReference: {fileID: 0}
     - target: {fileID: 7909010669126650959, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Offset.y
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea99df64c8cd570449153e3dcd2683af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cost: 100
+  m_cost: 350
   m_walkSpeed: 1.5
   m_canRun: 0
   m_runSpeed: 2

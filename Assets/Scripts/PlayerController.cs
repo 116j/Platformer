@@ -1,7 +1,5 @@
 using Cinemachine;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
@@ -56,7 +54,7 @@ public class PlayerController : MonoBehaviour
     bool m_canPet = false;
     bool m_onSlope = false;
 
-    int m_currentJumps=0;
+    int m_currentJumps = 0;
     int m_currentDir = 1;
     float m_jumpCounter = 0f;
     float m_dashCooldown = 0f;
@@ -115,7 +113,7 @@ public class PlayerController : MonoBehaviour
             // dash
             if (m_input.Dash && m_canDash && !m_blockMove && !m_isHit)
             {
-                m_blockMove = true;               
+                m_blockMove = true;
                 m_anim.SetTrigger(m_HashDash);
                 UIController.Instance.SetDashSprite(0f);
                 //remove garvity
@@ -185,11 +183,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void FixedUpdate()
     {
 
-        if(m_falling&&m_fallCheckpoint.y-transform.position.y>200)
+        if (m_falling && m_fallCheckpoint.y - transform.position.y > 200)
         {
             DestroyableTile.Instance.Restart(m_fallCheckpoint);
             transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
@@ -234,7 +231,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (m_touchings.IsSlopeDown())
                 {
-                    m_falling  = false;
+                    m_falling = false;
                     m_onSlope = m_rb.isKinematic = true;
                     m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, -Mathf.Abs(m_input.Move.x) * m_runSpeed);
                 }
@@ -262,7 +259,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             // if is not in attack or dash and is jumping - make double jump 
-            if (!m_blockMove && m_jumping && m_input.Jump && !m_jump && m_currentJumps<m_jumpsCount)
+            if (!m_blockMove && m_jumping && m_input.Jump && !m_jump && m_currentJumps < m_jumpsCount)
             {
                 m_sound.PlaySound("Jump");
                 m_jump = true;
@@ -288,11 +285,11 @@ public class PlayerController : MonoBehaviour
                 m_rb.velocity -= m_fallMultiplier * Time.fixedDeltaTime * m_gravity;
             }
             //if is in air and reaches the ground and not touching wall (or touching and standing on the ground) - reset falling and jumping
-            if ((m_falling && !m_touchings.IsSlopeDown()&& m_touchings.IsGrounded() && (!m_touchings.IsWalls() || Mathf.Approximately(m_rb.velocity.y, 0f)))|| (m_touchings.IsSlopeDown() || m_touchings.IsSlopeUp())&&m_jumping)
+            if ((m_falling && !m_touchings.IsSlopeDown() && m_touchings.IsGrounded() && (!m_touchings.IsWalls() || Mathf.Approximately(m_rb.velocity.y, 0f))) || (m_touchings.IsSlopeDown() || m_touchings.IsSlopeUp()) && m_jumping)
             {
                 m_sound.PlaySound("Land");
                 m_falling = m_jumping = false;
-                m_currentJumps=0;
+                m_currentJumps = 0;
             }
         }
         //stop moving if is dead
@@ -320,6 +317,29 @@ public class PlayerController : MonoBehaviour
             m_anim.SetTrigger(m_HashPet);
         }
     }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("cameraMove"))
+        {
+            if (m_input.MoveCamera.y < 0)
+            {
+                m_baseTransposer = -9;
+            }
+            else
+            {
+                m_baseTransposer = 2.5f;
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("cameraMove"))
+        {
+            m_baseTransposer = 2.5f;
+        }
+    }
     /// <summary>
     /// Recieve damage 
     /// </summary>
@@ -332,7 +352,7 @@ public class PlayerController : MonoBehaviour
             m_dead = !m_dead;
             transform.SetPositionAndRotation(m_rebornCheckpoint, Quaternion.identity);
             m_currentDir = 1;
-            
+
         }
         else if (damage < 0)
         {
@@ -365,12 +385,12 @@ public class PlayerController : MonoBehaviour
 
     public void SetRebornCheckpoint(Vector3 checkpoint)
     {
-        m_rebornCheckpoint = checkpoint+ m_values.GetOffset();
+        m_rebornCheckpoint = checkpoint + m_values.GetOffset();
     }
 
     public void SetLevelCheckpoint(Vector3 checkpoint)
     {
-        m_fallCheckpoint = checkpoint+ m_values.GetOffset().y*Vector3.up;
+        m_fallCheckpoint = checkpoint + m_values.GetOffset().y * Vector3.up;
     }
 
     public void ChangeTransposerHeight(bool down)
@@ -385,6 +405,6 @@ public class PlayerController : MonoBehaviour
 
     public void DecreaseDashCooldown()
     {
-        m_dashCooldown -= 0.5f;
+        m_dashCooldownTime -= 0.5f;
     }
 }

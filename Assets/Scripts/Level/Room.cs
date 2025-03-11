@@ -65,6 +65,8 @@ public class Room
     public Vector3Int GetEndPosition() => m_endPosition;
 
     public Vector3Int GetStartPosition() => m_startPosition;
+    
+    public void SetEndPosition(Vector3Int end) { m_endPosition = end; }
 
     public Room GetTransition() => m_nextTransition;
 

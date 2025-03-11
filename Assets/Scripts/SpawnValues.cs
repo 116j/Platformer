@@ -24,7 +24,7 @@ public class SpawnValues : MonoBehaviour, IMetrics
     [SerializeField]
     bool m_setOffset;
 
-    private void Awake()
+    private void Start()
     {
         if (m_setOffset)
             SetOffset();

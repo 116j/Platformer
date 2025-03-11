@@ -12,7 +12,7 @@ public class AttackScript : MonoBehaviour
     Animator m_anim;
     Rigidbody2D m_rb;
 
-    bool m_canAttack = false;
+    bool m_canAttack = true;
     float m_attackCooldown;
     // Start is called before the first frame update
     void Start()
@@ -40,10 +40,15 @@ public class AttackScript : MonoBehaviour
         }
     }
 
-    public void AttackMove()
+    public void AttackMoveForward()
     {
         if (m_rb != null)
             m_rb.velocity = transform.right * 5f;
+    }  
+    public void AttackMoveBackwards()
+    {
+        if (m_rb != null)
+            transform.position-=transform.right;
     }
 
     public void AttackStop()

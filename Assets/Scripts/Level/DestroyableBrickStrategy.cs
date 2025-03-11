@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class DestroyableBrickStrategy : FillStrategy
 {
-    protected new int m_maxRoomWidth = 70;
+    protected new int m_maxRoomWidth = 50;
     protected new int m_minRoomWidth = 20;
 
     protected new int m_maxTransitionHeight = 30;
@@ -26,4 +26,6 @@ public class DestroyableBrickStrategy : FillStrategy
     {
         return base.FillTransition(room);
     }
+
+
 }

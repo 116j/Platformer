@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 883b12cdd5f3dff4582aa2a295269603, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cost: 100
+  m_cost: 1000
   m_walkSpeed: 1.5
   m_canRun: 1
   m_runSpeed: 3
@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53a46ea2d2c72e14fa87c3185e7dea17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_maxHealth: 5
   m_health: 4
   m_recoverTime: 0.5
   m_receiver:
@@ -314,7 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_animAttackParameter: Attack
-  m_attackCooldownTime: 1.5
+  m_attackCooldownTime: 0.6
 --- !u!114 &8183254454711484530
 MonoBehaviour:
   m_ObjectHideFlags: 0

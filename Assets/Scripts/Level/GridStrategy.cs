@@ -8,11 +8,13 @@ public class GridStrategy : FillStrategy
     protected new int m_minTransitionWidth = 4;
     protected new int m_maxTransitionWidth = 10;
     protected int m_minTransitionHeight = 11;
-    protected new int m_maxTransitionHeight = 40;
+    protected new int m_maxTransitionHeight = 25;
 
     readonly int m_minWidth = 1;
     readonly int m_maxWidth = 6;
     readonly int m_minDist = 3;
+
+    int m_maxAttempts = 3;
 
     public GridStrategy(LevelTheme levelTheme) : base(levelTheme)
     {
@@ -33,8 +35,14 @@ public class GridStrategy : FillStrategy
         Vector3Int start = prevRoom.GetTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + width, start.y + height);
         Room room = new Room(start, end, transition);
+        int attempts = 0;
 
-        MakeGrid(room);
+        while (!MakeGrid(room))
+        {
+            attempts++;
+            if (attempts >= m_maxAttempts)
+                return null;
+        }
         // create bounds for player's fall
         BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
         bounds.gameObject.transform.position = new Vector3(start.x, (height > 0 ? start.y : end.y) - m_roomHeight);
@@ -105,12 +113,14 @@ public class GridStrategy : FillStrategy
         return transition;
     }
 
-    void MakeGrid(Room room)
+    bool MakeGrid(Room room)
     {
         Vector3Int start = room.GetStartPosition();
         Vector3Int end = room.GetEndPosition();
         Vector3Int lastPoint = start;
         Vector3Int lastOffset = start;
+        int attempts = 0;
+        int maxAttempts = 100;
         int lastWidth = 0;
         int w1 = 0;
         int platformsOffsetY = 0;
@@ -118,20 +128,25 @@ public class GridStrategy : FillStrategy
            (lastOffset.x + w1 <= end.x - 3 || end.x - lastOffset.x - w1 <= m_playerJumpWidth && Mathf.Abs(lastOffset.y - end.y) > GetJumpHeight(end.x - lastOffset.x - w1)))
         {
             int offsetY = (lastPoint.y > end.y ? -1 : 1) * Random.Range(m_minDist, m_playerJumpHeight);
-            int x = lastPoint.x + lastWidth + (int)(Mathf.Abs(offsetY) * 1.0f / Mathf.Abs(end.y - lastPoint.y) * (end.x - lastPoint.x - lastWidth));
+            int x = lastPoint.x + lastWidth + (int)(Mathf.Abs(offsetY) * 1.0f / Mathf.Max(1,Mathf.Abs(end.y - lastPoint.y)) * (end.x - lastPoint.x - lastWidth));
             int offsetX;
             if (x - lastPoint.x - lastWidth < GetJumpWidth(offsetY))
-                offsetX = Random.Range(-(lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth)+m_minWidth, (lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth));
+                offsetX = Random.Range(-(lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth), (lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth));
             else
                 offsetX = Random.Range((lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth) - x + lastPoint.x + lastWidth + m_minWidth, -lastPoint.x + x - (lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth) - m_minWidth);
             offsetX = Mathf.Clamp(offsetX, start.x - x + m_minWidth, end.x - x - m_minWidth * 2);
             // offsetX = Mathf.Clamp(offsetX ,- lastPoint.x + x - GetJumpWidth(offsetY) - m_minWidth, GetJumpWidth(offsetY) - x + lastPoint.x + lastWidth);
 
             Vector3Int pos = CheckSurroundings(room, new Vector3Int(x + offsetX, lastPoint.y + offsetY), end);
-            if (Mathf.Abs(lastPoint.x + lastWidth - pos.x) > m_playerJumpWidth ||
+            if (Mathf.Abs(lastPoint.x + lastWidth - pos.x) > GetJumpWidth(offsetY) ||
                 !AvailablePlatform(room, lastPoint.y > lastOffset.y && end.y - start.y > 0 ? lastPoint.y : lastOffset.y, pos, GetMaxWidth(room, pos), ref lastWidth, end) ||
             pos.x > end.x - m_minWidth * 2 || pos.x <= start.x)
+            {
+                attempts++;
+                if (attempts >= maxAttempts)
+                    return false;
                 continue;
+            }
 
             lastWidth = Mathf.Clamp(lastWidth, m_minWidth, end.x - pos.x - m_minWidth);
             lastPoint = pos;
@@ -144,7 +159,7 @@ public class GridStrategy : FillStrategy
             offsetX1 = Mathf.Clamp(offsetX1, start.x - lastPoint.x + m_minWidth, end.x - lastPoint.x - m_minWidth * 2);
             pos = CheckSurroundings(room, new Vector3Int(lastPoint.x + offsetX1, lastPoint.y + platformsOffsetY), end);
             if (!AvailablePlatform(room, lastPoint.y > lastOffset.y && end.y - start.y > 0 ? lastPoint.y : lastOffset.y, pos, GetMaxWidth(room, pos), ref w1, end) ||
-                pos.x > end.x - m_minWidth * 2 || pos.x <= start.x)
+                pos.x > end.x - m_minWidth || pos.x <= start.x)
             {
                 platformsOffsetY = lastOffset.y;
                 continue;
@@ -153,6 +168,7 @@ public class GridStrategy : FillStrategy
             room.CreatePlatform(pos, w1);
             lastOffset = pos;
         }
+        return true;
     }
 
     bool AvailablePlatform(Room room, int lastPointY, Vector3Int currentPoint, int maxWidth, ref int currentWidth, Vector3Int end)
@@ -305,33 +321,109 @@ public class GridStrategy : FillStrategy
 
                 if (room.PositionIsUsed(new Vector3Int(pos.x - i, pos.y)))
                 {
-                    pos += Vector3Int.right * (m_minDist - i);
-                    if (!CheckSurroundings(Vector3Int.right, room, pos))
-                        return end;
+                    if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
+                    {
+                        if(!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
+                        {
+                            if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
+                            {
+                                return end;
+                            }
+                            else
+                            {
+                                pos += Vector3Int.down * (m_minDist - i);
+                            }
+                        }
+                        else
+                        {
+                            pos += Vector3Int.up * (m_minDist - i);
+                        }
+                    }
+                    else
+                    {
+                        pos += Vector3Int.right * (m_minDist - i);
+                    }
                     suitable = false;
                     break;
                 }
                 if (room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y)))
                 {
-                    pos += Vector3Int.left * (m_minDist - i);
-                    if (!CheckSurroundings(Vector3Int.left, room, pos))
-                        return end;
+                    if (!CheckSurroundings(Vector3Int.left, room, pos + Vector3Int.left * (m_minDist - i)))
+                    {
+                        if (!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
+                        {
+                            if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
+                            {
+                                return end;
+                            }
+                            else
+                            {
+                                pos += Vector3Int.down * (m_minDist - i);
+                            }
+                        }
+                        else
+                        {
+                            pos += Vector3Int.up * (m_minDist - i);
+                        }
+                    }
+                    else
+                    {
+                        pos += Vector3Int.left * (m_minDist - i);
+                    }
                     suitable = false;
                     break;
                 }
                 if (room.PositionIsUsed(new Vector3Int(pos.x, pos.y - i)))
                 {
-                    pos += Vector3Int.up * (m_minDist - i);
-                    if (!CheckSurroundings(Vector3Int.up, room, pos))
-                        return end;
+                    if (!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
+                    {
+                        if (!CheckSurroundings(Vector3Int.left, room, pos + Vector3Int.left * (m_minDist - i)))
+                        {
+                            if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
+                            {
+                                return end;
+                            }
+                            else
+                            {
+                                pos += Vector3Int.right * (m_minDist - i);
+                            }
+                        }
+                        else
+                        {
+                            pos += Vector3Int.left * (m_minDist - i);
+                        }
+                    }
+                    else
+                    {
+                        pos += Vector3Int.up * (m_minDist - i);
+                    }
                     suitable = false;
                     break;
                 }
                 if (room.PositionIsUsed(new Vector3Int(pos.x, pos.y + i)))
                 {
-                    pos += Vector3Int.down * (m_minDist - i);
-                    if (!CheckSurroundings(Vector3Int.down, room, pos))
-                        return end;
+                    if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
+                    {
+                        if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
+                        {
+                            if (!CheckSurroundings(Vector3Int.left, room, pos + Vector3Int.left * (m_minDist - i)))
+                            {
+                                return end;
+                            }
+                            else
+                            {
+                                pos += Vector3Int.left * (m_minDist - i);
+                            }
+                        }
+                        else
+                        {
+                            pos += Vector3Int.right * (m_minDist - i);
+                        }
+                    }
+                    else
+                    {
+                        pos += Vector3Int.down * (m_minDist - i);
+                    }
                     suitable = false;
                     break;
                 }

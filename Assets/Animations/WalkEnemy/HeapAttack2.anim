@@ -1352,7 +1352,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.43333334
-    functionName: AttackMove
+    functionName: AttackMoveForward
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -165,19 +165,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a0587814e8f594ba162660aa86db3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_transitions:
+  m_attacks:
   - {fileID: 7400000, guid: b9cdc68fe0826ec42a94866e990c3117, type: 2}
   - {fileID: 7400000, guid: ff6c35a11bc03814da213eae9fe6e568, type: 2}
-  m_attacks:
-  - {fileID: 7400000, guid: f6c3b6c576b7ec64f8b84f5d8cbb70f3, type: 2}
-  - {fileID: 7400000, guid: f6c3b6c576b7ec64f8b84f5d8cbb70f3, type: 2}
   m_offsets:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: -0.5, z: 0}
-  m_spawnOffsets:
-  - 0
-  - -0.5
-  m_trapNumber: 1
+  - {x: 0, y: -0.25, z: 0}
+  m_metrics:
+  - {x: -0.5, y: 1, z: 0.5}
+  - {x: -0.5, y: 1, z: 0.5}
+  m_attackDirections:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
   m_spawnChances:
   - serializedVersion: 2
     m_Curve:
@@ -225,3 +224,4 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_series: 0

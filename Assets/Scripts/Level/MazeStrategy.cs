@@ -7,7 +7,7 @@ public class MazeStrategy : FillStrategy
     protected new int m_maxRoomWidth = 70;
     protected new int m_minRoomWidth = 20;
 
-    public MazeStrategy(LevelTheme levelTheme, GameObject cat ,AnimationCurve enemiesCount, AnimationCurve trapsCount) : base(levelTheme, cat,enemiesCount, trapsCount)
+    public MazeStrategy(LevelTheme levelTheme ,AnimationCurve enemiesCount, AnimationCurve trapsCount) : base(levelTheme,enemiesCount, trapsCount)
     {
     }
 

@@ -80,6 +80,7 @@ public class Trap : MonoBehaviour, IMetrics
     {
         SetAnimations(num);
         m_trapNumber = num;
+        m_numberSet = true;
         SetOffset();
     }
 

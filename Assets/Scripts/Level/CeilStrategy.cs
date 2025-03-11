@@ -11,7 +11,7 @@ public class CeilStrategy : FillStrategy
     protected new int m_minElevationHeight = 2;
     protected new int m_maxElevationHeight = 20;
 
-    public CeilStrategy(LevelTheme levelTheme, MovingPlatform movingPlatform, Jumper jumper) : base(levelTheme, movingPlatform, jumper)
+    public CeilStrategy(LevelTheme levelTheme) : base(levelTheme)
     {
     }
     /// <summary>
@@ -40,7 +40,7 @@ public class CeilStrategy : FillStrategy
     /// <param name="room"></param>
     void MakeCeil(Room room)
     {
-        Trap trap = m_levelTheme.ceilTraps[Random.Range(0, m_levelTheme.ceilTraps.Length)];
+        Trap trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
         trap.SetTrapNum();
         int offset = Mathf.CeilToInt(trap.GetHeight());
 
@@ -72,22 +72,19 @@ public class CeilStrategy : FillStrategy
             //if ground straight section is over 
             else
             {
-                if (start.y - ground[i].y > 0)
+                if (start.y > ground[i].y)
                 {
                     width += offset;
                 }
                 else
                 {
+                    groundWidth = groundWidth - offset;
+                    width = width - offset;
                     // if elevation is higher than player's jump - add space for platform
-                    if (ground[i].y - start.y> m_playerJumpHeight)
+                    if (ground[i].y - start.y > m_playerJumpHeight)
                     {
-                        groundWidth = Mathf.Clamp(groundWidth - offset - 1, 0, int.MaxValue);
-                        width = Mathf.Clamp(width - offset - 1, 0, int.MaxValue);
-                    }
-                    else
-                    {
-                        groundWidth = Mathf.Clamp(groundWidth - offset, 0, int.MaxValue);
-                        width = Mathf.Clamp(width - offset, 0, int.MaxValue);
+                        groundWidth--;
+                        width--;
                     }
                 }
 
@@ -98,30 +95,33 @@ public class CeilStrategy : FillStrategy
                     {
                         room.AddEnviromentObject(t.gameObject);
                     }
-                    width = groundWidth = 1;
+                    width = 1;
+                    height += start.y - ground[i].y;
+                    // if lowland - offset ground
+                    if (start.y > ground[i].y)
+                    {
+                        i += offset;
+                        start = ground[i];
+                    }
+                    //if elevation - add extra width in the left
+                    else
+                    {
+                        width += offset + 1;
+                        start = ground[i] - Vector3Int.right * (offset + 1);
+                    }
                 }
                 else
                 {
-                    groundWidth = 1;
-                    width += 1;
+                    width = ground[i].x - start.x;
+                    height += start.y - ground[i].y;
+                    start.y = ground[i].y;
                 }
-                height += start.y - ground[i].y;
-                // if lowland - offset ground
-                if (start.y - ground[i].y > 0)
-                {
-                    i += offset;
-                    start = ground[i];
-                }
-                //if elevation - add extra width in the left
-                else
-                {
-                    width += offset + 1;
-                    start = ground[i] - Vector3Int.right * (offset + 1);
-                }
+                groundWidth = 1;
+
                 if (i >= ground.Count - 1)
                     break;
                 groundStart = ground[i].x;
-                trap = m_levelTheme.ceilTraps[Random.Range(0, m_levelTheme.ceilTraps.Length)];
+                trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
                 trap.SetTrapNum();
             }
         }

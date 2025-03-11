@@ -12,7 +12,7 @@ public class ShootingEnemy : WalkEnemy
     readonly int m_shootNum = 2;
     protected override void FixedUpdate()
     {
-        if (m_shootZone.TargetDetected && !m_detectZone.TargetDetected)
+        if (!m_dead && m_shootZone.TargetDetected && !m_detectZone.TargetDetected)
         {
             m_shootScript.EnableAttack = true;
             m_speed = 0f;
