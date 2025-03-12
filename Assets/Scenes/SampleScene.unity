@@ -27419,7 +27419,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 991568554170551248, guid: 23c90a25cb0f48643952a37605a99df9, type: 3}
       propertyPath: m_maxRoomsCount
-      value: 99
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3535936475004516182, guid: 23c90a25cb0f48643952a37605a99df9, type: 3}
       propertyPath: m_Name

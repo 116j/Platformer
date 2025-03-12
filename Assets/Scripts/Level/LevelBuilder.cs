@@ -75,7 +75,7 @@ public class LevelBuilder : MonoBehaviour
         };
         m_usedStrategies.Add(m_strategies[0]);
         m_currentRoom = m_rooms[0];
-        SpawnRoom();
+       // SpawnRoom();
         SpawnRoom();
 
         m_player.transform.position = m_startPosition + m_player.gameObject.GetComponent<SpawnValues>().GetOffset();

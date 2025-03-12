@@ -33,7 +33,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     readonly int m_HashHit = Animator.StringToHash("Hit");
     readonly int m_HashDie = Animator.StringToHash("Die");
     readonly int m_HashCanMove = Animator.StringToHash("CanMove");
-    readonly int m_HashAttackNum = Animator.StringToHash("AttackNum");
+    protected readonly int m_HashAttackNum = Animator.StringToHash("AttackNum");
 
     protected bool m_dead = false;
     protected bool m_waiting = false;
@@ -117,7 +117,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         }
     }
 
-    void Chase()
+    protected void Chase()
     {
         // if the target is behind - turn around
         if ((m_detectZone.TargetLocation.x - transform.position.x) * m_currentDir < 0f)

@@ -14,7 +14,7 @@ public class DetectZone : MonoBehaviour
         if (collision.CompareTag(m_tag))
         {
             TargetDetected = true;
-            TargetLocation = collision.transform.position;
+            TargetLocation = collision.ClosestPoint(transform.position);
         }
     }
 
@@ -22,7 +22,7 @@ public class DetectZone : MonoBehaviour
     {
         if (collision.CompareTag(m_tag))
         {
-            TargetLocation = collision.transform.position;
+            TargetLocation = collision.ClosestPoint(transform.position);
             TargetDetected = true;
         }
     }
