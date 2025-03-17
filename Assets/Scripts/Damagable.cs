@@ -30,7 +30,6 @@ public class Damagable : MonoBehaviour
             {
                 m_recovering = false;
                 m_recoverTimer = 0f;
-                Invinsible = false;
             }
         }
         else if (Freezed)
@@ -46,7 +45,7 @@ public class Damagable : MonoBehaviour
 
     public void ApplyDamage(int damage)
     {
-        if (m_dead) return;
+        if (m_dead|| m_recovering) return;
 
         m_recovering = true;
         m_health -= damage;

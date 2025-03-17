@@ -180,7 +180,7 @@ public class FillStrategy
 
         room.CreateElevationOrLowland(-m_finalRoomHeight, m_finalRoomWidth, start + m_minStraightSection * Vector3Int.right);
         room.CreateElevationOrLowland(m_finalRoomHeight, m_minStraightSection, start + new Vector3Int(m_minStraightSection+ m_finalRoomWidth,-m_finalRoomHeight));
-        room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_boss, new Vector3(Random.Range(start.x+m_minStraightSection,start.x+m_minStraightSection+m_finalRoomWidth-m_levelTheme.m_boss.GetRightBorder()), start.y - m_finalRoomHeight), Quaternion.identity).gameObject);
+        room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_boss, new Vector3(Random.Range(start.x+m_minStraightSection+m_playerWidth,start.x+m_minStraightSection+m_finalRoomWidth-m_levelTheme.m_boss.GetRightBorder()), start.y - m_finalRoomHeight), Quaternion.identity).gameObject);
         room.DrawTiles();
         AddLandscape(room, int.MaxValue, true);
         return room;

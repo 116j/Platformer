@@ -123,6 +123,9 @@ public class CeilStrategy : FillStrategy
                 groundStart = ground[i].x;
                 trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
                 trap.SetTrapNum();
+                Coin coin = Object.Instantiate(m_levelTheme.m_coin, new Vector3(ground[i].x + m_levelTheme.m_coin.GetOffset().x, ground[i].y + m_levelTheme.m_coin.GetOffset().y), Quaternion.identity).GetComponent<Coin>();
+                coin.SetCost(Random.Range(10, 100), false);
+                room.AddEnviromentObject(coin.gameObject);
             }
         }
         room.AddTiles(height, Mathf.Clamp(width, 0, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);

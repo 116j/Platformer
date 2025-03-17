@@ -80,4 +80,5 @@ MonoBehaviour:
   m_boss: {fileID: 2348295116349724386, guid: 7b70d0099f3e31f46b4cc527e4158133, type: 3}
   m_jumper: {fileID: 9060158485804682776, guid: cc83d43d2102ed54399f07fb821fdde2, type: 3}
   m_movingPlatform: {fileID: -4439503424924161404, guid: 2fcad43d1d8b0dd459c256730ae8231f, type: 3}
+  m_coin: {fileID: 5758429308197393901, guid: 0e325bdf359636244a634ab84ce0c8f4, type: 3}
   m_themeNum: 1

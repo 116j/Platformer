@@ -34,7 +34,7 @@ public class LevelBuilder : MonoBehaviour
     List<Room> m_rooms;
     List<FillStrategy> m_usedStrategies = new List<FillStrategy>();
     List<FillStrategy> m_strategies;
-    float[] m_strategyWeights = { 0.3f, 0.0f, 0.0f, 0.0f };
+    float[] m_strategyWeights = { 0.3f, 0.7f, 0.0f, 0.0f };
     Room m_currentRoom;
     bool m_changeTransposer = false;
     bool m_transitionBounds = true;
@@ -75,7 +75,7 @@ public class LevelBuilder : MonoBehaviour
         };
         m_usedStrategies.Add(m_strategies[0]);
         m_currentRoom = m_rooms[0];
-       // SpawnRoom();
+        SpawnRoom();
         SpawnRoom();
 
         m_player.transform.position = m_startPosition + m_player.gameObject.GetComponent<SpawnValues>().GetOffset();

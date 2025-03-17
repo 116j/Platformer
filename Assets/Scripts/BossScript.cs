@@ -58,9 +58,11 @@ public class BossScript : WalkEnemy
                 var zone = m_attackZone.GetComponent<BoxCollider2D>();
                 zone.offset = new Vector2(m_attackZoneOffsetX, zone.offset.y);
             }
-            else if (m_closeAttack && m_attackZone.TargetDetected&&m_currentDir*(m_attackZone.TargetLocation.x- m_attackZone.GetComponent<BoxCollider2D>().bounds.max.x) <=0)
+            else if (m_closeAttack && m_attackZone.TargetDetected&&
+                (m_currentDir==1?
+                (m_attackZone.TargetLocation.x- m_attackZone.GetComponent<BoxCollider2D>().bounds.max.x): 
+                (m_attackZone.GetComponent<BoxCollider2D>().bounds.min.x-m_attackZone.TargetLocation.x)) <= 0.1f)
             {
-                Debug.Log(m_attackZone.GetComponent<BoxCollider2D>().bounds.max.x+" "+ m_attackZone.TargetLocation.x);
                 if (!m_attackScript.EnableAttack)
                 {
                     m_attackScript.EnableAttack = true;
@@ -76,7 +78,7 @@ public class BossScript : WalkEnemy
             }
             else
             {
-                base.FixedUpdate();
+                base.FixedUpdate(); 
             }
         }
     }

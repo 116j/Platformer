@@ -13,14 +13,17 @@ public class Coin : MonoBehaviour
     void Awake()
     {
         m_rb = GetComponent<Rigidbody2D>();
-
-        Destroy(gameObject, 10f);
     }
 
-    public void SetCost(float cost)
+    public void SetCost(float cost, bool destroy = true)
     {
         m_cost = cost;
-        m_rb.AddForce(new Vector2(Random.Range(-2f, 2f), 7f), ForceMode2D.Impulse);
+        if (destroy)
+        {
+            m_rb.AddForce(new Vector2(Random.Range(-2f, 2f), 7f), ForceMode2D.Impulse);
+            Destroy(gameObject, 10f);
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

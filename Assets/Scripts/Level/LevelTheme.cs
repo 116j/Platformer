@@ -21,6 +21,7 @@ public class LevelTheme : ScriptableObject
     public SpawnValues m_boss;
     public Trap m_jumper;
     public SpawnValues m_movingPlatform;
+    public SpawnValues m_coin;
     
     public int m_themeNum;
 }

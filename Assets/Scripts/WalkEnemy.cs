@@ -26,7 +26,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected Animator m_anim;
     protected Rigidbody2D m_rb;
     protected TouchingCheck m_touchings;
-    protected Collider2D m_col;
+    protected BoxCollider2D m_col;
     protected MovingPlatform m_platform;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
@@ -50,7 +50,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         m_anim = GetComponent<Animator>();
         m_rb = GetComponent<Rigidbody2D>();
         m_touchings = GetComponent<TouchingCheck>();
-        m_col = GetComponent<Collider2D>();
+        m_col = GetComponent<BoxCollider2D>();
     }
 
     protected virtual void Update()
@@ -126,7 +126,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         }
         m_attackScript.EnableAttack = false;
         m_waiting = false;
-        m_speed = m_canRun ? m_runSpeed : m_walkSpeed;
+        m_speed = m_canRun && Mathf.Abs(m_detectZone.TargetLocation.x - transform.position.x)>m_col.size.x ? m_runSpeed : m_walkSpeed;
     }
 
     protected void TurnAround()
