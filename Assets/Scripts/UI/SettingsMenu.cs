@@ -1,7 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -11,37 +9,52 @@ public class SettingsMenu : MonoBehaviour
 {
     [Header("Layouts")]
     [SerializeField]
-    Image m_header;
+    TextMeshProUGUI m_header;
     [SerializeField]
-    GameObject m_displayLayout;
-    [SerializeField]
-    GameObject m_audioLayout;
-    [SerializeField]
-    GameObject m_controlsLayout;
+    RectTransform m_layout;
 
     [Header("Audio")]
     [SerializeField]
     AudioMixer m_mixer;
     [SerializeField]
-    Sprite m_audioHeader;
-    [SerializeField]
     Transform m_gameVolumeFill;
+    [SerializeField]
+    Slider m_gameVolumeSlider;
     [SerializeField]
     Transform m_musicVolumeFill;
     [SerializeField]
+    Slider m_musicVolumeSlider;
+    [SerializeField]
     Transform m_sfxVolumeFill;
+    [SerializeField]
+    Slider m_sfxVolumeSlider;
 
     [Header("Display")]
-    [SerializeField]
-    Sprite m_displayHeader;
     [SerializeField]
     TextMeshProUGUI m_resolutionText;
     [SerializeField]
     TextMeshProUGUI m_languageText;
-    [SerializeField]
-    Transform m_brightnessFill;
 
-    KeyValuePair<int, int>[] m_resolutiions = { 
+    [Header("Controls")]
+
+    [Header("Level Builder")]
+    [SerializeField]
+    Transform m_roomsCountFill;
+    [SerializeField]
+    Slider m_roomsCountSlider;
+    [SerializeField]
+    TextMeshProUGUI m_roomsCountText;
+    [SerializeField]
+    TextMeshProUGUI m_baseRoomWeight;
+    [SerializeField]
+    TextMeshProUGUI m_ceilRoomWeight;
+    [SerializeField]
+    TextMeshProUGUI m_gridRoomWeight;
+    [SerializeField]
+    TextMeshProUGUI m_movPlatfRoomWeight;
+
+
+    KeyValuePair<int, int>[] m_resolutiions = {
         new(640,480), new(800,600), new(1280,800),
        new(1280,720), new(1440,900),new(1920,1200),
         new(1920,1080),new(2560,1440)
@@ -55,12 +68,15 @@ public class SettingsMenu : MonoBehaviour
     KeyValuePair<int, int> m_currentResolution;
     bool m_fullScreen = true;
 
+    int m_roomsCount = 50;
+    float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f };
+
     // Start is called before the first frame update
     void Start()
     {
         for (int i = 0; i < m_resolutiions.Length; i++)
         {
-            if(Screen.currentResolution.width== m_resolutiions[i].Key&&
+            if (Screen.currentResolution.width == m_resolutiions[i].Key &&
                 Screen.currentResolution.height == m_resolutiions[i].Value)
             {
                 m_currentResolutionInd = i;
@@ -72,27 +88,13 @@ public class SettingsMenu : MonoBehaviour
 
     public void Display()
     {
-        m_header.sprite = m_displayHeader;
-    }
-
-    public void SetBrightness(float value)
-    {
-        for (int i = 0; i <= (int)value; i++)
-        {
-            m_brightnessFill.GetChild(i).gameObject.SetActive(true);
-        }
-
-        for (int i = (int)value + 1; i < m_brightnessFill.childCount; i++)
-        {
-            m_brightnessFill.GetChild(i).gameObject.SetActive(false);
-        }
-
-        Screen.brightness = value/14f;
+        m_header.text = "DISPLAY";
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 270);
     }
 
     public void SetResolutionUp()
     {
-        if(m_currentResolutionInd<m_resolutiions.Length-1)
+        if (m_currentResolutionInd < m_resolutiions.Length - 1)
         {
             m_currentResolutionInd++;
             m_resolutionText.text = $"{m_resolutiions[m_currentResolutionInd].Key} x {m_resolutiions[m_currentResolutionInd].Value}";
@@ -115,15 +117,15 @@ public class SettingsMenu : MonoBehaviour
 
     public void SetLanguageUp()
     {
-        if (m_currentLanguageInd < m_languages.Length-1)
+        if (m_currentLanguageInd < m_languages.Length - 1)
         {
             m_languageText.text = m_languages[m_currentLanguageInd++].ToString();
         }
     }
-    
+
     public void SetLanguageDown()
     {
-        if(m_currentLanguageInd > 0)
+        if (m_currentLanguageInd > 0)
         {
             m_languageText.text = m_languages[m_currentLanguageInd--].ToString();
         }
@@ -138,17 +140,19 @@ public class SettingsMenu : MonoBehaviour
 
     public void Audio()
     {
-        m_header.sprite = m_audioHeader;
+        m_header.text = "AUDIO";
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 300);
     }
 
     public void ChangeGameVolume(float value)
     {
-        for (int i = 0;i<=(int)value;i++)
+        int num = Mathf.RoundToInt(value / m_gameVolumeSlider.maxValue * m_gameVolumeFill.childCount) - 1;
+        for (int i = 0; i <= num; i++)
         {
             m_gameVolumeFill.GetChild(i).gameObject.SetActive(true);
         }
 
-        for (int i = (int)value+1; i < m_gameVolumeFill.childCount; i++)
+        for (int i = num + 1; i < m_gameVolumeFill.childCount; i++)
         {
             m_gameVolumeFill.GetChild(i).gameObject.SetActive(false);
         }
@@ -157,12 +161,13 @@ public class SettingsMenu : MonoBehaviour
 
     public void ChangeMusicVolume(float value)
     {
-        for (int i = 0; i <= (int)value; i++)
+        int num = Mathf.RoundToInt(value / m_musicVolumeSlider.maxValue * m_musicVolumeFill.childCount) - 1;
+        for (int i = 0; i <= num; i++)
         {
             m_musicVolumeFill.GetChild(i).gameObject.SetActive(true);
         }
 
-        for (int i = (int)value + 1; i < m_musicVolumeFill.childCount; i++)
+        for (int i = num + 1; i < m_musicVolumeFill.childCount; i++)
         {
             m_musicVolumeFill.GetChild(i).gameObject.SetActive(false);
         }
@@ -170,12 +175,13 @@ public class SettingsMenu : MonoBehaviour
     }
     public void ChangeEffectsVolume(float value)
     {
-        for (int i = 0; i <= (int)value; i++)
+        int num = Mathf.RoundToInt(value / m_sfxVolumeSlider.maxValue * m_sfxVolumeFill.childCount) - 1;
+        for (int i = 0; i <= num; i++)
         {
             m_sfxVolumeFill.GetChild(i).gameObject.SetActive(true);
         }
 
-        for (int i = (int)value + 1; i < m_sfxVolumeFill.childCount; i++)
+        for (int i = num + 1; i < m_sfxVolumeFill.childCount; i++)
         {
             m_sfxVolumeFill.GetChild(i).gameObject.SetActive(false);
         }
@@ -189,6 +195,66 @@ public class SettingsMenu : MonoBehaviour
 
     public void Controls()
     {
+        m_header.text = "CONTROLS";
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 320);
 
+    }
+
+    public void LvlBuilder()
+    {
+        m_header.text = "LEVEL BUILDER";
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 410);
+    }
+
+    public void ChangeRoomsCount(float value)
+    {
+        m_roomsCount = (int)value;
+        m_roomsCountText.text = value.ToString();
+
+        int num = Mathf.RoundToInt(value / m_roomsCountSlider.maxValue * m_roomsCountFill.childCount) - 1;
+        for (int i = 0; i <= num; i++)
+        {
+            m_roomsCountFill.GetChild(i).gameObject.SetActive(true);
+        }
+
+        for (int i = num + 1; i < m_roomsCountFill.childCount; i++)
+        {
+            m_roomsCountFill.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    public void ChangeBaseRoomWeight(float value)
+    {
+        m_baseRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
+        m_strategyWeights[0] = value;
+    }
+
+    public void ChangeCeilRoomWeight(float value)
+    {
+        m_ceilRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
+        m_strategyWeights[1] = value;
+    }
+
+    public void ChangeGridRoomWeight(float value)
+    {
+        m_gridRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
+        m_strategyWeights[2] = value;
+    }
+
+    public void ChangeMovingPlatformRoomWeight(float value)
+    {
+        m_movPlatfRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
+        m_strategyWeights[3] = value;
+    }
+
+
+    public void SaveLevelBuilder()
+    {
+        for (int i = 0; i < m_strategyWeights.Length; i++)
+        {
+            LevelBuilder.Instance.ChangeStrategyWeight(i, m_strategyWeights[i]);
+        }
+
+        LevelBuilder.Instance.ChangeMaxRoomsCount(m_roomsCount);
     }
 }

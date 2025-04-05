@@ -198,6 +198,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 140c9b99a6090454cbc4cdfcaeef17ca, type: 2}
+    - target: {fileID: 1818020100778903183, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Volume
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 3615637257957227490, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Mass
       value: 100
@@ -340,7 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.x
-      value: 3.57
+      value: -3.585
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.y
@@ -352,7 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.x
-      value: -3.57
+      value: 3.6
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y
@@ -360,11 +364,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_health
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_maxHealth
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_receiver.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -509,7 +513,25 @@ MonoBehaviour:
   m_groundZone: {fileID: 1577654083624944376}
   m_spawnChance:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

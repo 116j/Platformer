@@ -9,7 +9,7 @@ public class AttackListener : MonoBehaviour
     {
         if (collision.TryGetComponent<Damagable>(out var damagable))
         {
-            Debug.Log(gameObject.name);
+            //Debug.Log(gameObject.name);
             if (!damagable.Invinsible || damagable.Invinsible && (Vector2.Dot(collision.transform.right, transform.right) == 1))
             {
                 damagable.ApplyDamage(m_damage);

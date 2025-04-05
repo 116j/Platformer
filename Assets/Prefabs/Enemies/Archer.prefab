@@ -138,6 +138,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: d9bee443eef666442886a1270d031e50, type: 2}
+    - target: {fileID: 1818020100778903183, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Volume
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 2306069385823091734, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_jumpSound
       value: 
@@ -458,7 +462,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 100
+      time: 1
       value: 1
       inSlope: 0
       outSlope: 0

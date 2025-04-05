@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CeilStrategy : FillStrategy
@@ -22,11 +20,11 @@ public class CeilStrategy : FillStrategy
     /// <returns></returns>
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
-        Vector3Int start = prevRoom.GetTransition().GetEndPosition();
+        Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
         //width of start straight section
         int startWidth = Random.Range(m_minStraightSection, end.x - start.x);
-        Room room = new Room(end, startWidth, prevRoom.GetTransition());
+        Room room = new Room(end, startWidth, prevRoom.GetNextTransition());
         // no slopes
         m_slopeChance = 1f;
         CreateElevations(room, start + startWidth * Vector3Int.right, false);
@@ -34,6 +32,7 @@ public class CeilStrategy : FillStrategy
         MakeCeil(room);
         return room;
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -58,7 +57,7 @@ public class CeilStrategy : FillStrategy
         // if new room is lower than previous - set ceil height higher so palayer can't jump on it
         if (room.GetTransitionHeight() < 0)
         {
-            height = Mathf.Clamp(room.GetTransition().GetTransitionRightHeight() + m_minStraightSection, height, int.MaxValue);
+            height = Mathf.Clamp(room.GetNextTransition().GetTransitionRightHeight() + m_minStraightSection, height, int.MaxValue);
         }
         // ceil polygon
         room.MakePolygon(0, start, false);
@@ -146,8 +145,8 @@ public class CeilStrategy : FillStrategy
     List<Trap> AddCeilTraps(Trap trap, int width, Vector3Int start)
     {
         List<Trap> traps = new List<Trap>();
-        float offset = Random.Range(1.5f*m_playerWidth, 2 * m_playerWidth);
-        float leftBorder = start.x - trap.GetLeftBorder()+offset;
+        float offset = Random.Range(1.5f * m_playerWidth, 2 * m_playerWidth);
+        float leftBorder = start.x - trap.GetLeftBorder() + offset;
         float rightBorder = start.x + width - trap.GetRightBorder();
 
         for (float x = leftBorder; x <= rightBorder;)

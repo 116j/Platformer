@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DefendingEnemy : WalkEnemy
@@ -27,7 +25,7 @@ public class DefendingEnemy : WalkEnemy
         if (m_protecting)
         {
             m_protectCooldown += Time.deltaTime;
-            if (m_protectCooldown >= m_protectCooldownTime||!m_playerAttackZone.TargetDetected)
+            if (m_protectCooldown >= m_protectCooldownTime || !m_playerAttackZone.TargetDetected)
             {
                 m_anim.SetBool(m_HashProtect, false);
                 m_protectCooldown = 0;
@@ -41,7 +39,7 @@ public class DefendingEnemy : WalkEnemy
 
     protected override void FixedUpdate()
     {
-        if(!m_protecting)
+        if (!m_protecting)
         {
             base.FixedUpdate();
         }

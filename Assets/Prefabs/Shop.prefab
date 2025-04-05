@@ -133,8 +133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnOffset: {x: -2.4, y: 2.5, z: 0}
-  m_metric: {x: -2.4, y: 2.65, z: 3.05}
+  m_spawnOffset: {x: 2.41, y: 2.5, z: 0}
+  m_metric: {x: -2.4, y: 2.65, z: 3.1}
   m_setOffset: 1
 --- !u!61 &5908530509698906269
 BoxCollider2D:

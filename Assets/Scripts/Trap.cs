@@ -59,7 +59,7 @@ public class Trap : MonoBehaviour, IMetrics
         List<float> chances = new List<float>();
         foreach (var spawnChance in m_spawnChances)
         {
-            chances.Add(spawnChance.Evaluate(LevelBuilder.Instance.RoomsCount));
+            chances.Add(spawnChance.Evaluate(LevelBuilder.Instance.LevelProgress()));
         }
 
         float value = Random.Range(0, chances.Sum());

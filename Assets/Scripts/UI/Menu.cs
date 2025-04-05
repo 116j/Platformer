@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -41,7 +38,7 @@ public class Menu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void Pause(bool show)
@@ -72,7 +69,7 @@ public class Menu : MonoBehaviour
 
     public void Settings()
     {
-        m_pauseLayoutAnim.SetBool("OpenSettings",true);
+        m_pauseLayoutAnim.SetBool("OpenSettings", true);
     }
 
     public void Options()
@@ -80,12 +77,7 @@ public class Menu : MonoBehaviour
         m_pauseLayoutAnim.SetBool("OpenOptions", true);
     }
 
-    public void Audio()
-    {
-        m_pauseLayoutAnim.SetTrigger("OpenSettingsLayout");
-    }
-
-    public void Display()
+    public void SettingsLayout()
     {
         m_pauseLayoutAnim.SetTrigger("OpenSettingsLayout");
     }

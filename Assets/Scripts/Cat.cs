@@ -133,6 +133,13 @@ public class Cat : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+        m_anim.SetBool(m_HashSleep, false);
+        CanPet = true;
+        m_petting = false;
+    }
+
     private void OnDestroy()
     {
         if (!m_anim.GetBool(m_HashSleep))

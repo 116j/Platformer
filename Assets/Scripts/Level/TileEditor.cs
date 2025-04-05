@@ -48,7 +48,7 @@ public class TileEditor : MonoBehaviour
 
     private void Start()
     {
- 
+
     }
 
     public void SetTheme(int num)
@@ -122,7 +122,7 @@ public class TileEditor : MonoBehaviour
         for (int i = 0; i < m_tilePositionsUsage.Count; i++)
         {
             StartCoroutine(nameof(ChangeTile), m_tilePositionsUsage.ElementAt(i).Key);
-           // ChangeTile(m_tilePositionsUsage.ElementAt(i).Key);
+            // ChangeTile(m_tilePositionsUsage.ElementAt(i).Key);
         }
         m_tilePositionsUsage.Clear();
     }
@@ -163,7 +163,7 @@ public class TileEditor : MonoBehaviour
                         m_walls.SetTile(position, null);
                         m_notCollidable.SetTile(position, null);
                         //return;
-                         throw new System.ArgumentNullException();
+                        throw new System.ArgumentNullException();
                     }
                     TileChanger newChanger = m_tileToChanger[tile];
 
@@ -222,9 +222,9 @@ public class TileEditor : MonoBehaviour
                 m_tilePositionsUsage[position] = true;
                 SetTile(m_tileToChanger[tile], tile, position);
             }
-            catch(System.ArgumentNullException e)
+            catch (System.ArgumentNullException)
             {
-                Debug.Log("Null "+position);
+                Debug.Log("Null " + position);
             }
         }
         yield return null;
@@ -252,7 +252,7 @@ public class TileEditor : MonoBehaviour
                 return m_tileToChanger[tile].changeTiles[surIndex].MatchesTiles(GetTilesAnalog(surAnalog)).Count == 0 ||
                 GetTilesAnalog(surAnalog).All(a => a != null && m_tileToChanger[a].changeTiles[surIndex + (int)Mathf.Pow(-1, surIndex % 2)] != null && !m_tileToChanger[a].changeTiles[surIndex + (int)Mathf.Pow(-1, surIndex % 2)].ContainsTile(tile));
         }
-        else 
+        else
         {
             if (m_tilePositionsUsage[surPos])
                 return m_tileToChanger[surTile].changeTiles[surIndex + (int)Mathf.Pow(-1, surIndex % 2)] != null && !m_tileToChanger[surTile].changeTiles[surIndex + (int)Mathf.Pow(-1, surIndex % 2)].ContainsTile(tile);
@@ -355,7 +355,7 @@ public class TileEditor : MonoBehaviour
              || result.tilemapTag == "ground";
 
             return isSlopeConditionMet ? result : result.placeAnalog;
-            }
+        }
 
         return result;
     }

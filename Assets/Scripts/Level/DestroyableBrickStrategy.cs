@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-
 public class DestroyableBrickStrategy : FillStrategy
 {
     protected new int m_maxRoomWidth = 50;

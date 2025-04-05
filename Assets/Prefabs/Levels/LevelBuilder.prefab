@@ -31,7 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &991568554170551248
 MonoBehaviour:
@@ -54,10 +54,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f55b47d1bc882db4eb5bf653ef26e1cb, type: 3}
   - {fileID: 8300000, guid: 802491224e4bac74584d636a379879f6, type: 3}
   - {fileID: 8300000, guid: da558d7387ee28d4c846363adb3eb76d, type: 3}
-  m_cat: {fileID: 4055731176202934183, guid: c656281db8fc7bf469eafee871408fb9, type: 3}
-  m_shop: {fileID: 4266908159261714169, guid: 56d36ef6e72fc544faeb556e127870e1, type: 3}
-  m_movingPlatform: {fileID: 784693155023262349, guid: 2fcad43d1d8b0dd459c256730ae8231f, type: 3}
-  m_jumper: {fileID: 9060158485804682776, guid: cc83d43d2102ed54399f07fb821fdde2, type: 3}
+  - {fileID: 8300000, guid: ba7e389568d8f4647846ed68ba1c12da, type: 3}
+  - {fileID: 8300000, guid: e3ed6b93fdf9ed34ab26937416c56d47, type: 3}
+  - {fileID: 8300000, guid: 9970cc45a79cab045be62faae8474e6d, type: 3}
   m_destroyableTile: {fileID: 11400000, guid: a369bd4836c75cc4da34127c44e5356e, type: 2}
   m_enemiesCountPerRoom:
     serializedVersion: 2
@@ -132,6 +131,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_startPosition: {x: 262, y: 25, z: 0}
+  m_maxRoomsCount: 99
 --- !u!82 &3544023340118429585
 AudioSource:
   m_ObjectHideFlags: 0
@@ -144,15 +144,15 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 5836907705764678863, guid: fec4151c0eb2b5444af142439c06bfcf, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.41
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 0
+  Priority: 21
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 100
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0

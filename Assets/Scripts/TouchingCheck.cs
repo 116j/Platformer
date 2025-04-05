@@ -8,6 +8,8 @@ public class TouchingCheck : MonoBehaviour
     ContactFilter2D m_wallCastFilter;
     [SerializeField]
     ContactFilter2D m_slopeCastFilter;
+    [SerializeField]
+    ContactFilter2D m_stuckCastFilter;
 
     Collider2D m_col;
 
@@ -17,6 +19,7 @@ public class TouchingCheck : MonoBehaviour
     readonly float m_groundHitDist = 0.05f;
     //distance to detect slope
     readonly float m_slopeHitDist = 0.2f;
+    readonly float m_stuckHitDist = 0.6f;
 
     RaycastHit2D[] m_colHits = new RaycastHit2D[5];
 
@@ -24,6 +27,11 @@ public class TouchingCheck : MonoBehaviour
     void Start()
     {
         m_col = GetComponent<Collider2D>();
+    }
+
+    public bool IsStuck()
+    {
+        return m_col.Cast(-transform.up, m_stuckCastFilter, m_colHits, m_stuckHitDist) > 0;
     }
 
     public bool IsGrounded()

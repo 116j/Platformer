@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
@@ -10,7 +6,7 @@ public class Shop : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            FloatingText.Instance.ShowShopText(true,transform.position);
+            FloatingText.Instance.ShowShopText(true, transform.position);
             collision.gameObject.GetComponent<PlayerInput>().EnableShop();
         }
     }
@@ -20,7 +16,7 @@ public class Shop : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            FloatingText.Instance.ShowShopText(false,Vector3.zero);
+            FloatingText.Instance.ShowShopText(false, Vector3.zero);
             collision.gameObject.GetComponent<PlayerInput>().EnableShop();
         }
     }

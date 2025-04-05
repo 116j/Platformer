@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BossScript : WalkEnemy
 {
@@ -28,10 +26,10 @@ public class BossScript : WalkEnemy
             if (m_roarRecovering)
             {
                 m_roarTimer += Time.fixedDeltaTime;
-                if(m_roarTimer >= m_roarRecoverTime)
+                if (m_roarTimer >= m_roarRecoverTime)
                 {
                     m_roarTimer = 0;
-                    m_roarRecovering=false;
+                    m_roarRecovering = false;
                 }
             }
 
@@ -45,23 +43,23 @@ public class BossScript : WalkEnemy
                 }
             }
 
-            if (m_roarZone.TargetDetected&&!m_roarRecovering)
+            if (m_roarZone.TargetDetected && !m_roarRecovering)
             {
                 m_attackScript.EnableAttack = false;
                 m_anim.SetTrigger(m_HashRoar);
                 m_roarRecovering = true;
             }
-            else if (m_canCloseAttack&&!m_closeAttack&&Random.value <= m_attackChance)
+            else if (m_canCloseAttack && !m_closeAttack && Random.value <= m_attackChance)
             {
                 m_closeAttack = true;
                 m_col.isTrigger = true;
                 var zone = m_attackZone.GetComponent<BoxCollider2D>();
                 zone.offset = new Vector2(m_attackZoneOffsetX, zone.offset.y);
             }
-            else if (m_closeAttack && m_attackZone.TargetDetected&&
-                (m_currentDir==1?
-                (m_attackZone.TargetLocation.x- m_attackZone.GetComponent<BoxCollider2D>().bounds.max.x): 
-                (m_attackZone.GetComponent<BoxCollider2D>().bounds.min.x-m_attackZone.TargetLocation.x)) <= 0.1f)
+            else if (m_closeAttack && m_attackZone.TargetDetected &&
+                (m_currentDir == 1 ?
+                (m_attackZone.TargetLocation.x - m_attackZone.GetComponent<BoxCollider2D>().bounds.max.x) :
+                (m_attackZone.GetComponent<BoxCollider2D>().bounds.min.x - m_attackZone.TargetLocation.x)) <= 0.1f)
             {
                 if (!m_attackScript.EnableAttack)
                 {
@@ -78,9 +76,19 @@ public class BossScript : WalkEnemy
             }
             else
             {
-                base.FixedUpdate(); 
+                base.FixedUpdate();
             }
         }
+    }
+
+    public override void ReceiveDamage(int damage)
+    {
+        if (damage == 0)
+        {
+            GameObject.FindWithTag("Player").GetComponent<PlayerController>().Win();
+            UIController.Instance.Win();
+        }
+        base.ReceiveDamage(damage);
     }
 
     public void ResetColliders()

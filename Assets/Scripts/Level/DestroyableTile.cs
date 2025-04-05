@@ -56,7 +56,7 @@ public class DestroyableTile : MonoBehaviour
             m_tilePos = tilePos;
             m_timer = 0f;
         }
-        else if(tilePos == m_tilePos && m_tilemap.GetTile(m_tilePos) != null && m_timer >= m_destroyTime)
+        else if (tilePos == m_tilePos && m_tilemap.GetTile(m_tilePos) != null && m_timer >= m_destroyTime)
         {
             m_tile = m_tilemap.GetTile(m_tilePos);
             m_tilemap.SetTile(m_tilePos, null);

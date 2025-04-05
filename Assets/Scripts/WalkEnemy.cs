@@ -28,6 +28,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected TouchingCheck m_touchings;
     protected BoxCollider2D m_col;
     protected MovingPlatform m_platform;
+    Damagable m_damageable;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -51,6 +52,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         m_rb = GetComponent<Rigidbody2D>();
         m_touchings = GetComponent<TouchingCheck>();
         m_col = GetComponent<BoxCollider2D>();
+        m_damageable = GetComponent<Damagable>();
     }
 
     protected virtual void Update()
@@ -157,7 +159,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
                 }
             }
         }
-        else
+        else if(damage<0)
         {
             if ((m_detectZone.TargetLocation.x - transform.position.x) * m_currentDir < 0f)
             {
@@ -174,6 +176,14 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
 
     public float GetSpawnChance()
     {
-        return m_spawnChance.Evaluate(LevelBuilder.Instance.RoomsCount);
+        return m_spawnChance.Evaluate(LevelBuilder.Instance.LevelProgress());
+    }
+
+    public void Reset()
+    {
+        m_col.isTrigger = false;
+        m_dead = false;
+        m_damageable.Reborn();
+        m_platform?.Restart(true);
     }
 }

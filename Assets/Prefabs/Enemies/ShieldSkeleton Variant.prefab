@@ -107,6 +107,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 22100000, guid: 7b4f8256eb698bf49974b633c41f71f3, type: 2}
+    - target: {fileID: 1818020100778903183, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_Volume
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3025617454799433832, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.456
@@ -356,7 +360,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 100
+      time: 1
       value: 1
       inSlope: 0
       outSlope: 0

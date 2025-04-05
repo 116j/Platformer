@@ -34,13 +34,14 @@ public class LevelBuilder : MonoBehaviour
     List<Room> m_rooms;
     List<FillStrategy> m_usedStrategies = new List<FillStrategy>();
     List<FillStrategy> m_strategies;
-    float[] m_strategyWeights = { 0.3f, 0.7f, 0.0f, 0.0f };
+    float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f };
     Room m_currentRoom;
     bool m_changeTransposer = false;
     bool m_transitionBounds = true;
     bool m_roomBounds = true;
     //Count of spawned rooms
-    public int RoomsCount { get; private set; } = 1;
+    int m_roomsCount = 1;
+    int m_roomIndex = 0;
 
     AudioSource m_audio;
     private void Awake()
@@ -79,6 +80,7 @@ public class LevelBuilder : MonoBehaviour
         SpawnRoom();
 
         m_player.transform.position = m_startPosition + m_player.gameObject.GetComponent<SpawnValues>().GetOffset();
+        m_player.SetRebornCheckpoint(m_rooms[0].GetStartPosition());
         m_audio = GetComponent<AudioSource>();
         m_audio.clip = m_backgroundMusic[Random.Range(0, m_backgroundMusic.Length)];
         m_audio.Play();
@@ -87,23 +89,43 @@ public class LevelBuilder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (m_currentRoom != null && m_player.transform.position.x > m_currentRoom.GetEndPosition().x)
+        if (m_currentRoom != null && m_player.transform.position.x < m_currentRoom.GetPreviousTransition().GetStartPosition().x)
         {
-            if (m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is GridStrategy || m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is MovingPlatformStrategy)
+            if (m_roomIndex > 0)
+            {
+                if (m_usedStrategies[m_roomIndex] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
+                {
+                    m_roomBounds = true;
+                    m_transitionBounds = false;
+                }
+
+                m_player.SetLevelCheckpoint(m_currentRoom.GetStartPosition());
+                m_currentRoom = m_rooms[--m_roomIndex];
+
+                if (m_usedStrategies[m_roomIndex] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
+                {
+                    m_roomBounds = true;
+                    m_transitionBounds = false;
+                }
+            }
+        }
+        else if (m_currentRoom != null && m_player.transform.position.x > m_currentRoom.GetEndPosition().x)
+        { 
+            if (m_usedStrategies[m_roomIndex] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
             {
                 m_roomBounds = true;
                 m_transitionBounds = false;
             }
 
             m_player.SetLevelCheckpoint(m_currentRoom.GetEndPosition());
-            m_currentRoom = m_rooms[m_rooms.IndexOf(m_currentRoom) + 1];
-            if (RoomsCount <= m_maxRoomsCount)
+            m_currentRoom = m_rooms[++m_roomIndex];
+            if (m_roomsCount <= m_maxRoomsCount)
             {
                 SpawnRoom();
             }
             ClearRoom();
 
-            if (m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is GridStrategy || m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is MovingPlatformStrategy)
+            if (m_usedStrategies[m_roomIndex] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
             {
                 m_roomBounds = true;
                 m_transitionBounds = false;
@@ -119,35 +141,32 @@ public class LevelBuilder : MonoBehaviour
             }
             m_transitionBounds = false;
             m_roomBounds = true;
-            m_currentRoom.SetTransitionCameraBouns();
+            m_currentRoom.SetTransitionCameraBounds();
+            m_player.SetCameraBoundsHeight(Mathf.Abs(m_currentRoom.GetTransitionHeight()));
         }
         //resize camera bounds and camera offset
         else if (m_currentRoom != null && m_player.transform.position.x >= m_currentRoom.GetStartPosition().x && m_roomBounds)
         {
-            if ((m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is GridStrategy || m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is MovingPlatformStrategy)
-                && m_currentRoom.GetEndPosition().y < m_currentRoom.GetStartPosition().y)
+            if (m_roomsCount >= m_maxRoomsCount && m_roomIndex == m_rooms.Count - 1)
             {
-                if (!m_changeTransposer)
-                {
-                    m_changeTransposer = !m_changeTransposer;
-                    m_player.ChangeTransposerHeight(m_changeTransposer);
-                }
-                m_currentRoom.SetCameraBounds();
+                m_player.SetRebornCheckpoint(m_currentRoom.GetStartPosition());
             }
-            else
+
+            if ((m_usedStrategies[m_rooms.IndexOf(m_currentRoom)] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
+                && m_currentRoom.GetEndPosition().y < m_currentRoom.GetStartPosition().y && !m_changeTransposer || m_changeTransposer)
             {
-                if (m_changeTransposer)
-                {
-                    m_changeTransposer = !m_changeTransposer;
-                    m_player.ChangeTransposerHeight(m_changeTransposer);
-                }
-                CameraBounds.Instance.SetHeight(m_player.transform.position, 1, false);
+                m_changeTransposer = !m_changeTransposer;
+                m_player.ChangeTransposerHeight(m_changeTransposer);
             }
+
             m_transitionBounds = true;
             m_roomBounds = false;
-            //  m_currentRoom.SetCameraBounds();
+            m_currentRoom.SetCameraBounds();
+            m_player.SetCameraBoundsHeight(m_currentRoom.GetRoomCameraHeight());
         }
     }
+
+    public float LevelProgress() => m_roomsCount / m_maxRoomsCount;
 
     public void CatPetted(int cats)
     {
@@ -163,8 +182,8 @@ public class LevelBuilder : MonoBehaviour
     /// </summary>
     void SpawnRoom()
     {
-        RoomsCount++;
-        if (RoomsCount > m_maxRoomsCount)
+        m_roomsCount++;
+        if (m_roomsCount > m_maxRoomsCount)
         {
             m_usedStrategies.Add(m_strategies[0]);
             m_rooms.Add(m_strategies[0].FillFinalRoom(m_rooms.Last()));
@@ -175,11 +194,11 @@ public class LevelBuilder : MonoBehaviour
                 if ((m_usedStrategies.Last() is GridStrategy || m_usedStrategies.Last() is MovingPlatformStrategy) &&
                     (s is GridStrategy || s is MovingPlatformStrategy))
                     continue;
-                m_usedStrategies.Add(s);
                 Room r = s.FillRoom(m_rooms.Last(), m_strategies[Random.Range(0, 4)]);
                 if (r == null)
                     continue;
-                ; m_rooms.Add(r);
+                m_usedStrategies.Add(s);
+                m_rooms.Add(r);
                 break;
             }
     }
@@ -203,15 +222,47 @@ public class LevelBuilder : MonoBehaviour
     /// </summary>
     void ClearRoom()
     {
-        if (m_rooms.IndexOf(m_currentRoom) >= 3)
+        if (m_roomIndex >= 3)
         {
             m_rooms[0].Clear();
             m_rooms.RemoveAt(0);
             m_usedStrategies.RemoveAt(0);
-            if (m_usedStrategies[0] is GridStrategy || m_usedStrategies[0] is MovingPlatformStrategy)
-                m_player.SetRebornCheckpoint(m_rooms[1].GetStartPosition());
-            else
-                m_player.SetRebornCheckpoint(m_rooms[0].GetStartPosition());
+            int i = m_usedStrategies[0] is GridStrategy || m_usedStrategies[0] is MovingPlatformStrategy ? 1 : 0;
+            m_roomIndex--;
+
+            BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
+            bounds.gameObject.transform.position = m_rooms[i].GetStartPosition();
+            bounds.size = new Vector2(0.5f, 12);
+            bounds.offset = new Vector2(-0.25f, 6);
+            m_rooms[i].AddEnviromentObject(bounds.gameObject);
+            m_player.SetRebornCheckpoint(m_rooms[i].GetStartPosition());
+        }
+    }
+
+    public void Restart()
+    {
+        m_player.Restart();
+        foreach (var r in m_rooms)
+        {
+            r.Restart();
+        }
+        m_roomIndex = m_usedStrategies[0] is GridStrategy || m_usedStrategies[0] is MovingPlatformStrategy ? 1 : 0;
+        m_currentRoom = m_rooms[m_roomIndex];
+        m_transitionBounds = false;
+        m_roomBounds = true;
+    }
+
+    public void ChangeStrategyWeight(int strategy, float weight)
+    {
+        m_strategyWeights[strategy] = weight;
+    }
+
+    public void ChangeMaxRoomsCount(int count)
+    {
+        m_maxRoomsCount = count;
+        if (m_roomsCount >= m_maxRoomsCount)
+        {
+            SpawnRoom();
         }
     }
 }

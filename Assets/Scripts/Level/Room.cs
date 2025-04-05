@@ -18,6 +18,7 @@ public class Room
     int m_lastElevationPoint;
     // lowest y point of the level
     int m_lowestPoint;
+    int m_cameraBoundsStart;
     int m_roomHeight = 0;
 
     int m_transitionLeftPoint;
@@ -38,6 +39,7 @@ public class Room
         m_lastWidthPoint = m_startPosition - Vector3Int.up * m_minHeight;
         m_roomHeight = m_minHeight;
         m_lastElevationPoint = m_startPosition.x;
+        m_cameraBoundsStart = m_startPosition.y - m_roomHeight;
 
         MakePolygon(startwWidth, m_startPosition);
         // adds tiles so the end of the level can't be seen if transition is increasing
@@ -59,16 +61,19 @@ public class Room
         m_roomHeight = Mathf.Abs(m_endPosition.y - m_startPosition.y) + m_minHeight;
         m_transitionLeftPoint = m_transitionRightPoint = Mathf.Abs(m_startPosition.y - m_endPosition.y);
         m_lowestPoint = (m_endPosition.y - m_startPosition.y > 0 ? end.y : start.y) - m_roomHeight;
+        m_cameraBoundsStart = (m_endPosition.y - m_startPosition.y > 0 ? end.y : start.y) - m_roomHeight;
         m_lastWidthPoint = start - Vector3Int.up * m_minHeight;
     }
 
     public Vector3Int GetEndPosition() => m_endPosition;
 
     public Vector3Int GetStartPosition() => m_startPosition;
-    
+
     public void SetEndPosition(Vector3Int end) { m_endPosition = end; }
 
-    public Room GetTransition() => m_nextTransition;
+    public Room GetNextTransition() => m_nextTransition;
+
+    public Room GetPreviousTransition() => m_prevTransition;
 
     public List<Vector3Int> GetGround() => m_polygons.Count == 1 ? m_polygons[0].Ground() : m_polygons.SelectMany(p => p.Ground()).ToList();
 
@@ -80,12 +85,14 @@ public class Room
 
     public int GetRoomHighestPoint() => m_lowestPoint + m_roomHeight;
 
+    public int GetRoomCameraHeight() => m_roomHeight - m_cameraBoundsStart + m_lowestPoint;
+
     public void SetCameraBounds()
     {
-        CameraBounds.Instance.SetHeight(new Vector3(m_startPosition.x, GetRoomHighestPoint()), m_roomHeight);
+        CameraBounds.Instance.SetHeight(new Vector3(m_startPosition.x, GetRoomHighestPoint()), GetRoomCameraHeight());
     }
 
-    public void SetTransitionCameraBouns()
+    public void SetTransitionCameraBounds()
     {
         m_prevTransition.SetCameraBounds();
     }
@@ -102,6 +109,31 @@ public class Room
         foreach (var obj in m_enviroment)
         {
             Object.Destroy(obj);
+        }
+    }
+
+    public void Restart()
+    {
+        WalkEnemy enemy;
+        MovingPlatform platform;
+        Cat cat;
+        foreach (var obj in m_enviroment)
+        {
+            if (obj != null)
+            {
+                if (obj.TryGetComponent(out enemy))
+                {
+                    enemy.Reset();
+                }
+                if (obj.TryGetComponent(out platform))
+                {
+                    platform.Restart();
+                }
+                if (obj.TryGetComponent(out cat))
+                {
+                    cat.Reset();
+                }
+            }
         }
     }
     /// <summary>
@@ -148,6 +180,11 @@ public class Room
             {
                 m_roomHeight += m_lowestPoint - startPos.y - height + m_minHeight;
                 m_lowestPoint = startPos.y + height - m_minHeight;
+            }
+
+            if (m_cameraBoundsStart > startPos.y + height - m_minHeight)
+            {
+                m_cameraBoundsStart = startPos.y + height - m_minHeight;
             }
             // add lowland tiles
             m_polygons[0].AddTiles(m_minHeight, width, new Vector3Int(startPos.x, startPos.y + height));
@@ -298,7 +335,7 @@ public class Room
         m_enviroment.Add(obj);
     }
     /// <summary>
-    /// Adds transition between this and next levwls and adds tiles if transition is decreasing so the end of the level can't be seen
+    /// Adds transition between this and next levels and adds tiles if transition is decreasing so the end of the level can't be seen
     /// </summary>
     /// <param name="transition"></param>
     public void AddTransition(Room transition, bool addExtraTiles = true)

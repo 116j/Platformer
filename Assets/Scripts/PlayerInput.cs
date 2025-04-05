@@ -71,6 +71,7 @@ public class PlayerInput : MonoBehaviour
     public bool HeavyAttack => !m_inputLocked && m_heavyAttack;
 
     bool m_inputLocked = false;
+    bool m_restart = false;
     bool m_shop = false;
     bool m_pause = false;
 
@@ -82,6 +83,11 @@ public class PlayerInput : MonoBehaviour
     public void EnableShop()
     {
         m_shop = !m_shop;
+    }
+
+    public void EnableRestart()
+    {
+        m_restart = !m_restart;
     }
 
     public void OnPause()
@@ -138,6 +144,16 @@ public class PlayerInput : MonoBehaviour
         {
             LockInput();
             UIController.Instance.OpenShop();
+        }
+    }
+
+    void OnRestart()
+    {
+        if (m_restart)
+        {
+            LevelBuilder.Instance.Restart();
+            UIController.Instance.Die(false);
+            m_restart = false;
         }
     }
 }

@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Polygon
 {
@@ -46,7 +44,7 @@ public class Polygon
                 {
                     m_tilePositions.Add(pos);
                 }
-                if (ground&& m_start.y < pos.y&& m_start.x== pos.x)
+                if (ground && m_start.y < pos.y && m_start.x == pos.x)
                 {
                     Debug.Log(startPosition);
                 }
@@ -78,7 +76,7 @@ public class Polygon
         }
     }
 
-    public List<Vector3Int> Ground()=>m_ground;
+    public List<Vector3Int> Ground() => m_ground;
 
     public bool ContainsTile(Vector3Int tilePos)
     {

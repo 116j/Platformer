@@ -1,7 +1,4 @@
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.InputSystem.Utilities;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class MovingPlatformStrategy : FillStrategy
 {
@@ -28,11 +25,11 @@ public class MovingPlatformStrategy : FillStrategy
 
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
-        prevRoom.GetTransition().Clear();
+        prevRoom.GetNextTransition().Clear();
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
         prevRoom.AddTransition(transition);
 
-        Vector3Int start = prevRoom.GetTransition().GetEndPosition();
+        Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         int width = Random.Range(m_minRoomSize, m_maxRoomSize);
         int height = Random.Range(m_minRoomSize, m_maxRoomSize);
         if (Random.value > 0.5)
@@ -49,12 +46,12 @@ public class MovingPlatformStrategy : FillStrategy
         while (lastPoint.x < end.x - m_levelTheme.m_movingPlatform.GetWidth())
         {
             float value = Random.value;
-            float speed = m_speed.Evaluate(LevelBuilder.Instance.RoomsCount);
+            float speed = m_speed.Evaluate(LevelBuilder.Instance.LevelProgress());
             Vector3 first = lastPoint;
             MovingPlatform platform;
             if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist &&
-                ( value <= 0.65f&&Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x)||value>=0.75f)
-                || Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist &&Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_minHorizontalDist)
+                (value <= 0.65f && Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) || value >= 0.75f)
+                || Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_minHorizontalDist)
             {
                 Vector3 second;
                 if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_minHorizontalDist)
@@ -77,18 +74,18 @@ public class MovingPlatformStrategy : FillStrategy
                 {
                     if (prev != 0)
                     {
-                        int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (m_minWidth/speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth,0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y)) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
+                        int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (m_minWidth / speed + movingPlatform.GetWaitTime()));
+                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y)) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
                         {
-                             n = Random.Range(1,minN+1);
-                            second = first + Vector3.up *speed*(height<0?-1:1)* (prev-(n-1)* movingPlatform.GetWaitTime())/n;
+                            n = Random.Range(1, minN + 1);
+                            second = first + Vector3.up * speed * (height < 0 ? -1 : 1) * (prev - (n - 1) * movingPlatform.GetWaitTime()) / n;
                         }
                         else
                         {
-                            n = Random.Range(1,maxN+1);
-                            second = first + Vector3.up * speed * (height < 0 ? -1 : 1) * (n*prev + (n - 1) * movingPlatform.GetWaitTime());
+                            n = Random.Range(1, maxN + 1);
+                            second = first + Vector3.up * speed * (height < 0 ? -1 : 1) * (n * prev + (n - 1) * movingPlatform.GetWaitTime());
                         }
                         if (n % 2 == 0)
                         {
@@ -101,11 +98,11 @@ public class MovingPlatformStrategy : FillStrategy
                             platform = Object.Instantiate(movingPlatform, second, Quaternion.identity);
                             prev = 0;
                             platform.AddCheckpoint(first);
-                        }                       
+                        }
                     }
                     else
                     {
-                        second = first + Vector3.up * (height < 0 ? -1 : 1)* Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y));
+                        second = first + Vector3.up * (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y));
                         platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
                         prev = Mathf.Abs(second.y - first.y) / speed;
                         platform.AddCheckpoint(second);
@@ -114,9 +111,9 @@ public class MovingPlatformStrategy : FillStrategy
 
                 lastPoint = second;
             }
-            else if ( Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist 
-                &&(value >= 0.65f&&Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x)&& value <= 0.5f)
-                || Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) <m_maxWidth + m_minWidth)
+            else if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist
+                && (value >= 0.65f && Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) && value <= 0.5f)
+                || Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth)
             {
                 Vector3 second;
                 if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth)
@@ -176,12 +173,12 @@ public class MovingPlatformStrategy : FillStrategy
                 lastPoint = second;
 
             }
-            else if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth || (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth||
-                Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist&value <= 0.65f)
+            else if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth || (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth ||
+                Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist & value <= 0.65f)
             {
                 Vector3 second;
                 //last 
-                if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth || (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth+m_minWidth)
+                if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth || (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth)
                 {
                     second = first + new Vector3(end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) * (height < 0 ? -1 : 1));
                     if (prev != 0)
@@ -208,15 +205,15 @@ public class MovingPlatformStrategy : FillStrategy
                         if (Random.value > 0.5f)
                         {
                             n = Random.Range(1, minN + 1);
-                            prev = (prev - (n - 1) * movingPlatform.GetWaitTime()) / n;                       
+                            prev = (prev - (n - 1) * movingPlatform.GetWaitTime()) / n;
                         }
                         else
                         {
                             n = Random.Range(1, maxN + 1);
                             prev = n * prev + (n - 1) * movingPlatform.GetWaitTime();
                         }
-                        float a = Random.Range(m_minWidth, prev*prev * speed * speed);
-                        second = first + (Random.value>0.5f?new Vector3(Mathf.Sqrt(a), Mathf.Sqrt(prev*prev*speed*speed-a) * (height < 0 ? -1 : 1)) :new Vector3(Mathf.Sqrt(prev * prev * speed * speed - a), Mathf.Sqrt(a) * (height < 0 ? -1 : 1)));
+                        float a = Random.Range(m_minWidth, prev * prev * speed * speed);
+                        second = first + (Random.value > 0.5f ? new Vector3(Mathf.Sqrt(a), Mathf.Sqrt(prev * prev * speed * speed - a) * (height < 0 ? -1 : 1)) : new Vector3(Mathf.Sqrt(prev * prev * speed * speed - a), Mathf.Sqrt(a) * (height < 0 ? -1 : 1)));
                         if (n % 2 == 0)
                         {
                             platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
@@ -232,7 +229,7 @@ public class MovingPlatformStrategy : FillStrategy
                     else
                     {
                         second = first +
-                        new Vector3(Mathf.Clamp(Random.Range(m_minWidth/2, m_maxWidth/2), 0, end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x), (height < 0 ? -1 : 1)*Mathf.Clamp(Random.Range(m_minWidth/2, m_maxWidth/2), 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y)));
+                        new Vector3(Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x), (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y)));
                         platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
                         prev = Mathf.Sqrt(Mathf.Pow(second.y - first.y, 2) + Mathf.Pow(second.x - first.x, 2)) / speed;
                         platform.AddCheckpoint(second);
@@ -263,7 +260,7 @@ public class MovingPlatformStrategy : FillStrategy
                     Vector3 second = first + new Vector3(1, 1) * d / 4;
                     Vector3 third = first + new Vector3(1, 1) * d / 2;
                     Vector3 fourth = first + new Vector3(d * 3, d) / 4;
-                     fifth = first + Vector3.right * d;
+                    fifth = first + Vector3.right * d;
                     Vector3 sixth = first + new Vector3(d * 3, -d) / 4;
                     Vector3 seventh = first + new Vector3(d, -d) / 2;
                     Vector3 eighth = first + new Vector3(d, -d) / 4;
@@ -290,14 +287,14 @@ public class MovingPlatformStrategy : FillStrategy
                         platform.AddCheckpoint(second, false);
                         platform.AddCheckpoint(third, false);
                         platform.AddCheckpoint(fourth, false);
-                    }                    
+                    }
 
                 }
                 else
                 {
                     d = Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Min(Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y), end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x));
 
-                    Vector3 second = first + new Vector3(1,1) * d / 4;
+                    Vector3 second = first + new Vector3(1, 1) * d / 4;
                     Vector3 third = first + new Vector3(1, 1) * d / 2;
                     Vector3 fourth = first + new Vector3(d * 3, d) / 4;
                     fifth = first + Vector3.right * d;
@@ -325,14 +322,14 @@ public class MovingPlatformStrategy : FillStrategy
         }
         // create bounds for player's fall
         BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
-        bounds.gameObject.transform.position = new Vector3(start.x, (height > 0 ? start.y : lastPoint.y-1) - m_roomHeight);
+        bounds.gameObject.transform.position = new Vector3(start.x, (height > 0 ? start.y : lastPoint.y - 1) - m_roomHeight);
         bounds.isTrigger = true;
         bounds.gameObject.tag = "bounds";
         bounds.size = new Vector2(width + 1, 0.5f);
         bounds.offset = new Vector2((width + 1) / 2, -0.5f);
         room.AddEnviromentObject(bounds.gameObject);
 
-        end = new Vector3Int(Mathf.CeilToInt(lastPoint.x)-1, Mathf.CeilToInt(lastPoint.y)-1);
+        end = new Vector3Int(Mathf.CeilToInt(lastPoint.x) - 1, Mathf.CeilToInt(lastPoint.y) - 1);
         room.SetEndPosition(end);
         room.AddTransition(new Room(end, end));
         return room;

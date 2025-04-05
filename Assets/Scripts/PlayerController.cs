@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D m_rb;
     PlayerInput m_input;
     BoxCollider2D m_col;
+    Damagable m_damagable;
     Animator m_anim;
     TouchingCheck m_touchings;
     SpawnValues m_values;
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour
     bool m_dash = false;
     bool m_pet = false;
     bool m_blockMove = false;
+    bool m_win = false;
 
     bool m_jumping = false;
     bool m_falling = false;
@@ -59,6 +61,8 @@ public class PlayerController : MonoBehaviour
     float m_jumpCounter = 0f;
     float m_dashCooldown = 0f;
     float m_baseTransposer = 2.5f;
+    float m_cameraBoundsHeight;
+    float m_cameraSpeed = 13f;
     Vector2 m_gravity;
     float m_gravityScale;
     Vector3 m_fallCheckpoint;
@@ -71,6 +75,7 @@ public class PlayerController : MonoBehaviour
         m_input = GetComponent<PlayerInput>();
         m_rb = GetComponent<Rigidbody2D>();
         m_col = GetComponent<BoxCollider2D>();
+        m_damagable = GetComponent<Damagable>();
         m_touchings = GetComponent<TouchingCheck>();
         m_sound = GetComponent<SoundController>();
         m_values = GetComponent<SpawnValues>();
@@ -183,8 +188,47 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        float targetY=0;
+        //camera offset 
+        if (!Mathf.Approximately(m_input.Move.y, 0))
+
+        {
+            targetY = Mathf.Clamp(m_transposer.m_TrackedObjectOffset.y + m_input.Move.y * m_cameraSpeed * Time.fixedDeltaTime, -m_cameraBoundsHeight, m_cameraBoundsHeight);
+        }
+        else
+        {
+            targetY = Mathf.MoveTowards(m_transposer.m_TrackedObjectOffset.y, m_baseTransposer, m_cameraSpeed * Time.fixedDeltaTime);
+        }
+        m_transposer.m_TrackedObjectOffset = new Vector3(m_transposer.m_TrackedObjectOffset.x,targetY, m_transposer.m_TrackedObjectOffset.z);
+
+    }
+
     private void FixedUpdate()
     {
+        if (m_win)
+        {
+            if (!m_jump && m_currentJumps < 3)
+            {
+                m_sound.PlaySound("Jump");
+                m_rb.velocity = new Vector2(0f, m_jumpPower);
+                m_jump = true;
+                m_currentJumps++;
+                Jump();
+            }
+            else if (m_falling && !m_touchings.IsSlopeDown() && m_touchings.IsGrounded() && (!m_touchings.IsWalls() || Mathf.Approximately(m_rb.velocity.y, 0f)) && m_jumping)
+            {
+                m_jump = false;
+                m_sound.PlaySound("Land");
+                m_falling = m_jumping = false;
+                if (m_currentJumps >= 3)
+                {
+
+                }
+            }
+            return;
+        }
 
         if (m_falling && m_fallCheckpoint.y - transform.position.y > 200)
         {
@@ -192,8 +236,7 @@ public class PlayerController : MonoBehaviour
             transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
             m_currentDir = 1;
         }
-        //camera offset 
-        m_transposer.m_TrackedObjectOffset = new Vector3(m_transposer.m_TrackedObjectOffset.x, Mathf.Lerp(m_transposer.m_TrackedObjectOffset.y, m_baseTransposer, Time.fixedDeltaTime), m_transposer.m_TrackedObjectOffset.z);
+
 
         if (!m_dead)
         {
@@ -209,6 +252,11 @@ public class PlayerController : MonoBehaviour
                     m_anim.SetTrigger(m_HashPet);
                 }
                 return;
+            }
+
+            if (m_touchings.IsStuck())
+            {
+                transform.position += Vector3.up * 0.6f;
             }
             // turn around
             if (m_currentDir * m_input.Move.x < 0 && !m_blockMove)
@@ -317,29 +365,6 @@ public class PlayerController : MonoBehaviour
             m_anim.SetTrigger(m_HashPet);
         }
     }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("cameraMove"))
-        {
-            if (m_input.MoveCamera.y < 0)
-            {
-                m_baseTransposer = -9;
-            }
-            else
-            {
-                m_baseTransposer = 2.5f;
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("cameraMove"))
-        {
-            m_baseTransposer = 2.5f;
-        }
-    }
     /// <summary>
     /// Recieve damage 
     /// </summary>
@@ -350,8 +375,8 @@ public class PlayerController : MonoBehaviour
         {
             m_rb.velocity = Vector2.zero;
             m_dead = !m_dead;
-            transform.SetPositionAndRotation(m_rebornCheckpoint, Quaternion.identity);
-            m_currentDir = 1;
+            m_input.EnableRestart();
+            UIController.Instance.Die(true);
 
         }
         else if (damage < 0)
@@ -398,6 +423,11 @@ public class PlayerController : MonoBehaviour
         m_baseTransposer += 3f * (down ? -1 : 1);
     }
 
+    public void SetCameraBoundsHeight(float height)
+    {
+        m_cameraBoundsHeight = (height * 3 - 3) / 2.0f;
+    }
+
     public void AddJump()
     {
         m_jumpsCount++;
@@ -406,5 +436,22 @@ public class PlayerController : MonoBehaviour
     public void DecreaseDashCooldown()
     {
         m_dashCooldownTime -= 0.5f;
+    }
+
+    public void Win()
+    {
+        m_win = true;
+        m_input.LockInput();
+    }
+
+    public void Restart()
+    {
+        m_damagable.Reborn(true);
+        m_dead = !m_dead;
+        transform.SetPositionAndRotation(m_rebornCheckpoint, Quaternion.identity);
+        m_currentDir = 1;
+        m_col.enabled = true;
+        m_rb.gravityScale = m_gravityScale;
+
     }
 }

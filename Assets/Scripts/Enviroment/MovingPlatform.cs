@@ -42,7 +42,7 @@ public class MovingPlatform : MonoBehaviour
 
             if (Vector3.Distance(m_checkpoints[m_currentCheckpoint], transform.position) < 0.02f)
             {
-                m_waiting = true&m_stops[m_currentCheckpoint];
+                m_waiting = true & m_stops[m_currentCheckpoint];
                 m_currentCheckpoint = (m_currentCheckpoint + 1) % m_checkpoints.Count;
             }
         }
@@ -95,8 +95,19 @@ public class MovingPlatform : MonoBehaviour
     }
 
     public void AddCheckpoint(Vector3 pos, bool stop = true)
-    {       
+    {
         m_checkpoints.Add(pos);
         m_stops.Add(stop);
+    }
+
+    public void Restart(bool enemy = false)
+    {
+        if (m_moveWnenStand || enemy)
+        {
+            m_start = false;
+            m_waiting = false;
+            m_currentCheckpoint = 0;
+            transform.position = m_checkpoints[m_checkpoints.Count - 1];
+        }
     }
 }

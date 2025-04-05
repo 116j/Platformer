@@ -1018,15 +1018,22 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0.3
+    functionName: PlaySound
+    data: 
+    objectReferenceParameter: {fileID: 8300000, guid: a9f053763660f1442b0c41e664ad1382, type: 3}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 1.05
-    functionName: AttackMoveBackwards
+    functionName: ResetColliders
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 1.05
-    functionName: ResetColliders
+    functionName: AttackMoveBackwards
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

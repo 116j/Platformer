@@ -232,7 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_maxHealth: 5
   m_health: 4
-  m_recoverTime: 0.5
+  m_recoverTime: 0.8
   m_receiver:
     m_PersistentCalls:
       m_Calls:
@@ -298,6 +298,20 @@ MonoBehaviour:
     layerMask:
       serializedVersion: 2
       m_Bits: 128
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  m_stuckCastFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0

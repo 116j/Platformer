@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class FloatingText : MonoBehaviour
 {
@@ -21,9 +18,9 @@ public class FloatingText : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null) 
-        { 
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
         }
     }
 
@@ -34,7 +31,7 @@ public class FloatingText : MonoBehaviour
         {
             transform.position = m_player.position + Vector3.up * 2f;
         }
-        else if(m_showShopText)
+        else if (m_showShopText)
         {
             transform.position = m_shop + new Vector3(0.7629f, 1);
         }

@@ -84,4 +84,11 @@ public class Damagable : MonoBehaviour
         m_maxHealth++;
         ApplyHealth(1);
     }
+
+    public void Reborn(bool invinsible = false)
+    {
+        m_recovering = invinsible;
+        ApplyHealth(m_maxHealth - m_health);
+        m_dead = false;
+    }
 }

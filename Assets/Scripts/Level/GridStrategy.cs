@@ -22,9 +22,7 @@ public class GridStrategy : FillStrategy
 
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
-        prevRoom.GetTransition().Clear();
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
-        prevRoom.AddTransition(transition);
 
         int width = Random.Range(m_minRoomSize, m_maxRoomSize);
         int height = Random.Range(m_minRoomSize, m_maxRoomSize);
@@ -32,7 +30,7 @@ public class GridStrategy : FillStrategy
         {
             height = -height;
         }
-        Vector3Int start = prevRoom.GetTransition().GetEndPosition();
+        Vector3Int start = prevRoom.GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + width, start.y + height);
         Room room = new Room(start, end, transition);
         int attempts = 0;
@@ -73,6 +71,8 @@ public class GridStrategy : FillStrategy
             room.AddEnviromentObject(boundsR.gameObject);
         }
 
+        prevRoom.GetNextTransition().Clear();
+        prevRoom.AddTransition(transition);
         room.AddTransition(new Room(end, end));
         room.DrawTiles();
         AddLandscape(room, int.MaxValue, false);
@@ -87,7 +87,7 @@ public class GridStrategy : FillStrategy
         Vector3Int end = new Vector3Int(start.x + width, start.y + height);
         Room transition = new Room(start, end);
 
-        Vector3Int lastPoint = start+Vector3Int.right;
+        Vector3Int lastPoint = start + Vector3Int.right;
         int platformWidth = (width - 2) / 2/*Mathf.Clamp(Random.Range(m_minWidth, m_minDist+1), m_minWidth, (width - 2) / 2)*/;
         int horOffset = width - 2 - platformWidth * 2;
         int vertOffset = Random.Range(m_minDist, GetJumpHeight(horOffset));
@@ -96,7 +96,7 @@ public class GridStrategy : FillStrategy
         {
             transition.CreatePlatform(lastPoint, platformWidth);
             lastPoint += new Vector3Int((posOffset ? 1 : -1) * (platformWidth + horOffset), vertOffset);
-            posOffset=!posOffset;
+            posOffset = !posOffset;
         }
         while (lastPoint.y < end.y);
         // create bounds for player's fall
@@ -128,7 +128,7 @@ public class GridStrategy : FillStrategy
            (lastOffset.x + w1 <= end.x - 3 || end.x - lastOffset.x - w1 <= m_playerJumpWidth && Mathf.Abs(lastOffset.y - end.y) > GetJumpHeight(end.x - lastOffset.x - w1)))
         {
             int offsetY = (lastPoint.y > end.y ? -1 : 1) * Random.Range(m_minDist, m_playerJumpHeight);
-            int x = lastPoint.x + lastWidth + (int)(Mathf.Abs(offsetY) * 1.0f / Mathf.Max(1,Mathf.Abs(end.y - lastPoint.y)) * (end.x - lastPoint.x - lastWidth));
+            int x = lastPoint.x + lastWidth + (int)(Mathf.Abs(offsetY) * 1.0f / Mathf.Max(1, Mathf.Abs(end.y - lastPoint.y)) * (end.x - lastPoint.x - lastWidth));
             int offsetX;
             if (x - lastPoint.x - lastWidth < GetJumpWidth(offsetY))
                 offsetX = Random.Range(-(lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth), (lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth));
@@ -189,10 +189,10 @@ public class GridStrategy : FillStrategy
                 {
                     if (!room.PositionIsUsed(new Vector3Int(currentPoint.x + j, currentPoint.y + i)))
                     {
-                        if (currentPoint.x + j + 1 > end.x - m_minWidth||j + 1== Mathf.Clamp(maxWidth, 0, end.x - currentPoint.x)-1)
+                        if (currentPoint.x + j + 1 > end.x - m_minWidth || j + 1 == Mathf.Clamp(maxWidth, 0, end.x - currentPoint.x) - 1)
                             return false;
 
-                        currentWidth = Random.Range(j+1, Mathf.Clamp(maxWidth, 0, end.x - currentPoint.x));
+                        currentWidth = Random.Range(j + 1, Mathf.Clamp(maxWidth, 0, end.x - currentPoint.x));
                         return true;
                     }
                 }
@@ -207,7 +207,7 @@ public class GridStrategy : FillStrategy
                     {
                         if (!room.PositionIsUsed(new Vector3Int(currentPoint.x + j + k, currentPoint.y - i)))
                         {
-                            currentWidth = Random.Range(m_minWidth, Mathf.Clamp(j + k,0, end.x - currentPoint.x));
+                            currentWidth = Random.Range(m_minWidth, Mathf.Clamp(j + k, 0, end.x - currentPoint.x));
                             return true;
                         }
                     }
@@ -277,7 +277,7 @@ public class GridStrategy : FillStrategy
            !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2)) &&
            !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 3)) &&
            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 3)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))) )
+            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))))
             {
                 pos += Vector3Int.down;
                 if (!CheckSurroundings(Vector3Int.down, room, pos))
@@ -291,8 +291,8 @@ public class GridStrategy : FillStrategy
                 room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1))) &&
                 !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2)) &&
                 !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 3)) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x +1, pos.y + 3)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))) )
+                !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 3)) &&
+            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))))
             {
                 pos += Vector3Int.up;
                 if (!CheckSurroundings(Vector3Int.up, room, pos))
@@ -307,7 +307,7 @@ public class GridStrategy : FillStrategy
                 !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y + 1)) &&
                 !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y + 2)) &&
                 !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y - 2)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y - 1))) )
+            !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y - 1))))
             {
                 pos += Vector3Int.left;
                 if (!CheckSurroundings(Vector3Int.left, room, pos))
@@ -323,7 +323,7 @@ public class GridStrategy : FillStrategy
                 {
                     if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
                     {
-                        if(!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
+                        if (!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
                         {
                             if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
                             {
@@ -437,9 +437,9 @@ public class GridStrategy : FillStrategy
     {
         if (dir == Vector3Int.right)
         {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1))||
+            if ((room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1)) ||
                 room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))) &&
-                (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1))||
+                (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)) ||
                 room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))))
                 return false;
 
@@ -447,18 +447,18 @@ public class GridStrategy : FillStrategy
             {
                 if (room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y)) ||
                     room.PositionIsUsed(new Vector3Int(pos.x, pos.y - i)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y + 2*m_minDist - i - 1)) ||
+                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y + 2 * m_minDist - i - 1)) ||
                     room.PositionIsUsed(new Vector3Int(pos.x, pos.y + i)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y - 2*m_minDist + i + 1)))
+                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y - 2 * m_minDist + i + 1)))
                     return false;
             }
 
         }
         else if (dir == Vector3Int.left)
         {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1))||
+            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) ||
                 room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2))) &&
-            (room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1))||
+            (room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) ||
             room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2))))
                 return false;
 
@@ -474,10 +474,10 @@ public class GridStrategy : FillStrategy
         }
         else if (dir == Vector3Int.up)
         {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1))||
+            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) ||
                 room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2))) &&
-            (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1))||
-            room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))) )
+            (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1)) ||
+            room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))))
                 return false;
 
             for (int i = 0; i < m_minDist; i++)
@@ -492,9 +492,9 @@ public class GridStrategy : FillStrategy
         }
         else if (dir == Vector3Int.down)
         {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1))||
+            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) ||
                 room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2))) &&
-                (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1))||
+                (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)) ||
                 room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))))
                 return false;
 

@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -36,11 +33,19 @@ public class UIController : MonoBehaviour
     [SerializeField]
     GameObject m_shopLayout;
 
+    [Header("Win")]
+    [SerializeField]
+    GameObject m_winLayout;
+
+    [Header("Die")]
+    [SerializeField]
+    GameObject m_dieLayout;
+
     List<Image> m_hearts;
     int m_currentHeart;
     readonly Vector3 m_heratSize = new Vector3(32.5f, 27);
 
-    public int CurrentHearts => m_currentHeart+1;
+    public int CurrentHearts => m_currentHeart + 1;
     public int AllHerats => m_hearts.Count;
 
     int m_money = 0;
@@ -67,8 +72,8 @@ public class UIController : MonoBehaviour
         if (m_amount != 0)
         {
             m_addAmount = Mathf.Lerp(m_addAmount, m_amount, Time.deltaTime);
-            m_moneyText.text = (m_money+ Mathf.CeilToInt(m_addAmount)).ToString();
-            if(Mathf.CeilToInt(m_addAmount) == m_amount)
+            m_moneyText.text = (m_money + Mathf.CeilToInt(m_addAmount)).ToString();
+            if (Mathf.CeilToInt(m_addAmount) == m_amount)
             {
                 m_addAmount = 0;
                 m_money += (int)m_amount;
@@ -81,7 +86,7 @@ public class UIController : MonoBehaviour
     {
         GameObject heart = new GameObject();
         Image image = heart.AddComponent<Image>();
-        if(m_currentHeart < m_hearts.Count - 1)
+        if (m_currentHeart < m_hearts.Count - 1)
         {
             image.sprite = m_emptyHeart;
         }
@@ -95,10 +100,10 @@ public class UIController : MonoBehaviour
     }
     public void AddMoney(float amount)
     {
-        m_amount+= amount;
+        m_amount += amount;
     }
 
-    public float GetMoney() => m_money;
+    public float GetMoney() => m_money + m_amount;
 
     /// <summary>
     /// Add or remove hearts
@@ -139,5 +144,25 @@ public class UIController : MonoBehaviour
     public void OpenShop()
     {
         m_shopLayout.SetActive(!m_shopLayout.activeInHierarchy);
+    }
+
+    public void Win()
+    {
+        m_winLayout.SetActive(true);
+    }
+
+    public void Die(bool active)
+    {
+        m_dieLayout.SetActive(active);
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        AudioListener.pause = pause;
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        AudioListener.pause = !focus;
     }
 }
