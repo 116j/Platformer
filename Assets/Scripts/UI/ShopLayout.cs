@@ -1,4 +1,7 @@
+using System;
+using System.Diagnostics;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ShopLayout : MonoBehaviour
@@ -10,24 +13,20 @@ public class ShopLayout : MonoBehaviour
     public static ShopLayout Instance => m_instance;
 
     GameObject m_player;
+    AudioSource m_buySound;
 
-    bool[] m_sold = new bool[5];
     bool[] m_clicked = new bool[5];
+    int[] m_itemsCount = { 3, 2, 2, 2, 1 };
     float[] m_prices = { 1000, 1500, 2000, 2000, 2500 };
+    string m_startText = "Hello, Stranger! Welcome to my shop! What would you like to purchase?";
     string[] m_dialogueTexts =
     {
         "Add extra health heart.",
-        "Add extra jump. You will be able to do triple jump.",
+        "Decrease dash cooldown time.",
         "Increase light attack damage.",
         "Increase heavy attack damage.",
-        "Decrease dash cooldown time."
+        "Add extra jump. You will be able to do triple jump."
     };
-
-    int m_maxHealth = 3;
-    int m_dash = 2;
-    int m_lDamage = 2;
-    int m_hDamage = 2;
-    bool m_jump = false;
 
     public float GetLowestPrice()
     {
@@ -38,7 +37,7 @@ public class ShopLayout : MonoBehaviour
 
         for (int i = 0; i < m_prices.Length; i++)
         {
-            if (!m_sold[i])
+            if (m_itemsCount[i] > 0)
                 return m_prices[i];
         }
 
@@ -53,138 +52,65 @@ public class ShopLayout : MonoBehaviour
         }
 
         m_player = GameObject.FindGameObjectWithTag("Player");
+        m_buySound = GetComponent<AudioSource>();
+    }
+
+    void Buy(int index, TextMeshProUGUI price, Action func)
+    {
+        if (m_itemsCount[index] <= 0)
+            return;
+        if (!m_clicked[index])
+        {
+            m_dialogueText.text = m_dialogueTexts[index];
+            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[index] ? " Click again to buy." : " But you don't have enough money, beggar.";
+            for (int i = 0; i < m_clicked.Length; i++)
+            {
+                m_clicked[i] = false;
+            }
+            m_clicked[index] = true;
+        }
+        else if (UIController.Instance.GetMoney() >= m_prices[index])
+        {
+            m_buySound.Play();
+            UIController.Instance.AddMoney(-m_prices[index]);
+            m_dialogueText.text = m_startText;
+            func();
+            m_clicked[index] = false;
+            m_itemsCount[index]--;
+            if (m_itemsCount[index] <= 0)
+            {
+                price.text = "SOLD";
+            }
+        }
     }
 
     public void AddHealth(TextMeshProUGUI price)
     {
-        if (m_maxHealth <= 0)
-            return;
-        if (!m_clicked[0])
-        {
-            m_dialogueText.text = m_dialogueTexts[0];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[0] ? " Click again to buy." : " But you don't have enough money, beggar.";
-            m_clicked[0] = true;
-            for (int i = 1; i < m_clicked.Length; i++)
-            {
-                m_clicked[i] = false;
-            }
-        }
-        else if (UIController.Instance.GetMoney() >= m_prices[0])
-        {
-            UIController.Instance.AddHeart();
-            UIController.Instance.AddMoney(-m_prices[0]);
-            m_player.GetComponent<Damagable>().IncreaseHealth();
-            m_maxHealth--;
-            if (m_maxHealth <= 0)
-            {
-                m_sold[0] = true;
-                price.text = "SOLD";
-            }
-        }
+        Action func = UIController.Instance.AddHeart;
+        func += m_player.GetComponent<Damagable>().IncreaseHealth;
+        Buy(0, price, func);
     }
 
-    public void AddJump(TextMeshProUGUI price)
+
+    public void AddDash(TextMeshProUGUI price)
     {
-        if (m_jump)
-            return;
-        if (!m_clicked[1])
-        {
-            m_dialogueText.text = m_dialogueTexts[1];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[1] ? " Click again to buy." : " But you don't have enough money, beggar.";
-            for (int i = 0; i < m_clicked.Length; i++)
-            {
-                m_clicked[i] = false;
-            }
-            m_clicked[1] = true;
-        }
-        else if (UIController.Instance.GetMoney() >= m_prices[1])
-        {
-            m_player.GetComponent<PlayerController>().AddJump();
-            UIController.Instance.AddMoney(-m_prices[1]);
-            m_sold[1] = true;
-            price.text = "SOLD";
-            m_jump = true;
-        }
+        Buy(1, price, m_player.GetComponent<PlayerController>().DecreaseDashCooldown);
     }
 
     public void AddLightDamage(TextMeshProUGUI price)
     {
-        if (m_lDamage <= 0)
-            return;
-        if (!m_clicked[2])
-        {
-            m_dialogueText.text = m_dialogueTexts[2];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[2] ? " Click again to buy." : " But you don't have enough money, beggar.";
-            for (int i = 0; i < m_clicked.Length; i++)
-            {
-                m_clicked[i] = false;
-            }
-            m_clicked[2] = true;
-        }
-        else if (UIController.Instance.GetMoney() >= m_prices[2])
-        {
-            m_player.transform.GetChild(0).GetComponent<AttackListener>().IncreaseDamage();
-            UIController.Instance.AddMoney(-m_prices[2]);
-            m_lDamage--;
-            if (m_lDamage <= 0)
-            {
-                m_sold[2] = true;
-                price.text = "SOLD";
-            }
-        }
+        Buy(2, price, m_player.transform.GetChild(0).GetComponent<AttackListener>().IncreaseDamage);
     }
 
     public void AddHeavyDamage(TextMeshProUGUI price)
     {
-        if (m_hDamage <= 0)
-            return;
-        if (!m_clicked[3])
-        {
-            m_dialogueText.text = m_dialogueTexts[3];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[3] ? " Click again to buy." : " But you don't have enough money, beggar.";
-            for (int i = 0; i < m_clicked.Length; i++)
-            {
-                m_clicked[i] = false;
-            }
-            m_clicked[3] = true;
-        }
-        else if (UIController.Instance.GetMoney() >= m_prices[3])
-        {
-            m_player.transform.GetChild(1).GetComponent<AttackListener>().IncreaseDamage();
-            UIController.Instance.AddMoney(-m_prices[3]);
-            m_hDamage--;
-            if (m_hDamage <= 0)
-            {
-                m_sold[3] = true;
-                price.text = "SOLD";
-            }
-        }
+        Buy(3, price, m_player.transform.GetChild(1).GetComponent<AttackListener>().IncreaseDamage);
     }
 
-    public void AddDash(TextMeshProUGUI price)
+    public void AddJump(TextMeshProUGUI price)
     {
-        if (m_dash <= 0)
-            return;
-        if (!m_clicked[4])
-        {
-            m_dialogueText.text = m_dialogueTexts[4];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[4] ? " Click again to buy." : " But you don't have enough money, beggar.";
-            m_clicked[4] = true;
-            for (int i = 0; i < m_clicked.Length - 1; i++)
-            {
-                m_clicked[i] = false;
-            }
-        }
-        else if (UIController.Instance.GetMoney() >= m_prices[4])
-        {
-            m_player.GetComponent<PlayerController>().DecreaseDashCooldown();
-            UIController.Instance.AddMoney(-m_prices[4]);
-            m_dash--;
-            if (m_dash <= 0)
-            {
-                m_sold[4] = true;
-                price.text = "SOLD";
-            }
-        }
+        Action func = m_player.GetComponent<PlayerController>().AddJump;
+        func += LevelBuilder.Instance.SetTripleJump;
+        Buy(4, price, func);
     }
 }

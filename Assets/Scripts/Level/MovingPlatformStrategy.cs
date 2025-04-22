@@ -321,13 +321,7 @@ public class MovingPlatformStrategy : FillStrategy
             lastPoint += Vector3.right * (m_levelTheme.m_movingPlatform.GetWidth() + 1);
         }
         // create bounds for player's fall
-        BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
-        bounds.gameObject.transform.position = new Vector3(start.x, (height > 0 ? start.y : lastPoint.y - 1) - m_roomHeight);
-        bounds.isTrigger = true;
-        bounds.gameObject.tag = "bounds";
-        bounds.size = new Vector2(width + 1, 0.5f);
-        bounds.offset = new Vector2((width + 1) / 2, -0.5f);
-        room.AddEnviromentObject(bounds.gameObject);
+        room.AddEnviromentObject(CreateHorizontalBounds(start, lastPoint-Vector3.up, width, height));
 
         end = new Vector3Int(Mathf.CeilToInt(lastPoint.x) - 1, Mathf.CeilToInt(lastPoint.y) - 1);
         room.SetEndPosition(end);
@@ -352,13 +346,7 @@ public class MovingPlatformStrategy : FillStrategy
         transition.AddEnviromentObject(platform.gameObject);
 
         // create bounds for player's fall
-        BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
-        bounds.gameObject.transform.position = new Vector3(room.GetEndPosition().x, (height > 0 ? room.GetEndPosition().y : end.y) - m_roomHeight);
-        bounds.isTrigger = true;
-        bounds.gameObject.tag = "bounds";
-        bounds.size = new Vector2(width + 1, 0.5f);
-        bounds.offset = new Vector2((width + 1) / 2, -0.5f);
-        transition.AddEnviromentObject(bounds.gameObject);
+        transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(),end,width,height));
 
         return transition;
     }

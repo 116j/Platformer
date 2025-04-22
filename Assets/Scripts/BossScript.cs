@@ -10,6 +10,7 @@ public class BossScript : WalkEnemy
     float m_roarRecoverTime = 5f;
     float m_roarTimer;
     bool m_roarRecovering = false;
+    bool m_showHealth = true;
 
     bool m_closeAttack = false;
     float m_attackChance = 0.3f;
@@ -74,6 +75,10 @@ public class BossScript : WalkEnemy
             {
                 Chase();
             }
+            else if(m_closeAttack&&!m_groundZone.TargetDetected)
+            {
+                ResetColliders();
+            }
             else
             {
                 base.FixedUpdate();
@@ -88,6 +93,17 @@ public class BossScript : WalkEnemy
             GameObject.FindWithTag("Player").GetComponent<PlayerController>().Win();
             UIController.Instance.Win();
         }
+        else if (damage < 0)
+        {
+            if (m_showHealth)
+            {
+                EnemyHealthBar.Instance.ShowBar(transform);
+                EnemyHealthBar.Instance.ChangeRotation(m_currentDir);
+                m_showHealth = false;
+            }
+
+            EnemyHealthBar.Instance.SetHealthSprite(m_damageable.GetHealthPercentage());
+        }
         base.ReceiveDamage(damage);
     }
 
@@ -98,5 +114,18 @@ public class BossScript : WalkEnemy
         m_closeAttack = false;
         var zone = m_attackZone.GetComponent<BoxCollider2D>();
         zone.offset = new Vector2(m_baseAttackZoneOffsetX, zone.offset.y);
+    }
+
+    protected override void TurnAround()
+    {
+        base.TurnAround();
+        EnemyHealthBar.Instance.ChangeRotation(m_currentDir);
+    }
+
+    public override void Reset()
+    {
+        EnemyHealthBar.Instance.HideBar();
+        m_showHealth = true;
+        base.Reset();
     }
 }

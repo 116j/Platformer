@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SliderArrow
+  m_Controller: {fileID: 9100000, guid: f9413f910c7db684e8cfc119aab818a0, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: ef871d56266f8914bb5056cb4b6e32a6, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 3f5c6169a9312ea4cbf603cd011a21e5, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 38f876d0c1d2e7147a4216cd111a37d8, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 98b854cac26601d40a1e5873b47afa92, type: 2}

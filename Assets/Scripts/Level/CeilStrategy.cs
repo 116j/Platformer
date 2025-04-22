@@ -27,7 +27,10 @@ public class CeilStrategy : FillStrategy
         Room room = new Room(end, startWidth, prevRoom.GetNextTransition());
         // no slopes
         m_slopeChance = 1f;
-        CreateElevations(room, start + startWidth * Vector3Int.right, false);
+        int height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
+        if (height > m_playerJumpHeight)
+            m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
+        CreateElevations(room, start + startWidth * Vector3Int.right, height, false);
         room.AddTransition(transitionStrategy.FillTransition(room));
         MakeCeil(room);
         return room;

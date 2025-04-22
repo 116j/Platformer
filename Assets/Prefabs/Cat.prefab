@@ -381,8 +381,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnOffset: {x: 0, y: 1.535, z: 0}
-  m_metric: {x: -0.165, y: 0.4, z: 0.235}
+  m_spawnOffset: {x: 0.185, y: 1.535, z: 0}
+  m_metric: {x: -0.185, y: 0.43, z: 0.24}
   m_setOffset: 1
 --- !u!114 &2336935378641655310
 MonoBehaviour:
@@ -425,6 +425,20 @@ MonoBehaviour:
     minNormalAngle: 0
     maxNormalAngle: 0
   m_slopeCastFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  m_stuckCastFilter:
     useTriggers: 0
     useLayerMask: 0
     useDepth: 0

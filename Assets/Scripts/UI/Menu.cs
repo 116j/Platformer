@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -7,16 +8,15 @@ public class Menu : MonoBehaviour
     static Menu m_instance;
     public static Menu Instance => m_instance;
 
-    [Header("Pause")]
     [SerializeField]
-    GameObject m_pauseLayout;
+    Button m_playButton;
     [SerializeField]
-    GameObject m_settingsLayout;
+    Button m_resumeButton;
+    [SerializeField]
+    Button m_displayButton;
 
     PlayerInput m_input;
-
     Animator m_pauseLayoutAnim;
-
     Image m_backgroundTint;
 
     private void Awake()
@@ -35,12 +35,6 @@ public class Menu : MonoBehaviour
         m_backgroundTint = GetComponent<Image>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void Pause(bool show)
     {
         m_backgroundTint.enabled = show;
@@ -52,6 +46,7 @@ public class Menu : MonoBehaviour
         {
             m_pauseLayoutAnim.SetBool("Close", true);
         }
+
     }
 
     public void Resume()
@@ -82,10 +77,30 @@ public class Menu : MonoBehaviour
         m_pauseLayoutAnim.SetTrigger("OpenSettingsLayout");
     }
 
+
+    public void CloseLayout(InputAction.CallbackContext ctx)
+    {
+        m_pauseLayoutAnim.SetTrigger("CloseLayout");
+    }
+
     public void Play()
     {
         m_input.LockInput();
         UIController.Instance.SetStats(true);
     }
 
+    public void SelectPlay()
+    {
+        m_playButton.Select();
+    }
+
+    public void SelectDisplay()
+    {
+        m_displayButton.Select();
+    }
+
+    public void SelectResume()
+    {
+        m_resumeButton.Select();
+    }
 }

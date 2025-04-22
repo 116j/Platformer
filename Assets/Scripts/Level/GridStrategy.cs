@@ -38,17 +38,15 @@ public class GridStrategy : FillStrategy
         while (!MakeGrid(room))
         {
             attempts++;
+            room.ClearGrid();
             if (attempts >= m_maxAttempts)
+            {
+                Debug.Log("Grid failed");
                 return null;
+            }
         }
         // create bounds for player's fall
-        BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
-        bounds.gameObject.transform.position = new Vector3(start.x, (height > 0 ? start.y : end.y) - m_roomHeight);
-        bounds.isTrigger = true;
-        bounds.gameObject.tag = "bounds";
-        bounds.size = new Vector2(width + 2, 0.5f);
-        bounds.offset = new Vector2((width + 2) / 2, -0.5f);
-        room.AddEnviromentObject(bounds.gameObject);
+        room.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
         if (height < 0)
         {
@@ -100,13 +98,7 @@ public class GridStrategy : FillStrategy
         }
         while (lastPoint.y < end.y);
         // create bounds for player's fall
-        BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
-        bounds.gameObject.transform.position = new Vector3(start.x, (height > 0 ? start.y : end.y) - m_roomHeight);
-        bounds.isTrigger = true;
-        bounds.gameObject.tag = "bounds";
-        bounds.size = new Vector2(width + 2, 0.5f);
-        bounds.offset = new Vector2((width + 2) / 2, -0.5f);
-        transition.AddEnviromentObject(bounds.gameObject);
+        transition.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
         transition.DrawTiles();
         AddLandscape(transition, int.MaxValue, false);
@@ -120,396 +112,253 @@ public class GridStrategy : FillStrategy
         Vector3Int lastPoint = start;
         Vector3Int lastOffset = start;
         int attempts = 0;
-        int maxAttempts = 100;
+        const int maxAttempts = 100;
         int lastWidth = 0;
         int w1 = 0;
         int platformsOffsetY = 0;
-        while ((lastPoint.x + lastWidth <= end.x - 3 || end.x - lastPoint.x - lastWidth <= m_playerJumpWidth && Mathf.Abs(lastPoint.y - end.y) > GetJumpHeight(end.x - lastPoint.x - lastWidth)) &&
-           (lastOffset.x + w1 <= end.x - 3 || end.x - lastOffset.x - w1 <= m_playerJumpWidth && Mathf.Abs(lastOffset.y - end.y) > GetJumpHeight(end.x - lastOffset.x - w1)))
+
+        while (attempts < maxAttempts)
         {
+            // Check if we've reached the end
+            if ((lastPoint.x + lastWidth >= end.x - m_minWidth) &&
+                (Mathf.Abs(lastPoint.y - end.y) <= m_playerJumpHeight))
+            {
+                return true;
+            }
+
+            // Calculate next platform position
             int offsetY = (lastPoint.y > end.y ? -1 : 1) * Random.Range(m_minDist, m_playerJumpHeight);
-            int x = lastPoint.x + lastWidth + (int)(Mathf.Abs(offsetY) * 1.0f / Mathf.Max(1, Mathf.Abs(end.y - lastPoint.y)) * (end.x - lastPoint.x - lastWidth));
+            float progress = Mathf.Abs(offsetY) * 1.0f / Mathf.Max(1, Mathf.Abs(end.y - lastPoint.y));
+            int x = lastPoint.x + lastWidth + (int)(progress * (end.x - lastPoint.x - lastWidth));
+
+            // Calculate horizontal offset
+            int jumpWidth = lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth;
             int offsetX;
-            if (x - lastPoint.x - lastWidth < GetJumpWidth(offsetY))
-                offsetX = Random.Range(-(lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth), (lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth));
+
+            if (x - lastPoint.x - lastWidth < jumpWidth)
+            {
+                offsetX = Random.Range(-jumpWidth, jumpWidth);
+            }
             else
-                offsetX = Random.Range((lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth) - x + lastPoint.x + lastWidth + m_minWidth, -lastPoint.x + x - (lastPoint.y < end.y ? GetJumpWidth(offsetY) : m_playerJumpWidth) - m_minWidth);
+            {
+                int rangeStart = jumpWidth - x + lastPoint.x + lastWidth + m_minWidth;
+                int rangeEnd = -lastPoint.x + x - jumpWidth - m_minWidth;
+                offsetX = Random.Range(rangeStart, rangeEnd);
+            }
+
             offsetX = Mathf.Clamp(offsetX, start.x - x + m_minWidth, end.x - x - m_minWidth * 2);
-            // offsetX = Mathf.Clamp(offsetX ,- lastPoint.x + x - GetJumpWidth(offsetY) - m_minWidth, GetJumpWidth(offsetY) - x + lastPoint.x + lastWidth);
 
             Vector3Int pos = CheckSurroundings(room, new Vector3Int(x + offsetX, lastPoint.y + offsetY), end);
+
+            // Validate platform position
             if (Mathf.Abs(lastPoint.x + lastWidth - pos.x) > GetJumpWidth(offsetY) ||
-                !AvailablePlatform(room, lastPoint.y > lastOffset.y && end.y - start.y > 0 ? lastPoint.y : lastOffset.y, pos, GetMaxWidth(room, pos), ref lastWidth, end) ||
-            pos.x > end.x - m_minWidth * 2 || pos.x <= start.x)
+                !AvailablePlatform(room, lastPoint.y > lastOffset.y && end.y - start.y > 0 ? lastPoint.y : lastOffset.y,
+                                 pos, GetMaxWidth(room, pos), ref lastWidth, end) ||
+                pos.x > end.x - m_minWidth * 2 || pos.x <= start.x)
             {
                 attempts++;
-                if (attempts >= maxAttempts)
-                    return false;
                 continue;
             }
 
+            // Create main platform
             lastWidth = Mathf.Clamp(lastWidth, m_minWidth, end.x - pos.x - m_minWidth);
             lastPoint = pos;
             room.CreatePlatform(lastPoint, lastWidth);
 
-            bool offset = (offsetX * (end.y - start.y) >= 0 ? -1 : 1) * platformsOffsetY > 0;
+            // Create secondary platform
             platformsOffsetY = (offsetX * (end.y - start.y) >= 0 ? -1 : 1) * Random.Range(m_minDist - 1, m_playerJumpHeight);
-            int offsetX1 = offsetX > 0 ? Random.Range(offset ? Mathf.Clamp(-m_minDist + 1, lastOffset.x + w1 - lastPoint.x + m_minWidth, 0) : -m_minDist + 1, GetJumpWidth(platformsOffsetY) + lastWidth) :
-                Random.Range(offset ? Mathf.Clamp(-GetJumpWidth(platformsOffsetY) - m_minWidth, lastOffset.x + w1 - lastPoint.x + m_minWidth, 0) : -GetJumpWidth(platformsOffsetY) - m_minWidth, m_minDist);
+            bool offsetDirection = (offsetX * (end.y - start.y) >= 0);
+
+            int offsetX1;
+            if (offsetX > 0)
+            {
+                int min = offsetDirection ? Mathf.Clamp(-m_minDist + 1, lastOffset.x + w1 - lastPoint.x + m_minWidth, 0) : -m_minDist + 1;
+                offsetX1 = Random.Range(min, GetJumpWidth(platformsOffsetY) + lastWidth);
+            }
+            else
+            {
+                int min = offsetDirection ? Mathf.Clamp(-GetJumpWidth(platformsOffsetY) - m_minWidth,
+                                                     lastOffset.x + w1 - lastPoint.x + m_minWidth, 0) :
+                                         -GetJumpWidth(platformsOffsetY) - m_minWidth;
+                offsetX1 = Random.Range(min, m_minDist);
+            }
+
             offsetX1 = Mathf.Clamp(offsetX1, start.x - lastPoint.x + m_minWidth, end.x - lastPoint.x - m_minWidth * 2);
             pos = CheckSurroundings(room, new Vector3Int(lastPoint.x + offsetX1, lastPoint.y + platformsOffsetY), end);
-            if (!AvailablePlatform(room, lastPoint.y > lastOffset.y && end.y - start.y > 0 ? lastPoint.y : lastOffset.y, pos, GetMaxWidth(room, pos), ref w1, end) ||
+
+            if (!AvailablePlatform(room, lastPoint.y > lastOffset.y && end.y - start.y > 0 ? lastPoint.y : lastOffset.y,
+                                pos, GetMaxWidth(room, pos), ref w1, end) ||
                 pos.x > end.x - m_minWidth || pos.x <= start.x)
             {
                 platformsOffsetY = lastOffset.y;
+                attempts++;
                 continue;
             }
+
+            // Create secondary platform
             w1 = Mathf.Clamp(w1, m_minWidth, end.x - pos.x - m_minWidth);
             room.CreatePlatform(pos, w1);
             lastOffset = pos;
+            attempts = 0; // Reset attempts after successful placement
         }
-        return true;
+
+        return false;
     }
 
     bool AvailablePlatform(Room room, int lastPointY, Vector3Int currentPoint, int maxWidth, ref int currentWidth, Vector3Int end)
     {
-        if (maxWidth < m_minWidth)
-            return false;
+        if (maxWidth < m_minWidth) return false;
 
         for (int i = 0; i < m_playerJumpHeight; i++)
         {
-            if (room.PositionIsUsed(new Vector3Int(currentPoint.x, currentPoint.y - i)) &&
-            !room.PositionIsUsed(new Vector3Int(currentPoint.x - 1, currentPoint.y - i)) &&
-            !room.PositionIsUsed(new Vector3Int(currentPoint.x + 1, currentPoint.y - i)))
-                return false;
+            if (CheckVerticalCollision(room, currentPoint, i)) return false;
 
             if (room.PositionIsUsed(new Vector3Int(currentPoint.x, currentPoint.y + i)))
             {
-                for (int j = 1; j < maxWidth; j++)
-                {
-                    if (!room.PositionIsUsed(new Vector3Int(currentPoint.x + j, currentPoint.y + i)))
-                    {
-                        if (currentPoint.x + j + 1 > end.x - m_minWidth || j + 1 == Mathf.Clamp(maxWidth, 0, end.x - currentPoint.x) - 1)
-                            return false;
+                return HandlePlatformWidth(room, currentPoint, maxWidth, ref currentWidth, end, i);
+            }
 
-                        currentWidth = Random.Range(j + 1, Mathf.Clamp(maxWidth, 0, end.x - currentPoint.x));
+            if (CheckHorizontalCollision(room, currentPoint, maxWidth, i, ref currentWidth, end))
+            {
+                return true;
+            }
+        }
+
+        currentWidth = Random.Range(m_minWidth, maxWidth);
+        return true;
+    }
+
+    // Helper methods for AvailablePlatform
+    private bool CheckVerticalCollision(Room room, Vector3Int point, int offset)
+    {
+        return room.PositionIsUsed(new Vector3Int(point.x, point.y - offset)) &&
+               !room.PositionIsUsed(new Vector3Int(point.x - 1, point.y - offset)) &&
+               !room.PositionIsUsed(new Vector3Int(point.x + 1, point.y - offset));
+    }
+
+    private bool HandlePlatformWidth(Room room, Vector3Int point, int maxWidth, ref int width, Vector3Int end, int offset)
+    {
+        for (int j = 1; j < maxWidth; j++)
+        {
+            if (!room.PositionIsUsed(new Vector3Int(point.x + j, point.y + offset)))
+            {
+                if (point.x + j + 1 > end.x - m_minWidth || j + 1 == Mathf.Clamp(maxWidth, 0, end.x - point.x) - 1)
+                    return false;
+
+                width = Random.Range(j + 1, Mathf.Clamp(maxWidth, 0, end.x - point.x));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool CheckHorizontalCollision(Room room, Vector3Int point, int maxWidth, int verticalOffset, ref int width, Vector3Int end)
+    {
+        for (int j = 0; j < maxWidth; j++)
+        {
+            if (room.PositionIsUsed(new Vector3Int(point.x + j, point.y - verticalOffset)))
+            {
+                for (int k = 1; k <= maxWidth - j; k++)
+                {
+                    if (!room.PositionIsUsed(new Vector3Int(point.x + j + k, point.y - verticalOffset)))
+                    {
+                        width = Random.Range(m_minWidth, Mathf.Clamp(j + k, 0, end.x - point.x));
                         return true;
                     }
                 }
-                return false;
             }
-
-            for (int j = 0; j < maxWidth; j++)
-            {
-                if (room.PositionIsUsed(new Vector3Int(currentPoint.x + j, currentPoint.y - i)))
-                {
-                    for (int k = 1; k <= maxWidth - j; k++)
-                    {
-                        if (!room.PositionIsUsed(new Vector3Int(currentPoint.x + j + k, currentPoint.y - i)))
-                        {
-                            currentWidth = Random.Range(m_minWidth, Mathf.Clamp(j + k, 0, end.x - currentPoint.x));
-                            return true;
-                        }
-                    }
-                }
-            }
-
         }
-        currentWidth = Random.Range(m_minWidth, maxWidth);
-        return true;
+        return false;
     }
 
     int GetMaxWidth(Room room, Vector3Int pos)
     {
         for (int i = 0; i < m_maxWidth; i++)
         {
-            if (room.PositionIsUsed(new Vector3Int(pos.x + i + 1, pos.y + 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + i + 1, pos.y - 1)))
+            if (CheckImmediateCollision(room, pos, i) || CheckDistanceCollision(room, pos, i))
             {
                 return i;
             }
-            for (int j = 0; j < m_minDist; j++)
-            {
-                if (room.PositionIsUsed(new Vector3Int(pos.x + i + j, pos.y)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y - j)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y + j)))
-                {
-                    return i;
-                }
-            }
         }
-
         return m_maxWidth;
     }
 
-    Vector3Int CheckSurroundings(Room room, Vector3Int pos, Vector3Int end)
+    // Helper methods for GetMaxWidth
+    private bool CheckImmediateCollision(Room room, Vector3Int pos, int offset)
     {
-        bool suitable = false;
+        return room.PositionIsUsed(new Vector3Int(pos.x + offset + 1, pos.y + 1)) ||
+               room.PositionIsUsed(new Vector3Int(pos.x + offset + 1, pos.y - 1));
+    }
 
-        if (room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) &&
-            room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1)) ||
-            room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) &&
-            room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)))
-            return end;
-
-        while (!suitable)
+    private bool CheckDistanceCollision(Room room, Vector3Int pos, int offset)
+    {
+        for (int j = 0; j < m_minDist; j++)
         {
-            suitable = true;
-            if (((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2)) ||
-            room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1))) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 2, pos.y - 1)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 2, pos.y - 2)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 2, pos.y + 2)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 2, pos.y + 1))))
+            if (room.PositionIsUsed(new Vector3Int(pos.x + offset + j, pos.y)) ||
+                room.PositionIsUsed(new Vector3Int(pos.x + offset, pos.y - j)) ||
+                room.PositionIsUsed(new Vector3Int(pos.x + offset, pos.y + j)))
             {
-                pos += Vector3Int.right;
-                if (!CheckSurroundings(Vector3Int.right, room, pos))
-                    return end;
-                suitable = false;
-                continue;
-            }
-            else if (((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2)) ||
-            room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1))) &&
-           !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2)) &&
-           !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 3)) &&
-           !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 3)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))))
-            {
-                pos += Vector3Int.down;
-                if (!CheckSurroundings(Vector3Int.down, room, pos))
-                    return end;
-                suitable = false;
-                continue;
-            }
-            else if (((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1))) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2)) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 3)) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 3)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))))
-            {
-                pos += Vector3Int.up;
-                if (!CheckSurroundings(Vector3Int.up, room, pos))
-                    return end;
-                suitable = false;
-                continue;
-            }
-            else if (((room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1))) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y + 1)) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y + 2)) &&
-                !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y - 2)) &&
-            !room.PositionIsUsed(new Vector3Int(pos.x - 2, pos.y - 1))))
-            {
-                pos += Vector3Int.left;
-                if (!CheckSurroundings(Vector3Int.left, room, pos))
-                    return end;
-                suitable = false;
-                continue;
-            }
-
-            for (int i = 0; i < m_minDist; i++)
-            {
-
-                if (room.PositionIsUsed(new Vector3Int(pos.x - i, pos.y)))
-                {
-                    if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
-                    {
-                        if (!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
-                        {
-                            if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
-                            {
-                                return end;
-                            }
-                            else
-                            {
-                                pos += Vector3Int.down * (m_minDist - i);
-                            }
-                        }
-                        else
-                        {
-                            pos += Vector3Int.up * (m_minDist - i);
-                        }
-                    }
-                    else
-                    {
-                        pos += Vector3Int.right * (m_minDist - i);
-                    }
-                    suitable = false;
-                    break;
-                }
-                if (room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y)))
-                {
-                    if (!CheckSurroundings(Vector3Int.left, room, pos + Vector3Int.left * (m_minDist - i)))
-                    {
-                        if (!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
-                        {
-                            if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
-                            {
-                                return end;
-                            }
-                            else
-                            {
-                                pos += Vector3Int.down * (m_minDist - i);
-                            }
-                        }
-                        else
-                        {
-                            pos += Vector3Int.up * (m_minDist - i);
-                        }
-                    }
-                    else
-                    {
-                        pos += Vector3Int.left * (m_minDist - i);
-                    }
-                    suitable = false;
-                    break;
-                }
-                if (room.PositionIsUsed(new Vector3Int(pos.x, pos.y - i)))
-                {
-                    if (!CheckSurroundings(Vector3Int.up, room, pos + Vector3Int.up * (m_minDist - i)))
-                    {
-                        if (!CheckSurroundings(Vector3Int.left, room, pos + Vector3Int.left * (m_minDist - i)))
-                        {
-                            if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
-                            {
-                                return end;
-                            }
-                            else
-                            {
-                                pos += Vector3Int.right * (m_minDist - i);
-                            }
-                        }
-                        else
-                        {
-                            pos += Vector3Int.left * (m_minDist - i);
-                        }
-                    }
-                    else
-                    {
-                        pos += Vector3Int.up * (m_minDist - i);
-                    }
-                    suitable = false;
-                    break;
-                }
-                if (room.PositionIsUsed(new Vector3Int(pos.x, pos.y + i)))
-                {
-                    if (!CheckSurroundings(Vector3Int.down, room, pos + Vector3Int.down * (m_minDist - i)))
-                    {
-                        if (!CheckSurroundings(Vector3Int.right, room, pos + Vector3Int.right * (m_minDist - i)))
-                        {
-                            if (!CheckSurroundings(Vector3Int.left, room, pos + Vector3Int.left * (m_minDist - i)))
-                            {
-                                return end;
-                            }
-                            else
-                            {
-                                pos += Vector3Int.left * (m_minDist - i);
-                            }
-                        }
-                        else
-                        {
-                            pos += Vector3Int.right * (m_minDist - i);
-                        }
-                    }
-                    else
-                    {
-                        pos += Vector3Int.down * (m_minDist - i);
-                    }
-                    suitable = false;
-                    break;
-                }
+                return true;
             }
         }
+        return false;
+    }
+    Vector3Int CheckSurroundings(Room room, Vector3Int pos, Vector3Int end)
+    {
+        // First check diagonal collisions
+        if (HasDiagonalCollision(room, pos))
+            return end;
 
+        // Check minimum distances (1 horizontal, 2 vertical)
+        if (!CheckMinimumDistances(room, pos))
+            return end;
+
+        // Check all 8 surrounding corners
+        Vector3Int[] cornerOffsets = new Vector3Int[]
+        {
+        new Vector3Int(1, 1, 0),    // Top-right
+        new Vector3Int(-1, 1, 0),   // Top-left
+        new Vector3Int(1, -1, 0),   // Bottom-right
+        new Vector3Int(-1, -1, 0),  // Bottom-left
+        new Vector3Int(1, 0, 0),    // Right
+        new Vector3Int(-1, 0, 0),   // Left
+        new Vector3Int(0, 1, 0),    // Top
+        new Vector3Int(0, -1, 0)    // Bottom
+        };
+
+        foreach (Vector3Int offset in cornerOffsets)
+        {
+            if (room.PositionIsUsed(pos + offset))
+                return end;
+        }
+
+        // If we get here, position is valid
         return pos;
     }
 
-    bool CheckSurroundings(Vector3Int dir, Room room, Vector3Int pos)
+    bool CheckMinimumDistances(Room room, Vector3Int pos)
     {
-        if (dir == Vector3Int.right)
+        // Check horizontal clearance (1 unit)
+        for (int x = -2; x <= 2; x++)
         {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))) &&
-                (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))))
-                return false;
 
-            for (int i = 0; i < m_minDist; i++)
+            for (int y = -2; y <= 2; y++)
             {
-                if (room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y - i)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y + 2 * m_minDist - i - 1)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y + i)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y - 2 * m_minDist + i + 1)))
-                    return false;
-            }
-
-        }
-        else if (dir == Vector3Int.left)
-        {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2))) &&
-            (room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) ||
-            room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2))))
-                return false;
-
-            for (int i = 0; i < m_minDist; i++)
-            {
-                if (room.PositionIsUsed(new Vector3Int(pos.x - i, pos.y)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y - i)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y + 2 * m_minDist - i - 1)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y + i)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x, pos.y - 2 * m_minDist + i + 1)))
-                    return false;
-            }
-        }
-        else if (dir == Vector3Int.up)
-        {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 2))) &&
-            (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1)) ||
-            room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 2))))
-                return false;
-
-            for (int i = 0; i < m_minDist; i++)
-            {
-                if (room.PositionIsUsed(new Vector3Int(pos.x, pos.y + i)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x - i, pos.y)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x + 2 * m_minDist - i - 1, pos.y)) ||
-                    room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y)) &&
-                    room.PositionIsUsed(new Vector3Int(pos.x - 2 * m_minDist + i + 1, pos.y)))
-                    return false;
-            }
-        }
-        else if (dir == Vector3Int.down)
-        {
-            if ((room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 2))) &&
-                (room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)) ||
-                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 2))))
-                return false;
-
-            for (int i = 0; i < m_minDist; i++)
-            {
-                if (room.PositionIsUsed(new Vector3Int(pos.x, pos.y - i)) ||
-                   room.PositionIsUsed(new Vector3Int(pos.x - i, pos.y)) &&
-                   room.PositionIsUsed(new Vector3Int(pos.x + 2 * m_minDist - i - 1, pos.y)) ||
-                   room.PositionIsUsed(new Vector3Int(pos.x + i, pos.y)) &&
-                   room.PositionIsUsed(new Vector3Int(pos.x - 2 * m_minDist + i + 1, pos.y)))
+                if (room.PositionIsUsed(new Vector3Int(pos.x + x, pos.y + y)))
                     return false;
             }
         }
 
         return true;
+    }
+
+    bool HasDiagonalCollision(Room room, Vector3Int pos)
+    {
+        // Your original diagonal collision check
+        return (room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y - 1)) &&
+               room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y + 1))) ||
+               (room.PositionIsUsed(new Vector3Int(pos.x - 1, pos.y + 1)) &&
+               room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)));
     }
 }
 

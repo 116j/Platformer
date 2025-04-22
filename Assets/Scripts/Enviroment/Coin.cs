@@ -3,12 +3,16 @@ using UnityEngine;
 public class Coin : MonoBehaviour
 {
     Rigidbody2D m_rb;
+    Collider2D m_col;
+    AudioSource m_coinGain;
 
     float m_cost;
     // Start is called before the first frame update
     void Awake()
     {
         m_rb = GetComponent<Rigidbody2D>();
+        m_coinGain = GetComponent<AudioSource>();
+        m_col = GetComponent<Collider2D>();
     }
 
     public void SetCost(float cost, bool destroy = true)
@@ -26,8 +30,10 @@ public class Coin : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            m_coinGain.Play();
+            m_col.isTrigger = true;
             UIController.Instance.AddMoney(m_cost);
-            Destroy(gameObject);
+            Destroy(gameObject,0.2f);
         }
     }
 

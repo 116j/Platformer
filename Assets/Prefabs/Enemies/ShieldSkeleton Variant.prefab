@@ -151,6 +151,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6030628016457017003, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.117
+      objectReference: {fileID: 0}
     - target: {fileID: 6371828228452578492, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.x
       value: 0.5634465
@@ -209,19 +213,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.x
-      value: -0.62
+      value: -0.95
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.y
-      value: 2.1
+      value: 1.844
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.z
-      value: 0.62
+      value: -0.06
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.x
-      value: 0.45
+      value: 0.95
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y
@@ -343,6 +347,7 @@ MonoBehaviour:
   m_walkSpeed: 1.5
   m_canRun: 0
   m_runSpeed: 2
+  m_healthBarOffset: {x: -0.538, y: 0.743, z: 0}
   m_attackScript: {fileID: 7173053027128764718}
   m_attackZone: {fileID: 3342180418849149163}
   m_detectZone: {fileID: 4754401117695290597}

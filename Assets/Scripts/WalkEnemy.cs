@@ -28,7 +28,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected TouchingCheck m_touchings;
     protected BoxCollider2D m_col;
     protected MovingPlatform m_platform;
-    Damagable m_damageable;
+    protected Damagable m_damageable;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -131,7 +131,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         m_speed = m_canRun && Mathf.Abs(m_detectZone.TargetLocation.x - transform.position.x)>m_col.size.x ? m_runSpeed : m_walkSpeed;
     }
 
-    protected void TurnAround()
+    virtual protected void TurnAround()
     {
         m_currentDir *= -1;
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
@@ -179,7 +179,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
         return m_spawnChance.Evaluate(LevelBuilder.Instance.LevelProgress());
     }
 
-    public void Reset()
+    public virtual void Reset()
     {
         m_col.isTrigger = false;
         m_dead = false;

@@ -45,14 +45,15 @@ public class Damagable : MonoBehaviour
 
     public void ApplyDamage(int damage)
     {
-        if (m_dead|| m_recovering) return;
+        if (m_dead || m_recovering) return;
 
         m_recovering = true;
-        m_health -= damage;
+        m_health = Mathf.Clamp(m_health - damage, 0, m_maxHealth);
 
         m_receiver.Invoke(-damage);
         if (m_health <= 0)
         {
+            m_health = 0;
             m_dead = true;
             m_receiver.Invoke(0);
         }
@@ -84,6 +85,8 @@ public class Damagable : MonoBehaviour
         m_maxHealth++;
         ApplyHealth(1);
     }
+
+    public float GetHealthPercentage() => m_health / (1.0f * m_maxHealth);
 
     public void Reborn(bool invinsible = false)
     {

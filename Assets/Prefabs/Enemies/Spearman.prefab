@@ -33,6 +33,14 @@ PrefabInstance:
       value: -1.954
       objectReference: {fileID: 0}
     - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_healthBarOffset.x
+      value: -0.285
+      objectReference: {fileID: 0}
+    - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_healthBarOffset.y
+      value: 0.651
+      objectReference: {fileID: 0}
+    - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnChance.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -158,19 +166,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.x
-      value: -1.2
+      value: -0.65
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.y
-      value: 2.845
+      value: 2.51
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.z
-      value: 1.2
+      value: 0.28
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.x
-      value: 0.205
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y

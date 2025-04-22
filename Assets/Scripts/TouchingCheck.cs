@@ -29,9 +29,18 @@ public class TouchingCheck : MonoBehaviour
         m_col = GetComponent<Collider2D>();
     }
 
-    public bool IsStuck()
+    public bool IsWallStuck()
     {
-        return m_col.Cast(-transform.up, m_stuckCastFilter, m_colHits, m_stuckHitDist) > 0;
+        return m_col.Cast(transform.up, m_stuckCastFilter, m_colHits, m_groundHitDist) > 0 &&
+        m_col.Cast(transform.right, m_stuckCastFilter, m_colHits, m_groundHitDist) > 0 &&
+        m_col.Cast(-transform.right, m_stuckCastFilter, m_colHits, m_groundHitDist) > 0;
+    }
+
+    public bool IsGroundStuck()
+    {
+        return m_col.Cast(-transform.up, m_stuckCastFilter, m_colHits, m_stuckHitDist) > 0&&
+            m_col.Cast(transform.right, m_stuckCastFilter, m_colHits, m_wallHitDist) > 0&&
+            m_col.Cast(transform.right, m_stuckCastFilter, m_colHits, m_wallHitDist) > 0;
     }
 
     public bool IsGrounded()

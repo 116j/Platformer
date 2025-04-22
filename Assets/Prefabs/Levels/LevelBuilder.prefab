@@ -64,17 +64,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0.03
-      outSlope: 0.03
+      inSlope: 3
+      outSlope: 3
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 100
+      time: 1
       value: 4
-      inSlope: 0.03
-      outSlope: 0.03
+      inSlope: 3
+      outSlope: 3
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -88,17 +88,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0.03
-      outSlope: 0.03
+      inSlope: 3
+      outSlope: 3
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 100
+      time: 1
       value: 4
-      inSlope: 0.03
-      outSlope: 0.03
+      inSlope: 3
+      outSlope: 3
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -112,17 +112,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 4
-      inSlope: 0.05
-      outSlope: 0.05
+      inSlope: 5
+      outSlope: 5
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 100
+      time: 1
       value: 9
-      inSlope: 0.05
-      outSlope: 0.05
+      inSlope: 5
+      outSlope: 5
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -131,7 +131,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_startPosition: {x: 262, y: 25, z: 0}
-  m_maxRoomsCount: 99
+  m_maxRoomsCount: 50
 --- !u!82 &3544023340118429585
 AudioSource:
   m_ObjectHideFlags: 0

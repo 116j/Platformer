@@ -3,10 +3,15 @@ using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour
 {
+    static SettingsMenu m_instance;
+    public static SettingsMenu Instance => m_instance;
+
     [Header("Layouts")]
     [SerializeField]
     TextMeshProUGUI m_header;
@@ -36,6 +41,10 @@ public class SettingsMenu : MonoBehaviour
     TextMeshProUGUI m_languageText;
 
     [Header("Controls")]
+    [SerializeField]
+    GameObject m_gamepadContent;
+    [SerializeField]
+    GameObject m_keyboardContent;
 
     [Header("Level Builder")]
     [SerializeField]
@@ -71,9 +80,19 @@ public class SettingsMenu : MonoBehaviour
     int m_roomsCount = 50;
     float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f };
 
-    // Start is called before the first frame update
+    PlayerInput m_input;
+
+    private void Awake()
+    {
+        if (m_instance == null)
+        {
+            m_instance = this;
+        }
+    }
+
     void Start()
     {
+        m_input = GameObject.FindWithTag("Player").GetComponent<PlayerInput>();
         for (int i = 0; i < m_resolutiions.Length; i++)
         {
             if (Screen.currentResolution.width == m_resolutiions[i].Key &&
@@ -119,7 +138,7 @@ public class SettingsMenu : MonoBehaviour
     {
         if (m_currentLanguageInd < m_languages.Length - 1)
         {
-            m_languageText.text = m_languages[m_currentLanguageInd++].ToString();
+            m_languageText.text = m_languages[++m_currentLanguageInd].ToString();
         }
     }
 
@@ -127,7 +146,7 @@ public class SettingsMenu : MonoBehaviour
     {
         if (m_currentLanguageInd > 0)
         {
-            m_languageText.text = m_languages[m_currentLanguageInd--].ToString();
+            m_languageText.text = m_languages[--m_currentLanguageInd].ToString();
         }
     }
 
@@ -196,8 +215,17 @@ public class SettingsMenu : MonoBehaviour
     public void Controls()
     {
         m_header.text = "CONTROLS";
-        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 320);
-
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 375);
+        if (m_input.GetCurrebtDeviceType() == "Gamepad")
+        {
+            m_gamepadContent.SetActive(true);
+            m_keyboardContent.SetActive(false);
+        }
+        else
+        {
+            m_gamepadContent.SetActive(false);
+            m_keyboardContent.SetActive(true);
+        }
     }
 
     public void LvlBuilder()

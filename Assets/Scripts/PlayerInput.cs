@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -75,10 +76,21 @@ public class PlayerInput : MonoBehaviour
     bool m_shop = false;
     bool m_pause = false;
 
+    UnityEngine.InputSystem.PlayerInput m_input;
+
+    private void Start()
+    {
+        Cursor.visible = true;
+        m_input = GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        m_input.uiInputModule.cancel.action.performed += Menu.Instance.CloseLayout;
+    }
+
     public void LockInput()
     {
         m_inputLocked = !m_inputLocked;
     }
+
+    public string GetCurrebtDeviceType() => m_input.currentControlScheme;
 
     public void EnableShop()
     {
@@ -138,7 +150,7 @@ public class PlayerInput : MonoBehaviour
         m_pet = value.isPressed;
     }
 
-    void OnShop(InputValue value)
+    void OnShop()
     {
         if (m_shop)
         {

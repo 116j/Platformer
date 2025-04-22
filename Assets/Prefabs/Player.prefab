@@ -306,7 +306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e741ca1e84b80c4f892cff0a26dd550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnOffset: {x: 2.4, y: 1, z: 0}
+  m_spawnOffset: {x: 1.4, y: 1, z: 0}
   m_metric: {x: -0.4, y: 1.4, z: 0.4}
   m_setOffset: 1
 --- !u!50 &1085217618323219388

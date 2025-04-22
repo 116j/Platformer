@@ -190,51 +190,26 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        float targetY=0;
+        float targetY = 0;
         //camera offset 
-        if (!Mathf.Approximately(m_input.Move.y, 0))
+        if (!Mathf.Approximately(m_input.MoveCamera.y, 0))
 
         {
-            targetY = Mathf.Clamp(m_transposer.m_TrackedObjectOffset.y + m_input.Move.y * m_cameraSpeed * Time.fixedDeltaTime, -m_cameraBoundsHeight, m_cameraBoundsHeight);
+            targetY = Mathf.Clamp(m_transposer.m_TrackedObjectOffset.y + m_input.MoveCamera.y * m_cameraSpeed * Time.fixedDeltaTime, -m_cameraBoundsHeight, m_cameraBoundsHeight);
         }
         else
         {
             targetY = Mathf.MoveTowards(m_transposer.m_TrackedObjectOffset.y, m_baseTransposer, m_cameraSpeed * Time.fixedDeltaTime);
         }
-        m_transposer.m_TrackedObjectOffset = new Vector3(m_transposer.m_TrackedObjectOffset.x,targetY, m_transposer.m_TrackedObjectOffset.z);
+        m_transposer.m_TrackedObjectOffset = new Vector3(m_transposer.m_TrackedObjectOffset.x, targetY, m_transposer.m_TrackedObjectOffset.z);
 
     }
 
     private void FixedUpdate()
     {
-        if (m_win)
+        if (m_falling && (m_fallCheckpoint.y - transform.position.y > 200/* || m_touchings.IsWallStuck()*/))
         {
-            if (!m_jump && m_currentJumps < 3)
-            {
-                m_sound.PlaySound("Jump");
-                m_rb.velocity = new Vector2(0f, m_jumpPower);
-                m_jump = true;
-                m_currentJumps++;
-                Jump();
-            }
-            else if (m_falling && !m_touchings.IsSlopeDown() && m_touchings.IsGrounded() && (!m_touchings.IsWalls() || Mathf.Approximately(m_rb.velocity.y, 0f)) && m_jumping)
-            {
-                m_jump = false;
-                m_sound.PlaySound("Land");
-                m_falling = m_jumping = false;
-                if (m_currentJumps >= 3)
-                {
-
-                }
-            }
-            return;
-        }
-
-        if (m_falling && m_fallCheckpoint.y - transform.position.y > 200)
-        {
-            DestroyableTile.Instance.Restart(m_fallCheckpoint);
-            transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
-            m_currentDir = 1;
+            FallReset();
         }
 
 
@@ -254,9 +229,13 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            if (m_touchings.IsStuck())
+            if (m_touchings.IsGroundStuck())
             {
                 transform.position += Vector3.up * 0.6f;
+            }
+            if (m_falling && m_touchings.IsWallStuck())
+            {
+                transform.position -= Vector3.up * 2f;
             }
             // turn around
             if (m_currentDir * m_input.Move.x < 0 && !m_blockMove)
@@ -274,6 +253,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (m_touchings.IsSlopeUp())
                 {
+                    m_falling = false;
                     m_onSlope = m_rb.isKinematic = true;
                     m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, Mathf.Abs(m_input.Move.x) * m_runSpeed);
                 }
@@ -354,9 +334,7 @@ public class PlayerController : MonoBehaviour
         //if player fell down - move to checkpoint and reset camera
         if (collision.gameObject.CompareTag("bounds"))
         {
-            DestroyableTile.Instance?.Restart(m_fallCheckpoint);
-            transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
-            m_currentDir = 1;
+            FallReset();
         }
         else if (collision.gameObject.CompareTag("cat") && m_pet)
         {
@@ -418,6 +396,13 @@ public class PlayerController : MonoBehaviour
         m_fallCheckpoint = checkpoint + m_values.GetOffset().y * Vector3.up;
     }
 
+    public void FallReset()
+    {
+        //DestroyableTile.Instance?.Restart(m_fallCheckpoint);
+        transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
+        m_currentDir = 1;
+    }
+
     public void ChangeTransposerHeight(bool down)
     {
         m_baseTransposer += 3f * (down ? -1 : 1);
@@ -446,6 +431,7 @@ public class PlayerController : MonoBehaviour
 
     public void Restart()
     {
+        EnemyHealthBar.Instance.HideBar();
         m_damagable.Reborn(true);
         m_dead = !m_dead;
         transform.SetPositionAndRotation(m_rebornCheckpoint, Quaternion.identity);

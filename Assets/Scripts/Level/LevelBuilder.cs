@@ -177,6 +177,14 @@ public class LevelBuilder : MonoBehaviour
     {
         m_strategies[0].ShopDestroyed();
     }
+
+    public void SetTripleJump()
+    {
+        foreach(var s in m_strategies)
+        {
+            s.SetTripleJump();
+        }
+    }
     /// <summary>
     /// Creates room from random strategy
     /// </summary>
@@ -230,11 +238,7 @@ public class LevelBuilder : MonoBehaviour
             int i = m_usedStrategies[0] is GridStrategy || m_usedStrategies[0] is MovingPlatformStrategy ? 1 : 0;
             m_roomIndex--;
 
-            BoxCollider2D bounds = new GameObject().AddComponent<BoxCollider2D>();
-            bounds.gameObject.transform.position = m_rooms[i].GetStartPosition();
-            bounds.size = new Vector2(0.5f, 12);
-            bounds.offset = new Vector2(-0.25f, 6);
-            m_rooms[i].AddEnviromentObject(bounds.gameObject);
+            m_rooms[i].AddEnviromentObject(m_usedStrategies[i].CreateVerticalBounds(m_rooms[i].GetStartPosition()));
             m_player.SetRebornCheckpoint(m_rooms[i].GetStartPosition());
         }
     }
@@ -242,6 +246,7 @@ public class LevelBuilder : MonoBehaviour
     public void Restart()
     {
         m_player.Restart();
+        m_strategies[0].ResetCats();
         foreach (var r in m_rooms)
         {
             r.Restart();

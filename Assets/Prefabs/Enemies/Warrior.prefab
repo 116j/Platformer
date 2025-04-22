@@ -151,6 +151,10 @@ PrefabInstance:
       propertyPath: m_attackCooldownTime
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6030628016457017003, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.448
+      objectReference: {fileID: 0}
     - target: {fileID: 6371828228452578492, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.x
       value: 0.7637397
@@ -201,19 +205,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.x
-      value: -1.15
+      value: -0.795
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.y
-      value: 2.385
+      value: 1.785
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.z
-      value: 1.15
+      value: 0.82
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.x
-      value: 0.08
+      value: 0.795
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y
@@ -335,6 +339,7 @@ MonoBehaviour:
   m_walkSpeed: 1.5
   m_canRun: 1
   m_runSpeed: 3
+  m_healthBarOffset: {x: -0.12, y: 0.2, z: 0}
   m_attackScript: {fileID: 6925367753251332102}
   m_attackZone: {fileID: 3310668667958876611}
   m_detectZone: {fileID: 4785939226791503309}

@@ -41,6 +41,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_healthBarOffset.x
+      value: -0.643
+      objectReference: {fileID: 0}
+    - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_healthBarOffset.y
+      value: 0.768
+      objectReference: {fileID: 0}
+    - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnChance.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -122,7 +130,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5901932265902264129, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_attackCooldownTime
-      value: 1
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030628016457017003, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.894
       objectReference: {fileID: 0}
     - target: {fileID: 6371828228452578492, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Size.x
@@ -182,19 +194,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.x
-      value: -1.15
+      value: -1.85
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.y
-      value: 2.9
+      value: 1.81
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_metric.z
-      value: 1.15
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.x
-      value: 0.885
+      value: 1.85
       objectReference: {fileID: 0}
     - target: {fileID: 8183254454711484530, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_spawnOffset.y

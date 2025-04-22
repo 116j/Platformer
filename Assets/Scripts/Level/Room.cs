@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Room
@@ -39,7 +40,7 @@ public class Room
         m_lastWidthPoint = m_startPosition - Vector3Int.up * m_minHeight;
         m_roomHeight = m_minHeight;
         m_lastElevationPoint = m_startPosition.x;
-        m_cameraBoundsStart = m_startPosition.y - m_roomHeight;
+        m_cameraBoundsStart = m_lowestPoint = m_startPosition.y - m_roomHeight;
 
         MakePolygon(startwWidth, m_startPosition);
         // adds tiles so the end of the level can't be seen if transition is increasing
@@ -58,10 +59,9 @@ public class Room
         m_startPosition = start;
         m_endPosition = end;
         m_lastElevationPoint = start.x;
-        m_roomHeight = Mathf.Abs(m_endPosition.y - m_startPosition.y) + m_minHeight;
-        m_transitionLeftPoint = m_transitionRightPoint = Mathf.Abs(m_startPosition.y - m_endPosition.y);
-        m_lowestPoint = (m_endPosition.y - m_startPosition.y > 0 ? end.y : start.y) - m_roomHeight;
-        m_cameraBoundsStart = (m_endPosition.y - m_startPosition.y > 0 ? end.y : start.y) - m_roomHeight;
+        m_roomHeight = Mathf.Abs(end.y - start.y) + m_minHeight;
+        m_transitionLeftPoint = m_transitionRightPoint = Mathf.Abs(start.y - end.y);
+        m_lowestPoint = m_cameraBoundsStart = (end.y - start.y > 0 ? end.y : start.y) - m_roomHeight;
         m_lastWidthPoint = start - Vector3Int.up * m_minHeight;
     }
 
@@ -69,7 +69,13 @@ public class Room
 
     public Vector3Int GetStartPosition() => m_startPosition;
 
-    public void SetEndPosition(Vector3Int end) { m_endPosition = end; }
+    public void SetEndPosition(Vector3Int end)
+    {
+        m_endPosition = end;
+        m_roomHeight = Mathf.Abs(end.y - m_startPosition.y) + m_minHeight;
+        m_transitionLeftPoint = m_transitionRightPoint = Mathf.Abs(m_startPosition.y - end.y);
+        m_lowestPoint = m_cameraBoundsStart = (end.y - m_startPosition.y > 0 ? end.y : m_startPosition.y) - m_roomHeight;
+    }
 
     public Room GetNextTransition() => m_nextTransition;
 
@@ -110,6 +116,11 @@ public class Room
         {
             Object.Destroy(obj);
         }
+    }
+
+    public void ClearGrid()
+    {
+        m_polygons.Clear();
     }
 
     public void Restart()
