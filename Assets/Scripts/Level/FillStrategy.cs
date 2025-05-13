@@ -370,88 +370,49 @@ public class FillStrategy
     /// <param name="start">start of the straight section</param>
     /// <param name="vegs">array of the vegetation</param>
     /// <returns></returns>
-protected List<EnviromentObject> AddVegetation(int width, int height, Vector3Int start, EnviromentObject[] vegs)
+    /// <summary>
+    /// Adds vegetation on the straight section of the ground
+    /// </summary>
+    /// <param name="width">width of the straight section</param>
+    /// <param name="height">max veg's height</param>
+    /// <param name="start">start of the straight section</param>
+    /// <param name="vegs">array of the vegetation</param>
+    /// <returns></returns>
+    protected List<EnviromentObject> AddVegetation(int width, int height, Vector3Int start, EnviromentObject[] vegs)
     {
-        // 1) Если нечего ставить — сразу выходим
-        if (width <= 0 || vegs == null || vegs.Length == 0)
-            return new List<EnviromentObject>();
-
-        // 2) Предварительный расчёт границ и ёмкости списка
-        float minX = start.x;
-        float maxX = start.x + width;
-        float halfWidth = width * 0.5f;
-        var result = new List<EnviromentObject>(Mathf.Max(1, width / 2));
-
-        int tries = width + 2;      // сколько попыток в сумме
-        float usedLength = 0f;      // уже «занятая» длина
-
-        // 3) Основной цикл
-        while (tries-- > 0)
+        List<EnviromentObject> objs = new List<EnviromentObject>();
+        if (width == 0)
+            return objs;
+        // tries for respawn
+        int tries = width + 2;
+        float length = 0;
+        while (tries >= 0)
         {
-            // 3.1 Выбираем префаб и создаём объект
-            var prefab = vegs[Random.Range(0, vegs.Length)];
-            var go = Object.Instantiate(prefab, start, Quaternion.identity);
-            var obj = go.GetComponent<EnviromentObject>();
+            EnviromentObject obj = Object.Instantiate(vegs[Random.Range(0, vegs.Length)], start, Quaternion.identity).GetComponent<EnviromentObject>();
+            Vector3 pos = new Vector3(Random.Range(start.x + obj.GetRightBorder(), start.x + width + obj.GetLeftBorder()), start.y);
+            obj.transform.position = pos + obj.GetOffset();
+            // if obj collides other objs for more than 1/3 of its width
+            bool collides = objs.Any(o => o.transform.position.x > obj.transform.position.x &&
+                obj.transform.position.x + obj.GetRightBorder() - o.transform.position.x - o.GetLeftBorder() > obj.GetWidth() / 3 ||
+                o.transform.position.x < obj.transform.position.x &&
+                o.transform.position.x + o.GetRightBorder() - obj.transform.position.x - obj.GetLeftBorder() > obj.GetWidth() / 3);
 
-            // 3.2 Кэшируем размеры и оффсеты
-            float objWidth = obj.GetWidth();
-            float objHeight = obj.GetHeight();
-            float leftBorder = obj.GetLeftBorder();
-            float rightBorder = obj.GetRightBorder();
-            Vector3 offset = obj.GetOffset();
-
-            // 3.3 Случайная позиция внутри [minX+leftBorder ; maxX-rightBorder]
-            float px = Random.Range(minX + leftBorder, maxX - rightBorder);
-            Vector3 pos = new Vector3(px, start.y) + offset;
-            obj.transform.position = pos;
-
-            // 4) Быстрые отбрасывающие проверки до коллизий:
-            //    - по высоте
-            //    - по выходу за границы
-            //    - по случайному досрочному завершению (чтобы не набивать слишком плотно)
-            if (objHeight > height
-                || pos.x + rightBorder > maxX
-                || pos.x + leftBorder < minX
-                || (usedLength > halfWidth && Random.value > 0.65f))
+            if (obj.GetHeight() > height || collides || (Random.value > 0.65f && length > width * 1.0f / 2) || pos.x + obj.GetRightBorder() > start.x + width || pos.x + obj.GetLeftBorder() < start.x)
             {
-                GameObject.Destroy(go);
+                tries--;
+                Object.Destroy(obj.gameObject);
                 continue;
             }
-
-            // 5) Проверка пересечения с уже поставленными объектами
-            bool overlap = false;
-            for (int i = 0; i < result.Count; i++)
-            {
-                var existing = result[i];
-                float exX = existing.transform.position.x;
-                float exWidth = existing.GetWidth();
-                float exLeft = existing.GetLeftBorder();
-                float exRight = existing.GetRightBorder();
-                // приблизительная проверка пересечения по оси X
-                if (Mathf.Abs(pos.x - exX) < (objWidth + exWidth) * 0.5f)
-                {
-                    overlap = true;
-                    break;
-                }
-            }
-            if (overlap)
-            {
-                GameObject.Destroy(go);
-                continue;
-            }
-
-            // 6) Всё ок — сохраняем и накапливаем занятое пространство
-            result.Add(obj);
-            usedLength += objWidth;
+            length += obj.GetWidth();
+            objs.Add(obj);
         }
-
-        return result;
+        return objs;
     }
-/// <summary>
-/// Get random enemy based on their spawn chances
-/// </summary>
-/// <returns></returns>
-int GetEnemyNum()
+    /// <summary>
+    /// Get random enemy based on their spawn chances
+    /// </summary>
+    /// <returns></returns>
+    int GetEnemyNum()
     {
         List<float> chances = new List<float>();
         foreach (var enemy in m_levelTheme.m_enemies)
