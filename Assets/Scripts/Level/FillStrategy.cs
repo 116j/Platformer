@@ -104,7 +104,8 @@ public class FillStrategy
         SpawnEnemyOrTrap(room, startWidth, int.MaxValue, start);
         CreateElevations(room, start + startWidth * Vector3Int.right, height, true);
         room.AddTransition(transitionStrategy.FillTransition(room, isInitial));
-        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, true),isInitial: isInitial);
+        room.DrawTiles();
+        AddLandscape(room, int.MaxValue, true);
 
         return room;
     }
@@ -143,7 +144,8 @@ public class FillStrategy
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(),end,width,height));
 
-        transition.DrawTiles((List<Vector3Int> ground) => AddLandscape(transition, ground, int.MaxValue, false), isInitial: isInitial);
+        transition.DrawTiles();
+        AddLandscape(transition, int.MaxValue, false);
 
         return transition;
     }
@@ -191,7 +193,8 @@ public class FillStrategy
 
         room.AddEnviromentObject(CreateVerticalBounds(start));
 
-        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, true), isInitial:true);
+        room.DrawTiles();
+        AddLandscape(room, int.MaxValue, true);
 
         return room;
     }
@@ -215,7 +218,8 @@ public class FillStrategy
         room.CreateElevationOrLowland(-m_finalRoomHeight, m_finalRoomWidth, start + m_minStraightSection * Vector3Int.right);
         room.CreateElevationOrLowland(m_finalRoomHeight, m_minStraightSection, start + new Vector3Int(m_minStraightSection + m_finalRoomWidth, -m_finalRoomHeight));
         room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_boss, new Vector3(start.x + (m_minStraightSection + m_finalRoomWidth - m_levelTheme.m_boss.GetWidth()) / 2, start.y - m_finalRoomHeight), Quaternion.identity).gameObject);
-        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, true));
+        room.DrawTiles();
+        AddLandscape(room, int.MaxValue, true);
         return room;
     }
     /// <summary>
@@ -294,13 +298,13 @@ public class FillStrategy
     /// <param name="room"></param>
     /// <param name="height">max vegetation height</param>
     /// <param name="addTrees"></param>
-    protected void AddLandscape(Room room, List<Vector3Int> groundTiles, int height, bool addTrees)
+    protected void AddLandscape(Room room, int height, bool addTrees)
     {
         int width = 0;
         int grassWidth = 0;
-        Vector3Int start = groundTiles.FirstOrDefault();
-        Vector3Int grassStart = groundTiles.FirstOrDefault();
-        foreach (var ground in groundTiles)
+        Vector3Int start = room.GetStartPosition();
+        Vector3Int grassStart = room.GetStartPosition();
+        foreach (var ground in room.GetGround())
         {
             // if tile has grass - don't add one
             if (!TileEditor.Instance.AddGrass(ground) && ground.y == start.y && ground.x == start.x + width)
@@ -356,6 +360,7 @@ public class FillStrategy
             {
                 room.AddEnviromentObject(obj.gameObject);
             }
+
     }
     /// <summary>
     /// Adds vegetation on the straight section of the ground
@@ -365,41 +370,88 @@ public class FillStrategy
     /// <param name="start">start of the straight section</param>
     /// <param name="vegs">array of the vegetation</param>
     /// <returns></returns>
-    protected List<EnviromentObject> AddVegetation(int width, int height, Vector3Int start, EnviromentObject[] vegs)
+protected List<EnviromentObject> AddVegetation(int width, int height, Vector3Int start, EnviromentObject[] vegs)
     {
-        List<EnviromentObject> objs = new List<EnviromentObject>();
-        if (width == 0)
-            return objs;
-        // tries for respawn
-        int tries = width + 2;
-        float length = 0;
-        while (tries >= 0)
-        {
-            EnviromentObject obj = Object.Instantiate(vegs[Random.Range(0, vegs.Length)], start, Quaternion.identity).GetComponent<EnviromentObject>();
-            Vector3 pos = new Vector3(Random.Range(start.x + obj.GetRightBorder(), start.x + width + obj.GetLeftBorder()), start.y);
-            obj.transform.position = pos + obj.GetOffset();
-            // if obj collides other objs for more than 1/3 of its width
-            bool collides = objs.Any(o => o.transform.position.x > obj.transform.position.x &&
-                obj.transform.position.x + obj.GetRightBorder() - o.transform.position.x - o.GetLeftBorder() > obj.GetWidth() / 3 ||
-                o.transform.position.x < obj.transform.position.x &&
-                o.transform.position.x + o.GetRightBorder() - obj.transform.position.x - obj.GetLeftBorder() > obj.GetWidth() / 3);
+        // 1) Если нечего ставить — сразу выходим
+        if (width <= 0 || vegs == null || vegs.Length == 0)
+            return new List<EnviromentObject>();
 
-            if (obj.GetHeight() > height || collides || (Random.value > 0.65f && length > width * 1.0f / 2) || pos.x + obj.GetRightBorder() > start.x + width || pos.x + obj.GetLeftBorder() < start.x)
+        // 2) Предварительный расчёт границ и ёмкости списка
+        float minX = start.x;
+        float maxX = start.x + width;
+        float halfWidth = width * 0.5f;
+        var result = new List<EnviromentObject>(Mathf.Max(1, width / 2));
+
+        int tries = width + 2;      // сколько попыток в сумме
+        float usedLength = 0f;      // уже «занятая» длина
+
+        // 3) Основной цикл
+        while (tries-- > 0)
+        {
+            // 3.1 Выбираем префаб и создаём объект
+            var prefab = vegs[Random.Range(0, vegs.Length)];
+            var go = Object.Instantiate(prefab, start, Quaternion.identity);
+            var obj = go.GetComponent<EnviromentObject>();
+
+            // 3.2 Кэшируем размеры и оффсеты
+            float objWidth = obj.GetWidth();
+            float objHeight = obj.GetHeight();
+            float leftBorder = obj.GetLeftBorder();
+            float rightBorder = obj.GetRightBorder();
+            Vector3 offset = obj.GetOffset();
+
+            // 3.3 Случайная позиция внутри [minX+leftBorder ; maxX-rightBorder]
+            float px = Random.Range(minX + leftBorder, maxX - rightBorder);
+            Vector3 pos = new Vector3(px, start.y) + offset;
+            obj.transform.position = pos;
+
+            // 4) Быстрые отбрасывающие проверки до коллизий:
+            //    - по высоте
+            //    - по выходу за границы
+            //    - по случайному досрочному завершению (чтобы не набивать слишком плотно)
+            if (objHeight > height
+                || pos.x + rightBorder > maxX
+                || pos.x + leftBorder < minX
+                || (usedLength > halfWidth && Random.value > 0.65f))
             {
-                tries--;
-                Object.Destroy(obj.gameObject);
+                GameObject.Destroy(go);
                 continue;
             }
-            length += obj.GetWidth();
-            objs.Add(obj);
+
+            // 5) Проверка пересечения с уже поставленными объектами
+            bool overlap = false;
+            for (int i = 0; i < result.Count; i++)
+            {
+                var existing = result[i];
+                float exX = existing.transform.position.x;
+                float exWidth = existing.GetWidth();
+                float exLeft = existing.GetLeftBorder();
+                float exRight = existing.GetRightBorder();
+                // приблизительная проверка пересечения по оси X
+                if (Mathf.Abs(pos.x - exX) < (objWidth + exWidth) * 0.5f)
+                {
+                    overlap = true;
+                    break;
+                }
+            }
+            if (overlap)
+            {
+                GameObject.Destroy(go);
+                continue;
+            }
+
+            // 6) Всё ок — сохраняем и накапливаем занятое пространство
+            result.Add(obj);
+            usedLength += objWidth;
         }
-        return objs;
+
+        return result;
     }
-    /// <summary>
-    /// Get random enemy based on their spawn chances
-    /// </summary>
-    /// <returns></returns>
-    int GetEnemyNum()
+/// <summary>
+/// Get random enemy based on their spawn chances
+/// </summary>
+/// <returns></returns>
+int GetEnemyNum()
     {
         List<float> chances = new List<float>();
         foreach (var enemy in m_levelTheme.m_enemies)

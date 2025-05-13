@@ -135,7 +135,8 @@ public class CeilStrategy : FillStrategy
         {
             room.AddEnviromentObject(t.gameObject);
         }
-        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, offset, true));
+        room.DrawTiles();
+        AddLandscape(room, offset, true);
     }
     /// <summary>
     /// Adds a series of traps with offsets

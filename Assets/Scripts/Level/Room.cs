@@ -324,13 +324,13 @@ public class Room
         return false;
     }
 
-    public void DrawTiles(Action<List<Vector3Int>> callback, TilePlaceAnalog analog = null, bool isInitial=false)
+    public void DrawTiles(TilePlaceAnalog analog = null)
     {
         if (analog == null)
         {
                 foreach (var poly in m_polygons)
                 {
-                    poly.DrawTiles(isInitial, callback);
+                    poly.DrawTiles();
                 }            
         }
         else

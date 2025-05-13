@@ -73,7 +73,8 @@ public class GridStrategy : FillStrategy
         prevRoom.GetNextTransition().Clear();
         prevRoom.AddTransition(transition);
         room.AddTransition(new Room(end, end));
-        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, false), isInitial: isInitial);
+        room.DrawTiles();
+        AddLandscape(room, int.MaxValue, false);
         return room;
     }
 
@@ -100,7 +101,8 @@ public class GridStrategy : FillStrategy
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
-        transition.DrawTiles((List<Vector3Int> ground) => AddLandscape(transition, ground, int.MaxValue, false), isInitial: isInitial);
+        transition.DrawTiles();
+        AddLandscape(transition, int.MaxValue, false);
         return transition;
     }
 

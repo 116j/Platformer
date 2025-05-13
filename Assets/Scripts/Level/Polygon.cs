@@ -14,9 +14,9 @@ public class Polygon
     }
 
 
-    public void DrawTiles(bool isInitial, Action<List<Vector3Int>> callback)
+    public void DrawTiles()
     {
-        TileEditor.Instance.SetTiles(m_tilePositions, m_ground, callback, isInitial);
+        TileEditor.Instance.SetTiles(m_tilePositions);
     }
 
     public void DrawTilesWithAnalog(TilePlaceAnalog analog)
