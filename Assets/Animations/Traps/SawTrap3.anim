@@ -1693,10 +1693,10 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.25
-    functionName: 
+  - time: 0
+    functionName: PlaySoundLoop
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 8300000, guid: 4e0b0ce99f099784aa2185f73aa0459c, type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0

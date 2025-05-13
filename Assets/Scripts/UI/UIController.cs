@@ -1,8 +1,12 @@
+﻿using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public class UIController : MonoBehaviour
 {
@@ -36,10 +40,14 @@ public class UIController : MonoBehaviour
     [Header("Win")]
     [SerializeField]
     GameObject m_winLayout;
+    [SerializeField]
+    TextMeshProUGUI m_winText;
 
     [Header("Die")]
     [SerializeField]
     GameObject m_dieLayout;
+    [SerializeField]
+    TextMeshProUGUI m_dieText;
 
     List<Image> m_hearts;
     int m_currentHeart;
@@ -49,8 +57,43 @@ public class UIController : MonoBehaviour
     public int AllHerats => m_hearts.Count;
 
     int m_money = 0;
-    float m_addAmount = 0;
-    float m_amount = 0;
+    int m_currentMoney = 0;
+
+    public int CurrentLanguage { get; set; }
+    PlayerInput m_input;
+
+    string[][] m_restartTexts ={
+        new string[]{
+        "press SELECT to RESTART",
+        "pressione SELECT para REINICIAR",
+        "нажмите SELECT для ПЕРЕЗАПУСКА",
+        "presione SELECT para REINICIAR",
+        "YENİDEN başlatmak için SELECT tuşuna basın"
+        },
+        new string[]{
+        "PRESS R TO RESTART",
+        "PRESSIONE R PARA REINICIAR",
+        "НАЖМИТЕ R ДЛЯ ПЕРЕЗАПУСКА",
+        "PRESIONE R PARA REINICIAR",
+        "YENİDEN BAŞLATMAK İÇİN R TUŞUNA BASIN"
+        }
+        };
+    string[][] m_winTexts ={
+        new string[]{
+        "press SELECT to go to the MAIN MENU",
+        "pressione SELECT para ir para o MENU PRINCIPAL", 
+        "нажмите SELECT, чтобы перейти в ГЛАВНОЕ МЕНЮ",
+        "haga clic en SELECCIONAR para ir al MENÚ PRINCIPAL",
+        "ANA MENÜYE gitmek için SELECT tuşuna basın"
+        },
+        new string[]{
+        "PRESS M TO GO TO THE MAIN MENU",
+        "PRESSIONE M PARA IR PARA O MENU PRINCIPAL",
+        "НАЖМИТЕ M, ЧТОБЫ ПЕРЕЙТИ В ГЛАВНОЕ МЕНЮ",
+        "PRESIONE M PARA IR AL MENÚ PRINCIPAL",
+        "ANA MENÜYE GİTMEK İÇİN M TUŞUNA BASIN"
+        }
+        };
 
     private void Awake()
     {
@@ -64,20 +107,14 @@ public class UIController : MonoBehaviour
     {
         m_hearts = m_healthLayout.GetComponentsInChildren<Image>().ToList();
         m_currentHeart = m_hearts.Count - 1;
-    }
+        m_input = GameObject.FindWithTag("Player").GetComponent<PlayerInput>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (m_amount != 0)
+        for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
         {
-            m_addAmount = Mathf.Lerp(m_addAmount, m_amount, Time.deltaTime);
-            m_moneyText.text = (m_money + Mathf.CeilToInt(m_addAmount)).ToString();
-            if (Mathf.CeilToInt(m_addAmount) == m_amount)
+            var locale = LocalizationSettings.AvailableLocales.Locales[i];
+            if (LocalizationSettings.SelectedLocale == locale)
             {
-                m_addAmount = 0;
-                m_money += (int)m_amount;
-                m_amount = 0;
+                CurrentLanguage = i;
             }
         }
     }
@@ -98,12 +135,32 @@ public class UIController : MonoBehaviour
         image.rectTransform.sizeDelta = m_heratSize;
         m_hearts.Add(image);
     }
-    public void AddMoney(float amount)
+    public void AddMoney(int amount)
     {
-        m_amount += amount;
+        // Рассчитываем длительность анимации (например, 0.001s на единицу, но не меньше 0.5s и не больше 2s)
+        float baseDuration = Mathf.Abs(amount) * Time.deltaTime;
+        float duration = Mathf.Clamp(baseDuration, 0.5f, 3f);
+        m_currentMoney = m_money;
+        m_money += amount;
+        DOTween.To(
+            () => m_currentMoney,
+            x => {
+                m_currentMoney = x;
+                UpdateMoneyText();
+            },
+            m_money,
+            duration
+        ).SetEase(Ease.OutQuad);
+
     }
 
-    public float GetMoney() => m_money + m_amount;
+    void UpdateMoneyText()
+    {
+        m_moneyText.text = m_currentMoney.ToString();  // Можно добавить "$" или форматирование
+    }
+
+
+    public float GetMoney() => m_money;
 
     /// <summary>
     /// Add or remove hearts
@@ -148,11 +205,28 @@ public class UIController : MonoBehaviour
 
     public void Win()
     {
+        m_input.LockInput();
+        if (m_input.GetCurrebtDeviceType() == "Gamepad")
+        {
+            m_dieText.text = m_winTexts[0][CurrentLanguage];
+        }
+        else
+        {
+            m_winText.text = m_winTexts[1][CurrentLanguage];
+        }
         m_winLayout.SetActive(true);
     }
 
     public void Die(bool active)
     {
+        if (m_input.GetCurrebtDeviceType() == "Gamepad")
+        {
+            m_dieText.text = m_restartTexts[0][CurrentLanguage];
+        }
+        else
+        {
+            m_dieText.text = m_restartTexts[1][CurrentLanguage];
+        }
         m_dieLayout.SetActive(active);
     }
 

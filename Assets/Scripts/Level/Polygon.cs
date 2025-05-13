@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,9 +14,9 @@ public class Polygon
     }
 
 
-    public void DrawTiles()
+    public void DrawTiles(bool isInitial, Action<List<Vector3Int>> callback)
     {
-        TileEditor.Instance.SetTiles(m_tilePositions);
+        TileEditor.Instance.SetTiles(m_tilePositions, m_ground, callback, isInitial);
     }
 
     public void DrawTilesWithAnalog(TilePlaceAnalog analog)

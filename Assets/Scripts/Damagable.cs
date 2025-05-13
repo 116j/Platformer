@@ -86,6 +86,12 @@ public class Damagable : MonoBehaviour
         ApplyHealth(1);
     }
 
+    public void SetHealth(int health)
+    {
+        m_maxHealth = health;
+        m_health = health;
+    }
+
     public float GetHealthPercentage() => m_health / (1.0f * m_maxHealth);
 
     public void Reborn(bool invinsible = false)

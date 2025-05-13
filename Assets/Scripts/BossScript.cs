@@ -4,6 +4,8 @@ public class BossScript : WalkEnemy
 {
     [SerializeField]
     DetectZone m_roarZone;
+    [SerializeField]
+    AnimationCurve m_bossHealth;
 
     readonly int m_HashRoar = Animator.StringToHash("Roar");
 
@@ -19,6 +21,12 @@ public class BossScript : WalkEnemy
     float m_closeAttackCooldown = 5f;
     float m_closeAttackCooldownTimer;
     bool m_canCloseAttack = true;
+
+    protected override void Start()
+    {
+        base.Start();
+        m_damageable.SetHealth((int)m_bossHealth.Evaluate(LevelBuilder.Instance.GetMaxRoomsCount() / 150f));
+    }
 
     protected override void FixedUpdate()
     {
@@ -90,7 +98,6 @@ public class BossScript : WalkEnemy
     {
         if (damage == 0)
         {
-            GameObject.FindWithTag("Player").GetComponent<PlayerController>().Win();
             UIController.Instance.Win();
         }
         else if (damage < 0)

@@ -1,0 +1,191 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: c8d669ffb1f104a4196767f9c8d20b6f, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 3230425858048
+    m_Localized: SHOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5988151377920
+    m_Localized: EXTRA DASH
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5622416457728
+    m_Localized: L ATTACK+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5456175218688
+    m_Localized: H ATTACK+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5732093313024
+    m_Localized: TRIPLE JUMP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6772305870848
+    m_Localized: EXTRA HEART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10487754571776
+    m_Localized: DISPLAY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10511225896960
+    m_Localized: AUDIO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10565894455296
+    m_Localized: CONTROLS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10611742392320
+    m_Localized: LEVEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10648094425088
+    m_Localized: OPTIONS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10691455139840
+    m_Localized: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10710346285056
+    m_Localized: MAIN MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13786444644352
+    m_Localized: BACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14972916776960
+    m_Localized: RESUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15487008423936
+    m_Localized: PLAY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15785370238976
+    m_Localized: EXIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15981047103488
+    m_Localized: RESOLUTION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16481771503616
+    m_Localized: FULL SCREEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16967220248576
+    m_Localized: LANGUAGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17283927949312
+    m_Localized: SAVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17896501854208
+    m_Localized: MUTE ALL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17860539891712
+    m_Localized: SFX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17781510815744
+    m_Localized: GAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17827702685696
+    m_Localized: MUSIC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20624187768832
+    m_Localized: ROOMS COUNT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20650360225792
+    m_Localized: THE FREQUENCY OF ROOM GENERATION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20704886177792
+    m_Localized: Base room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20736116965376
+    m_Localized: Ceiling room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20750046248960
+    m_Localized: Grid platforms room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20774792642560
+    m_Localized: Moving platforms room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22886800867328
+    m_Localized: PLAYER'S MOVEMENT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23436841893888
+    m_Localized: DODGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23404579307520
+    m_Localized: 'HEAVY ATTACK
+
+      (HOLD)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23321938935808
+    m_Localized: LIGHT ATTACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23189612838912
+    m_Localized: DASH
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23151595667456
+    m_Localized: 'JUMP
+
+      (HOLD TO JUMP HIGHER)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23103445057536
+    m_Localized: CAMERA MOVEMENT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293250265169920
+    m_Localized: THE END
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293273988153344
+    m_Localized: YOU'RE DEAD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293296146661376
+    m_Localized: PAUSE
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

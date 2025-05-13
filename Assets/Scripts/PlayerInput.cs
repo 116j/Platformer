@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
 public class PlayerInput : MonoBehaviour
@@ -167,5 +168,10 @@ public class PlayerInput : MonoBehaviour
             UIController.Instance.Die(false);
             m_restart = false;
         }
+    }
+
+    void OnMenu()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

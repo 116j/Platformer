@@ -59,17 +59,18 @@ public class Menu : MonoBehaviour
         Time.timeScale = 1;
         m_input.LockInput();
         UIController.Instance.SetStats(false);
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Settings()
     {
+        m_pauseLayoutAnim.ResetTrigger("CloseLayout");
         m_pauseLayoutAnim.SetBool("OpenSettings", true);
     }
 
-    public void Options()
+    public void Back()
     {
-        m_pauseLayoutAnim.SetBool("OpenOptions", true);
+        m_pauseLayoutAnim.SetTrigger("CloseSettings");
     }
 
     public void SettingsLayout()
@@ -86,6 +87,7 @@ public class Menu : MonoBehaviour
     public void Play()
     {
         m_input.LockInput();
+        m_pauseLayoutAnim.SetBool("Close", true);
         UIController.Instance.SetStats(true);
     }
 

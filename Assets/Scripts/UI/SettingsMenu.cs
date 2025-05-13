@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
@@ -5,6 +6,8 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.SmartFormat.Core.Parsing;
 using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour
@@ -68,12 +71,10 @@ public class SettingsMenu : MonoBehaviour
        new(1280,720), new(1440,900),new(1920,1200),
         new(1920,1080),new(2560,1440)
     };
-    SystemLanguage[] m_languages = { };
 
     int m_currentLanguageInd = 0;
     int m_currentResolutionInd;
 
-    SystemLanguage m_currentLanguage;
     KeyValuePair<int, int> m_currentResolution;
     bool m_fullScreen = true;
 
@@ -103,6 +104,9 @@ public class SettingsMenu : MonoBehaviour
                 m_resolutionText.text = $"{m_resolutiions[m_currentResolutionInd].Key} x {m_resolutiions[m_currentResolutionInd].Value}";
             }
         }
+
+        m_currentLanguageInd = UIController.Instance.CurrentLanguage;
+        m_languageText.text = LocalizationSettings.AvailableLocales.Locales[m_currentLanguageInd].name.ToUpper();
     }
 
     public void Display()
@@ -136,9 +140,9 @@ public class SettingsMenu : MonoBehaviour
 
     public void SetLanguageUp()
     {
-        if (m_currentLanguageInd < m_languages.Length - 1)
+        if (m_currentLanguageInd < LocalizationSettings.AvailableLocales.Locales.Count - 1)
         {
-            m_languageText.text = m_languages[++m_currentLanguageInd].ToString();
+            m_languageText.text = LocalizationSettings.AvailableLocales.Locales[++m_currentLanguageInd].name.ToUpper();
         }
     }
 
@@ -146,13 +150,14 @@ public class SettingsMenu : MonoBehaviour
     {
         if (m_currentLanguageInd > 0)
         {
-            m_languageText.text = m_languages[--m_currentLanguageInd].ToString();
+            m_languageText.text = LocalizationSettings.AvailableLocales.Locales[--m_currentLanguageInd].name.ToString();
         }
     }
 
     public void SaveDisplay()
     {
-        m_currentLanguage = m_languages[m_currentLanguageInd];
+        UIController.Instance.CurrentLanguage = m_currentLanguageInd;
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[m_currentLanguageInd];
         m_currentResolution = m_resolutiions[m_currentResolutionInd];
         Screen.SetResolution(m_currentResolution.Key, m_currentResolution.Key, m_fullScreen);
     }

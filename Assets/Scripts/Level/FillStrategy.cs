@@ -86,7 +86,7 @@ public class FillStrategy
     /// <param name="prevRoom">previous room</param>
     /// <param name="transitionStrategy">strategy to create the transition between this and next rooms</param>
     /// <returns>filled room</returns>
-    public virtual Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
+    public virtual Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
     {
         Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
@@ -103,9 +103,8 @@ public class FillStrategy
         m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
         SpawnEnemyOrTrap(room, startWidth, int.MaxValue, start);
         CreateElevations(room, start + startWidth * Vector3Int.right, height, true);
-        room.AddTransition(transitionStrategy.FillTransition(room));
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, true);
+        room.AddTransition(transitionStrategy.FillTransition(room, isInitial));
+        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, true),isInitial: isInitial);
 
         return room;
     }
@@ -113,7 +112,7 @@ public class FillStrategy
     /// Creates transition from room
     /// </summary>
     /// <param name="room"></param>
-    public virtual Room FillTransition(Room room)
+    public virtual Room FillTransition(Room room, bool isInitial)
     {
         int width = Random.Range(m_minTransitionWidth, m_maxTransitionWidth);
         int height = Random.Range(-m_maxTransitionHeight, Mathf.Clamp(width / 3 * m_playerJumpHeight, 0, m_maxTransitionHeight));
@@ -144,8 +143,8 @@ public class FillStrategy
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(),end,width,height));
 
-        transition.DrawTiles();
-        AddLandscape(transition, int.MaxValue, false);
+        transition.DrawTiles((List<Vector3Int> ground) => AddLandscape(transition, ground, int.MaxValue, false), isInitial: isInitial);
+
         return transition;
     }
 
@@ -188,12 +187,11 @@ public class FillStrategy
         if (height > m_playerJumpHeight)
             m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
         CreateElevations(room, start + startWidth * Vector3Int.right, height,  false);
-        room.AddTransition(transitionStrategy.FillTransition(room));
+        room.AddTransition(transitionStrategy.FillTransition(room, true));
 
         room.AddEnviromentObject(CreateVerticalBounds(start));
 
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, true);
+        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, true), isInitial:true);
 
         return room;
     }
@@ -217,8 +215,7 @@ public class FillStrategy
         room.CreateElevationOrLowland(-m_finalRoomHeight, m_finalRoomWidth, start + m_minStraightSection * Vector3Int.right);
         room.CreateElevationOrLowland(m_finalRoomHeight, m_minStraightSection, start + new Vector3Int(m_minStraightSection + m_finalRoomWidth, -m_finalRoomHeight));
         room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_boss, new Vector3(start.x + (m_minStraightSection + m_finalRoomWidth - m_levelTheme.m_boss.GetWidth()) / 2, start.y - m_finalRoomHeight), Quaternion.identity).gameObject);
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, true);
+        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, int.MaxValue, true));
         return room;
     }
     /// <summary>
@@ -297,13 +294,13 @@ public class FillStrategy
     /// <param name="room"></param>
     /// <param name="height">max vegetation height</param>
     /// <param name="addTrees"></param>
-    protected void AddLandscape(Room room, int height, bool addTrees)
+    protected void AddLandscape(Room room, List<Vector3Int> groundTiles, int height, bool addTrees)
     {
         int width = 0;
         int grassWidth = 0;
-        Vector3Int start = room.GetStartPosition();
-        Vector3Int grassStart = room.GetStartPosition();
-        foreach (var ground in room.GetGround())
+        Vector3Int start = groundTiles.FirstOrDefault();
+        Vector3Int grassStart = groundTiles.FirstOrDefault();
+        foreach (var ground in groundTiles)
         {
             // if tile has grass - don't add one
             if (!TileEditor.Instance.AddGrass(ground) && ground.y == start.y && ground.x == start.x + width)

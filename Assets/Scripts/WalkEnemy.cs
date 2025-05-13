@@ -155,7 +155,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
                 int coins = Random.Range(3, 7);
                 for (int i = 0; i < coins; i++)
                 {
-                    Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(m_cost / coins * 1.0f);
+                    Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(m_cost / coins);
                 }
             }
         }

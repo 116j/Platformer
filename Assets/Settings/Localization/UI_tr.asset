@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_tr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: tr
+  m_SharedData: {fileID: 11400000, guid: c8d669ffb1f104a4196767f9c8d20b6f, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 3230425858048
+    m_Localized: "MA\u011EAZA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6772305870848
+    m_Localized: KALP+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5988151377920
+    m_Localized: EKSTRA ATILIM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5456175218688
+    m_Localized: A SALDIRI+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5622416457728
+    m_Localized: H SALDIRI+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5732093313024
+    m_Localized: "\xDC\xC7L\xDC ATLAMA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10648094425088
+    m_Localized: "SE\xC7ENEKLER"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10691455139840
+    m_Localized: AYARLAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10710346285056
+    m_Localized: "ANA MEN\xDC"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10565894455296
+    m_Localized: KONTROLLER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10511225896960
+    m_Localized: SES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10487754571776
+    m_Localized: EKRAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10611742392320
+    m_Localized: "SEV\u0130YE"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13786444644352
+    m_Localized: "GER\u0130"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14972916776960
+    m_Localized: "S\xDCRD\xDCRMEK"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15487008423936
+    m_Localized: OYUN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15785370238976
+    m_Localized: "\xC7IKI\u015E"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15981047103488
+    m_Localized: "\xC7\xD6Z\xDCNME"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16481771503616
+    m_Localized: TAM EKRAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16967220248576
+    m_Localized: DIL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17283927949312
+    m_Localized: KAYDETMEK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17860539891712
+    m_Localized: "SFX'\u0130N"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17781510815744
+    m_Localized: OYUN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17827702685696
+    m_Localized: "M\xDCZIK"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17896501854208
+    m_Localized: SES YOK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20624187768832
+    m_Localized: ODA SAYISI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20650360225792
+    m_Localized: "ODA OLU\u015ETURMA SIKLI\u011EI"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20704886177792
+    m_Localized: Temel oda
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20736116965376
+    m_Localized: "Tavan odas\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20750046248960
+    m_Localized: "Izgara platformlar\u0131 Odas\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20774792642560
+    m_Localized: "Hareketli platformlar odas\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22886800867328
+    m_Localized: "OYUNCUNUN HAREKET\u0130"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23404579307520
+    m_Localized: "A\u011EIR SALDIRI\n(TUTMAK)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23321938935808
+    m_Localized: "HAF\u0130F SALDIRI"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23436841893888
+    m_Localized: ATLATMAK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23189612838912
+    m_Localized: ATILIM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23151595667456
+    m_Localized: "ATLAMA\n(Y\xDCKSE\u011EE ZIPLAMAK \u0130\xC7\u0130N BASILI TUTUN)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23103445057536
+    m_Localized: "KAMERA HAREKET\u0130"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293250265169920
+    m_Localized: SON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293273988153344
+    m_Localized: "S\u0130Z \xD6LD\xDCN\xDCZ"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293296146661376
+    m_Localized: DURAKLAT
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

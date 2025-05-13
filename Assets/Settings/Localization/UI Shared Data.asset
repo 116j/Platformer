@@ -1,0 +1,192 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: UI
+  m_TableCollectionNameGuidString: c8d669ffb1f104a4196767f9c8d20b6f
+  m_Entries:
+  - m_Id: 3230425858048
+    m_Key: shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5456175218688
+    m_Key: hattack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5622416457728
+    m_Key: lattack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5732093313024
+    m_Key: 3jump
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5988151377920
+    m_Key: dash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6772305870848
+    m_Key: heart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10487754571776
+    m_Key: display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10511225896960
+    m_Key: audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10565894455296
+    m_Key: controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10611742392320
+    m_Key: lvlbuilder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10648094425088
+    m_Key: options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10691455139840
+    m_Key: settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10710346285056
+    m_Key: main menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13786444644352
+    m_Key: back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14972916776960
+    m_Key: resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15487008423936
+    m_Key: play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15785370238976
+    m_Key: exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15981047103488
+    m_Key: resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16481771503616
+    m_Key: fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16967220248576
+    m_Key: language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17283927949312
+    m_Key: save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17781510815744
+    m_Key: gamevolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17827702685696
+    m_Key: music volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17860539891712
+    m_Key: sfx volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17896501854208
+    m_Key: mute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20624187768832
+    m_Key: roomscount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20650360225792
+    m_Key: roomsgeneration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20704886177792
+    m_Key: base
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20736116965376
+    m_Key: ceiling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20750046248960
+    m_Key: grid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20774792642560
+    m_Key: moving
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22886800867328
+    m_Key: playersmovement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23103445057536
+    m_Key: cameramovement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23151595667456
+    m_Key: jump
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23189612838912
+    m_Key: dashM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23321938935808
+    m_Key: lightattack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23404579307520
+    m_Key: heavyattack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23436841893888
+    m_Key: dodge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293250265169920
+    m_Key: end
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293273988153344
+    m_Key: die
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293296146661376
+    m_Key: pause
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 6207722349864157237
+  references:
+    version: 2
+    RefIds:
+    - rid: 6207722349864157237
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1745847271544

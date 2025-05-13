@@ -18,7 +18,7 @@ public class CeilStrategy : FillStrategy
     /// <param name="prevRoom"></param>
     /// <param name="transitionStrategy"></param>
     /// <returns></returns>
-    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
     {
         Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
@@ -31,7 +31,7 @@ public class CeilStrategy : FillStrategy
         if (height > m_playerJumpHeight)
             m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
         CreateElevations(room, start + startWidth * Vector3Int.right, height, false);
-        room.AddTransition(transitionStrategy.FillTransition(room));
+        room.AddTransition(transitionStrategy.FillTransition(room,isInitial));
         MakeCeil(room);
         return room;
     }
@@ -135,8 +135,7 @@ public class CeilStrategy : FillStrategy
         {
             room.AddEnviromentObject(t.gameObject);
         }
-        room.DrawTiles();
-        AddLandscape(room, offset, true);
+        room.DrawTiles((List<Vector3Int> ground) => AddLandscape(room, ground, offset, true));
     }
     /// <summary>
     /// Adds a series of traps with offsets

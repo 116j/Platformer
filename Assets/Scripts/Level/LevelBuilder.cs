@@ -76,11 +76,12 @@ public class LevelBuilder : MonoBehaviour
         };
         m_usedStrategies.Add(m_strategies[0]);
         m_currentRoom = m_rooms[0];
-        SpawnRoom();
-        SpawnRoom();
+        SpawnRoom(true);
+        SpawnRoom(true);
 
         m_player.transform.position = m_startPosition + m_player.gameObject.GetComponent<SpawnValues>().GetOffset();
-        m_player.SetRebornCheckpoint(m_rooms[0].GetStartPosition());
+        m_player.SetRebornCheckpoint(m_startPosition);
+        m_player.SetLevelCheckpoint(m_startPosition);
         m_audio = GetComponent<AudioSource>();
         m_audio.clip = m_backgroundMusic[Random.Range(0, m_backgroundMusic.Length)];
         m_audio.Play();
@@ -168,6 +169,8 @@ public class LevelBuilder : MonoBehaviour
 
     public float LevelProgress() => m_roomsCount / m_maxRoomsCount;
 
+    public int GetMaxRoomsCount() => m_maxRoomsCount;
+
     public void CatPetted(int cats)
     {
         m_strategies[0].CatPetted(cats);
@@ -188,7 +191,7 @@ public class LevelBuilder : MonoBehaviour
     /// <summary>
     /// Creates room from random strategy
     /// </summary>
-    void SpawnRoom()
+    void SpawnRoom(bool isInitial = false)
     {
         m_roomsCount++;
         if (m_roomsCount > m_maxRoomsCount)
@@ -202,7 +205,7 @@ public class LevelBuilder : MonoBehaviour
                 if ((m_usedStrategies.Last() is GridStrategy || m_usedStrategies.Last() is MovingPlatformStrategy) &&
                     (s is GridStrategy || s is MovingPlatformStrategy))
                     continue;
-                Room r = s.FillRoom(m_rooms.Last(), m_strategies[Random.Range(0, 4)]);
+                Room r = s.FillRoom(m_rooms.Last(), m_strategies[Random.Range(0, 4)], isInitial);
                 if (r == null)
                     continue;
                 m_usedStrategies.Add(s);

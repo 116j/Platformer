@@ -1,4 +1,5 @@
 using Cinemachine;
+using DG.Tweening;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -47,7 +48,6 @@ public class PlayerController : MonoBehaviour
     bool m_dash = false;
     bool m_pet = false;
     bool m_blockMove = false;
-    bool m_win = false;
 
     bool m_jumping = false;
     bool m_falling = false;
@@ -207,6 +207,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         if (m_falling && (m_fallCheckpoint.y - transform.position.y > 200/* || m_touchings.IsWallStuck()*/))
         {
             FallReset();
@@ -231,11 +232,23 @@ public class PlayerController : MonoBehaviour
 
             if (m_touchings.IsGroundStuck())
             {
+                Debug.Log("Ground stuck");
                 transform.position += Vector3.up * 0.6f;
             }
-            if (m_falling && m_touchings.IsWallStuck())
+            if (m_touchings.IsWallStuckUp())
             {
+                Debug.Log("Walls stuck up");
                 transform.position -= Vector3.up * 2f;
+            }
+            if (m_falling && m_touchings.IsWallStuckLeft())
+            {
+                Debug.Log("Walls stuck left");
+                transform.position += Vector3.right * 2f;
+            }
+            if (m_falling && m_touchings.IsWallStuckRight())
+            {
+                Debug.Log("Walls stuck right");
+                transform.position -= Vector3.right * 2f;
             }
             // turn around
             if (m_currentDir * m_input.Move.x < 0 && !m_blockMove)
@@ -421,12 +434,6 @@ public class PlayerController : MonoBehaviour
     public void DecreaseDashCooldown()
     {
         m_dashCooldownTime -= 0.5f;
-    }
-
-    public void Win()
-    {
-        m_win = true;
-        m_input.LockInput();
     }
 
     public void Restart()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -114,7 +115,7 @@ public class Room
         }
         foreach (var obj in m_enviroment)
         {
-            Object.Destroy(obj);
+            GameObject.Destroy(obj);
         }
     }
 
@@ -323,14 +324,14 @@ public class Room
         return false;
     }
 
-    public void DrawTiles(TilePlaceAnalog analog = null)
+    public void DrawTiles(Action<List<Vector3Int>> callback, TilePlaceAnalog analog = null, bool isInitial=false)
     {
         if (analog == null)
         {
-            foreach (var poly in m_polygons)
-            {
-                poly.DrawTiles();
-            }
+                foreach (var poly in m_polygons)
+                {
+                    poly.DrawTiles(isInitial, callback);
+                }            
         }
         else
         {

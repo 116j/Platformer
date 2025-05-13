@@ -21,7 +21,8 @@ public class TouchingCheck : MonoBehaviour
     readonly float m_slopeHitDist = 0.2f;
     readonly float m_stuckHitDist = 0.6f;
 
-    RaycastHit2D[] m_colHits = new RaycastHit2D[5];
+    RaycastHit2D[] m_rayHits = new RaycastHit2D[5];
+    Collider2D[] m_colHits = new Collider2D[5];
 
     // Start is called before the first frame update
     void Start()
@@ -29,40 +30,56 @@ public class TouchingCheck : MonoBehaviour
         m_col = GetComponent<Collider2D>();
     }
 
-    public bool IsWallStuck()
+    public bool IsWallStuckLeft()
     {
-        return m_col.Cast(transform.up, m_stuckCastFilter, m_colHits, m_groundHitDist) > 0 &&
-        m_col.Cast(transform.right, m_stuckCastFilter, m_colHits, m_groundHitDist) > 0 &&
-        m_col.Cast(-transform.right, m_stuckCastFilter, m_colHits, m_groundHitDist) > 0;
+        return m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0&&
+            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+            m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+            Physics2D.OverlapBoxNonAlloc(transform.position + Vector3.right * 2, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0;
+    }
+    public bool IsWallStuckRight()
+    {
+        return m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0&&
+            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+           m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+           Physics2D.OverlapBoxNonAlloc(transform.position - Vector3.right * 2, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0;
+    }
+    public bool IsWallStuckUp()
+    {
+        return m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0&&
+            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+           m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+           Physics2D.OverlapBoxNonAlloc(transform.position - Vector3.up * 2, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0;
     }
 
     public bool IsGroundStuck()
     {
-        return m_col.Cast(-transform.up, m_stuckCastFilter, m_colHits, m_stuckHitDist) > 0&&
-            m_col.Cast(transform.right, m_stuckCastFilter, m_colHits, m_wallHitDist) > 0&&
-            m_col.Cast(transform.right, m_stuckCastFilter, m_colHits, m_wallHitDist) > 0;
+        return m_col.Cast(-transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
+            m_col.Cast(transform.right, m_stuckCastFilter, m_rayHits, m_wallHitDist) > 0 &&
+            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_wallHitDist) > 0&&
+            Physics2D.OverlapBoxNonAlloc(transform.position + Vector3.up * 0.6f, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0; ;
     }
 
     public bool IsGrounded()
     {
-        return m_col.Cast(-transform.up, m_groundCastFilter, m_colHits, m_groundHitDist) > 0;
+        return m_col.Cast(-transform.up, m_groundCastFilter, m_rayHits, m_groundHitDist) > 0;
     }
 
     public bool IsWalls()
     {
-        return m_col.Cast(transform.right, m_wallCastFilter, m_colHits, m_wallHitDist) > 0;
+        return m_col.Cast(transform.right, m_wallCastFilter, m_rayHits, m_wallHitDist) > 0;
     }
 
     public bool IsSlopeUp()
     {
-        return m_col.Cast(transform.right, m_slopeCastFilter, m_colHits, m_slopeHitDist) > 0 &&
-        m_col.Cast(-transform.up, m_groundCastFilter, m_colHits, m_groundHitDist) > 0;
+        return m_col.Cast(transform.right, m_slopeCastFilter, m_rayHits, m_slopeHitDist) > 0 &&
+        m_col.Cast(-transform.up, m_groundCastFilter, m_rayHits, m_groundHitDist) > 0;
     }
 
     public bool IsSlopeDown()
     {
-        return m_col.Cast(-transform.right, m_slopeCastFilter, m_colHits, m_slopeHitDist) > 0 &&
-        !Physics2D.Raycast(new Vector2(m_col.bounds.max.x, m_col.bounds.min.y), -transform.up, m_groundHitDist, m_groundCastFilter.layerMask)&&
-        m_col.Cast(-transform.up, m_groundCastFilter, m_colHits, m_groundHitDist) > 0;
+        return m_col.Cast(-transform.right, m_slopeCastFilter, m_rayHits, m_slopeHitDist) > 0 &&
+        !Physics2D.Raycast(new Vector2(m_col.bounds.max.x, m_col.bounds.min.y), -transform.up, m_groundHitDist, m_groundCastFilter.layerMask) &&
+        m_col.Cast(-transform.up, m_groundCastFilter, m_rayHits, m_groundHitDist) > 0;
     }
 }

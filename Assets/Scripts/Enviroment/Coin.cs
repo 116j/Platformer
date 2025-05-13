@@ -6,7 +6,7 @@ public class Coin : MonoBehaviour
     Collider2D m_col;
     AudioSource m_coinGain;
 
-    float m_cost;
+    int m_cost;
     // Start is called before the first frame update
     void Awake()
     {
@@ -15,7 +15,7 @@ public class Coin : MonoBehaviour
         m_col = GetComponent<Collider2D>();
     }
 
-    public void SetCost(float cost, bool destroy = true)
+    public void SetCost(int cost, bool destroy = true)
     {
         m_cost = cost;
         if (destroy)

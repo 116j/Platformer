@@ -1,0 +1,191 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_pt
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: pt
+  m_SharedData: {fileID: 11400000, guid: c8d669ffb1f104a4196767f9c8d20b6f, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 3230425858048
+    m_Localized: LOJA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5988151377920
+    m_Localized: GOLPE EXTRA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5622416457728
+    m_Localized: L ATAQUE+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5456175218688
+    m_Localized: P ATAQUE+1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5732093313024
+    m_Localized: SALTO TRIPLO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6772305870848
+    m_Localized: "CORA\xC7\xC3O+1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10710346285056
+    m_Localized: MENU PRINCIPAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10648094425088
+    m_Localized: "OP\xC7\xD5ES"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10691455139840
+    m_Localized: "DEFINI\xC7\xD5ES"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10565894455296
+    m_Localized: CONTROLOS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10511225896960
+    m_Localized: "\xC1UDIO"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10487754571776
+    m_Localized: PANTALHA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10611742392320
+    m_Localized: "N\xCDVEL"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13786444644352
+    m_Localized: "ATR\xC1S"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14972916776960
+    m_Localized: RETOMAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15487008423936
+    m_Localized: JOGAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15785370238976
+    m_Localized: "SA\xCDDA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15981047103488
+    m_Localized: "RESOLU\xC7\xC3O"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16481771503616
+    m_Localized: "ECR\xC3 COMPLETO"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16967220248576
+    m_Localized: "L\xCDNGUA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17283927949312
+    m_Localized: GUARDAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17860539891712
+    m_Localized: SFX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17781510815744
+    m_Localized: JOGO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17827702685696
+    m_Localized: "M\xDASICA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17896501854208
+    m_Localized: SEM SOM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20624187768832
+    m_Localized: QUARTOS CONTAM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20650360225792
+    m_Localized: "FREQU\xCANCIA DE GERA\xC7\xC3O DE QUARTOS"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20704886177792
+    m_Localized: Quarto Base
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20736116965376
+    m_Localized: Sala do teto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20750046248960
+    m_Localized: Sala de plataformas de rede
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20774792642560
+    m_Localized: "Sala de plataformas m\xF3veis"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22886800867328
+    m_Localized: MOVIMENTO DO JOGADOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23404579307520
+    m_Localized: 'ATAQUE PESADO
+
+      (MANTER)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23321938935808
+    m_Localized: "ATAQUE F\xC1CIL"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23436841893888
+    m_Localized: DODGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23189612838912
+    m_Localized: GOLPE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23151595667456
+    m_Localized: 'SALTO
+
+      (SEGURE PARA SALTAR MAIS ALTO)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23103445057536
+    m_Localized: "MOVIMENTO DA C\xC2MERA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293250265169920
+    m_Localized: O FIM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293273988153344
+    m_Localized: "EST\xC1 MORTO"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293296146661376
+    m_Localized: PAUSA
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

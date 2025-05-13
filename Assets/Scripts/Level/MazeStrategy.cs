@@ -11,13 +11,13 @@ public class MazeStrategy : FillStrategy
     {
     }
 
-    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy,bool isInitial)
     {
-        return base.FillRoom(prevRoom, transitionStrategy);
+        return base.FillRoom(prevRoom, transitionStrategy, isInitial);
     }
 
-    public override Room FillTransition(Room room)
+    public override Room FillTransition(Room room, bool isInitial)
     {
-        return base.FillTransition(room);
+        return base.FillTransition(room, isInitial);
     }
 }

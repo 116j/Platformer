@@ -17,7 +17,7 @@ public class ShopLayout : MonoBehaviour
 
     bool[] m_clicked = new bool[5];
     int[] m_itemsCount = { 3, 2, 2, 2, 1 };
-    float[] m_prices = { 1000, 1500, 2000, 2000, 2500 };
+    int[] m_prices = { 1000, 1500, 2000, 2000, 2500 };
     string m_startText = "Hello, Stranger! Welcome to my shop! What would you like to purchase?";
     string[] m_dialogueTexts =
     {
@@ -32,7 +32,7 @@ public class ShopLayout : MonoBehaviour
     {
         if (m_prices.Length == 0)
         {
-            m_prices = new float[] { 1000, 1500, 2000, 2000, 2500 };
+            m_prices = new int[] { 1000, 1500, 2000, 2000, 2500 };
         }
 
         for (int i = 0; i < m_prices.Length; i++)
