@@ -82,7 +82,7 @@ public class Room
 
     public Room GetPreviousTransition() => m_prevTransition;
 
-    public List<Vector3Int> GetGround() => m_polygons.Count == 1 ? m_polygons[0].Ground() : m_polygons.SelectMany(p => p.Ground()).ToList();
+    public List<Vector3Int> GetGround() => m_polygons.Count == 1 ? m_polygons[0].Ground().ToList() : m_polygons.SelectMany(p => p.Ground()).ToList();
 
     public int GetTransitionRightHeight() => m_transitionRightPoint;
 
@@ -324,13 +324,13 @@ public class Room
         return false;
     }
 
-    public void DrawTiles(TilePlaceAnalog analog = null)
+    public void DrawTiles(System.Action<HashSet<Vector3Int>> callback, bool isInitial = false, TilePlaceAnalog analog = null)
     {
         if (analog == null)
         {
                 foreach (var poly in m_polygons)
                 {
-                    poly.DrawTiles();
+                    poly.DrawTiles(callback,isInitial);
                 }            
         }
         else

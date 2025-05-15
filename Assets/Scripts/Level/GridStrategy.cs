@@ -21,7 +21,7 @@ public class GridStrategy : FillStrategy
     {
     }
 
-    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
 
@@ -73,12 +73,12 @@ public class GridStrategy : FillStrategy
         prevRoom.GetNextTransition().Clear();
         prevRoom.AddTransition(transition);
         room.AddTransition(new Room(end, end));
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, false);
+        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room,groundTiles, int.MaxValue, false));
+        //AddLandscape(room, int.MaxValue, false);
         return room;
     }
 
-    public override Room FillTransition(Room room, bool isInitial)
+    public override Room FillTransition(Room room)
     {
         int width = Random.Range(m_minTransitionWidth, m_maxTransitionWidth);
         int height = Random.Range(m_minTransitionHeight, m_maxTransitionHeight);
@@ -101,8 +101,8 @@ public class GridStrategy : FillStrategy
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
-        transition.DrawTiles();
-        AddLandscape(transition, int.MaxValue, false);
+        transition.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(transition, groundTiles, int.MaxValue, false));
+       // AddLandscape(transition, int.MaxValue, false);
         return transition;
     }
 

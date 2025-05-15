@@ -23,7 +23,7 @@ public class MovingPlatformStrategy : FillStrategy
         m_speed = speed;
     }
 
-    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
         prevRoom.GetNextTransition().Clear();
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
@@ -329,7 +329,7 @@ public class MovingPlatformStrategy : FillStrategy
         return room;
     }
 
-    public override Room FillTransition(Room room, bool isInitial)
+    public override Room FillTransition(Room room)
     {
         int width = Random.Range(m_minTransitionWidth, m_maxTransitionWidth);
         int height = Random.Range(m_minTransitionHeight, m_maxTransitionHeight);

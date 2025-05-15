@@ -76,8 +76,8 @@ public class LevelBuilder : MonoBehaviour
         };
         m_usedStrategies.Add(m_strategies[0]);
         m_currentRoom = m_rooms[0];
-        SpawnRoom(true);
-        SpawnRoom(true);
+        SpawnRoom(false);
+        SpawnRoom(false);
 
         m_player.transform.position = m_startPosition + m_player.gameObject.GetComponent<SpawnValues>().GetOffset();
         m_player.SetRebornCheckpoint(m_startPosition);
@@ -205,7 +205,7 @@ public class LevelBuilder : MonoBehaviour
                 if ((m_usedStrategies.Last() is GridStrategy || m_usedStrategies.Last() is MovingPlatformStrategy) &&
                     (s is GridStrategy || s is MovingPlatformStrategy))
                     continue;
-                Room r = s.FillRoom(m_rooms.Last(), m_strategies[Random.Range(0, 4)], isInitial);
+                Room r = s.FillRoom(m_rooms.Last(), m_strategies[Random.Range(0, 4)]);
                 if (r == null)
                     continue;
                 m_usedStrategies.Add(s);

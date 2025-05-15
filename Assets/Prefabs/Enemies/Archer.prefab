@@ -445,11 +445,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18307c2d59f2a3341885fe924a175dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cost: 350
+  m_costCoeff: 1.5
   m_walkSpeed: 1.5
   m_canRun: 1
   m_runSpeed: 3
-  m_healthBarOffset: {x: -0.15, y: 0.462, z: 0}
   m_attackScript: {fileID: 3154528563731028456}
   m_attackZone: {fileID: 7362578179812958253}
   m_detectZone: {fileID: 700283468767861795}

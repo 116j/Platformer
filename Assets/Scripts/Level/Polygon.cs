@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Polygon
 {
-    List<Vector3Int> m_tilePositions = new List<Vector3Int>();
-    List<Vector3Int> m_ground = new List<Vector3Int>();
+    HashSet<Vector3Int> m_tilePositions = new HashSet<Vector3Int>();
+    HashSet<Vector3Int> m_ground = new HashSet<Vector3Int>();
     Vector3Int m_start;
 
     public Polygon(Vector3Int start)
@@ -14,9 +14,9 @@ public class Polygon
     }
 
 
-    public void DrawTiles()
+    public void DrawTiles(System.Action<HashSet<Vector3Int>> callback, bool isInitial)
     {
-        TileEditor.Instance.SetTiles(m_tilePositions);
+        TileEditor.Instance.SetTiles(m_tilePositions,()=>callback?.Invoke(m_ground),isInitial);
     }
 
     public void DrawTilesWithAnalog(TilePlaceAnalog analog)
@@ -77,7 +77,7 @@ public class Polygon
         }
     }
 
-    public List<Vector3Int> Ground() => m_ground;
+    public HashSet<Vector3Int> Ground() => m_ground;
 
     public bool ContainsTile(Vector3Int tilePos)
     {

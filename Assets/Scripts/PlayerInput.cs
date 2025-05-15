@@ -13,6 +13,9 @@ public class PlayerInput : MonoBehaviour
     bool m_dash;
     bool m_dodge;
     bool m_pet;
+    bool m_restart;
+    bool m_shop;
+    bool m_pause;
 
     public Vector2 Move => m_inputLocked ? Vector2.zero : m_move;
     public Vector2 MoveCamera => m_inputLocked ? Vector2.zero : m_moveCamera;
@@ -72,10 +75,7 @@ public class PlayerInput : MonoBehaviour
 
     public bool HeavyAttack => !m_inputLocked && m_heavyAttack;
 
-    bool m_inputLocked = false;
-    bool m_restart = false;
-    bool m_shop = false;
-    bool m_pause = false;
+    bool m_inputLocked = true;
 
     UnityEngine.InputSystem.PlayerInput m_input;
 

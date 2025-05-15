@@ -33,6 +33,10 @@ PrefabInstance:
       value: -1.954
       objectReference: {fileID: 0}
     - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_costCoeff
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3069782676626971270, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_healthBarOffset.x
       value: -0.285
       objectReference: {fileID: 0}

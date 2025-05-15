@@ -53,7 +53,7 @@ public class Trap : MonoBehaviour, IMetrics
     /// <summary>
     /// Get random trap variant based on their spawn chances
     /// </summary>
-    public void SetTrapNum()
+    public void SetTrapNum(int num=-1)
     {
         m_numberSet = true;
         List<float> chances = new List<float>();
@@ -83,6 +83,8 @@ public class Trap : MonoBehaviour, IMetrics
         m_numberSet = true;
         SetOffset();
     }
+
+    public int GetTrapNum() => m_trapNumber;
 
     public void DestroyTrap()
     {

@@ -18,7 +18,7 @@ public class CeilStrategy : FillStrategy
     /// <param name="prevRoom"></param>
     /// <param name="transitionStrategy"></param>
     /// <returns></returns>
-    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
         Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
@@ -31,7 +31,7 @@ public class CeilStrategy : FillStrategy
         if (height > m_playerJumpHeight)
             m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
         CreateElevations(room, start + startWidth * Vector3Int.right, height, false);
-        room.AddTransition(transitionStrategy.FillTransition(room,isInitial));
+        room.AddTransition(transitionStrategy.FillTransition(room));
         MakeCeil(room);
         return room;
     }
@@ -42,6 +42,7 @@ public class CeilStrategy : FillStrategy
     /// <param name="room"></param>
     void MakeCeil(Room room)
     {
+        List<(GameObject, Vector3)> coins = new List<(GameObject, Vector3)>();
         Trap trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
         trap.SetTrapNum();
         int offset = Mathf.CeilToInt(trap.GetHeight());
@@ -125,9 +126,10 @@ public class CeilStrategy : FillStrategy
                 groundStart = ground[i].x;
                 trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
                 trap.SetTrapNum();
-                Coin coin = Object.Instantiate(m_levelTheme.m_coin, new Vector3(ground[i].x + m_levelTheme.m_coin.GetOffset().x, ground[i].y + m_levelTheme.m_coin.GetOffset().y), Quaternion.identity).GetComponent<Coin>();
+                Coin coin = Object.Instantiate(m_levelTheme.m_coin, ground[i], Quaternion.identity).GetComponent<Coin>();
                 coin.SetCost(Random.Range(10, 100), false);
                 room.AddEnviromentObject(coin.gameObject);
+                coins.Add((coin.gameObject, new Vector3(ground[i].x + m_levelTheme.m_coin.GetOffset().x, ground[i].y + m_levelTheme.m_coin.GetOffset().y)));
             }
         }
         room.AddTiles(height, Mathf.Clamp(width, 0, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
@@ -135,8 +137,14 @@ public class CeilStrategy : FillStrategy
         {
             room.AddEnviromentObject(t.gameObject);
         }
-        room.DrawTiles();
-        AddLandscape(room, offset, true);
+        room.DrawTiles((HashSet<Vector3Int> groundTiles) => { 
+            AddLandscape(room, groundTiles, offset, true);
+            foreach(var (obj,pos) in coins)
+            {
+                obj.transform.position = pos;
+            }
+        });
+        //AddLandscape(room, offset, true);
     }
     /// <summary>
     /// Adds a series of traps with offsets
@@ -154,7 +162,9 @@ public class CeilStrategy : FillStrategy
 
         for (float x = leftBorder; x <= rightBorder;)
         {
-            traps.Add(Object.Instantiate(trap, new Vector3(x, start.y), Quaternion.identity));
+            Trap newTrap = Object.Instantiate(trap, new Vector3(x, start.y), Quaternion.identity);
+            newTrap.SetTrap(trap.GetTrapNum());
+            traps.Add(newTrap);
             x += trap.GetRightBorder() + offset;
         }
 

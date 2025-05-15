@@ -86,7 +86,7 @@ public class FillStrategy
     /// <param name="prevRoom">previous room</param>
     /// <param name="transitionStrategy">strategy to create the transition between this and next rooms</param>
     /// <returns>filled room</returns>
-    public virtual Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
+    public virtual Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
         Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
@@ -103,9 +103,9 @@ public class FillStrategy
         m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
         SpawnEnemyOrTrap(room, startWidth, int.MaxValue, start);
         CreateElevations(room, start + startWidth * Vector3Int.right, height, true);
-        room.AddTransition(transitionStrategy.FillTransition(room, isInitial));
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, true);
+        room.AddTransition(transitionStrategy.FillTransition(room));
+        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true));
+        //AddLandscape(room, int.MaxValue, true);
 
         return room;
     }
@@ -113,7 +113,7 @@ public class FillStrategy
     /// Creates transition from room
     /// </summary>
     /// <param name="room"></param>
-    public virtual Room FillTransition(Room room, bool isInitial)
+    public virtual Room FillTransition(Room room)
     {
         int width = Random.Range(m_minTransitionWidth, m_maxTransitionWidth);
         int height = Random.Range(-m_maxTransitionHeight, Mathf.Clamp(width / 3 * m_playerJumpHeight, 0, m_maxTransitionHeight));
@@ -144,8 +144,8 @@ public class FillStrategy
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(),end,width,height));
 
-        transition.DrawTiles();
-        AddLandscape(transition, int.MaxValue, false);
+        transition.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(transition,groundTiles, int.MaxValue, false));
+       // AddLandscape(transition, int.MaxValue, false);
 
         return transition;
     }
@@ -189,12 +189,12 @@ public class FillStrategy
         if (height > m_playerJumpHeight)
             m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
         CreateElevations(room, start + startWidth * Vector3Int.right, height,  false);
-        room.AddTransition(transitionStrategy.FillTransition(room, true));
+        room.AddTransition(transitionStrategy.FillTransition(room));
 
         room.AddEnviromentObject(CreateVerticalBounds(start));
 
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, true);
+        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true),isInitial:true);
+        //AddLandscape(room, int.MaxValue, true);
 
         return room;
     }
@@ -218,8 +218,8 @@ public class FillStrategy
         room.CreateElevationOrLowland(-m_finalRoomHeight, m_finalRoomWidth, start + m_minStraightSection * Vector3Int.right);
         room.CreateElevationOrLowland(m_finalRoomHeight, m_minStraightSection, start + new Vector3Int(m_minStraightSection + m_finalRoomWidth, -m_finalRoomHeight));
         room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_boss, new Vector3(start.x + (m_minStraightSection + m_finalRoomWidth - m_levelTheme.m_boss.GetWidth()) / 2, start.y - m_finalRoomHeight), Quaternion.identity).gameObject);
-        room.DrawTiles();
-        AddLandscape(room, int.MaxValue, true);
+        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true));
+        //AddLandscape(room, int.MaxValue, true);
         return room;
     }
     /// <summary>
@@ -298,13 +298,13 @@ public class FillStrategy
     /// <param name="room"></param>
     /// <param name="height">max vegetation height</param>
     /// <param name="addTrees"></param>
-    protected void AddLandscape(Room room, int height, bool addTrees)
+    protected void AddLandscape(Room room, HashSet<Vector3Int> groundTiles, int height, bool addTrees)
     {
         int width = 0;
         int grassWidth = 0;
-        Vector3Int start = room.GetStartPosition();
-        Vector3Int grassStart = room.GetStartPosition();
-        foreach (var ground in room.GetGround())
+        Vector3Int start = groundTiles.FirstOrDefault();
+        Vector3Int grassStart = start;
+        foreach (var ground in groundTiles)
         {
             // if tile has grass - don't add one
             if (!TileEditor.Instance.AddGrass(ground) && ground.y == start.y && ground.x == start.x + width)
@@ -319,22 +319,11 @@ public class FillStrategy
             // if a ground straight section is over - add vegetation
             else if (grassWidth > 0 || ground.y != start.y || ground.x != start.x + width)
             {
-                foreach (var obj in AddVegetation(grassWidth, height, grassStart, m_levelTheme.m_grass))
-                {
-                    room.AddEnviromentObject(obj.gameObject);
-                }
+                AddEnvObjects(room, grassWidth, height, grassStart, m_levelTheme.m_grass);
 
                 if (ground.y != start.y || ground.x != start.x + width)
                 {
-                    foreach (var obj in AddVegetation(width, height, start, m_levelTheme.m_bushes))
-                    {
-                        room.AddEnviromentObject(obj.gameObject);
-                    }
-                    if (addTrees)
-                        foreach (var obj in AddVegetation(width, height, start, m_levelTheme.m_trees))
-                        {
-                            room.AddEnviromentObject(obj.gameObject);
-                        }
+                    AddEnvObjects(room, width, height, start, m_levelTheme.m_bushes,addTrees?m_levelTheme.m_trees:null);
 
                     start = grassStart = ground;
                     width = grassWidth = 1;
@@ -347,30 +336,24 @@ public class FillStrategy
             }
         }
 
-        foreach (var obj in AddVegetation(grassWidth, height, grassStart, m_levelTheme.m_grass))
-        {
-            room.AddEnviromentObject(obj.gameObject);
-        }
-        foreach (var obj in AddVegetation(width, height, start, m_levelTheme.m_bushes))
-        {
-            room.AddEnviromentObject(obj.gameObject);
-        }
-        if (addTrees)
-            foreach (var obj in AddVegetation(width, height, start, m_levelTheme.m_trees))
-            {
-                room.AddEnviromentObject(obj.gameObject);
-            }
-
+        AddEnvObjects(room, grassWidth, height, grassStart, m_levelTheme.m_grass);
+        AddEnvObjects(room, width, height, start, m_levelTheme.m_bushes, addTrees ? m_levelTheme.m_trees : null);
     }
+
     /// <summary>
-    /// Adds vegetation on the straight section of the ground
+    /// Вспомогательный метод для сброса растений: кусты + опционально деревья
     /// </summary>
-    /// <param name="width">width of the straight section</param>
-    /// <param name="height">max veg's height</param>
-    /// <param name="start">start of the straight section</param>
-    /// <param name="vegs">array of the vegetation</param>
-    /// <returns></returns>
-    /// <summary>
+    private void AddEnvObjects(Room room, int width, int height, Vector3Int start,
+        EnviromentObject[] bushes, EnviromentObject[] trees = null)
+    {
+        foreach (var obj in AddVegetation(width, height, start, bushes))
+            room.AddEnviromentObject(obj.gameObject);
+
+        if (trees != null)
+            foreach (var obj in AddVegetation(width, height, start, trees))
+                room.AddEnviromentObject(obj.gameObject);
+    }
+
     /// Adds vegetation on the straight section of the ground
     /// </summary>
     /// <param name="width">width of the straight section</param>
@@ -408,6 +391,7 @@ public class FillStrategy
         }
         return objs;
     }
+
     /// <summary>
     /// Get random enemy based on their spawn chances
     /// </summary>

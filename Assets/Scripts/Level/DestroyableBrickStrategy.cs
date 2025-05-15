@@ -12,14 +12,14 @@ public class DestroyableBrickStrategy : FillStrategy
         m_destroyableTile = destroyableTile;
     }
 
-    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy, bool isInitial)
+    public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
-        return base.FillRoom(prevRoom, transitionStrategy,isInitial);
+        return base.FillRoom(prevRoom, transitionStrategy);
     }
 
-    public override Room FillTransition(Room room, bool isInitial)
+    public override Room FillTransition(Room room)
     {
-        return base.FillTransition(room, isInitial);
+        return base.FillTransition(room);
     }
 
 

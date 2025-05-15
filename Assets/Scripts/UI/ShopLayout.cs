@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -18,15 +19,72 @@ public class ShopLayout : MonoBehaviour
     bool[] m_clicked = new bool[5];
     int[] m_itemsCount = { 3, 2, 2, 2, 1 };
     int[] m_prices = { 1000, 1500, 2000, 2000, 2500 };
-    string m_startText = "Hello, Stranger! Welcome to my shop! What would you like to purchase?";
-    string[] m_dialogueTexts =
-    {
-        "Add extra health heart.",
-        "Decrease dash cooldown time.",
-        "Increase light attack damage.",
-        "Increase heavy attack damage.",
-        "Add extra jump. You will be able to do triple jump."
+    string[] m_startText = {
+        "Hello, Stranger! Welcome to my shop! What would you like to purchase?",
+        "Olá, Estranho! Bem-vindo à minha loja! O que você gostaria de comprar?",
+        "Привет, Путник! Добро пожаловать в мой магазин! Что бы ты хотел приобрести?",
+        "¡Hola, Forastero! Bienvenido a mi tienda! ¿Qué le gustaría comprar?",
+        "Merhaba Yabancı! Benim dükkana hoşgeldiniz! Ne satın almak istersiniz?"
     };
+    string[][] m_dialogueTexts =
+    {
+        new string[]{ 
+            "Adds an extra health heart. ",
+            "Adiciona saúde do coração extra. ",
+            "Добавляет дополнительное сердце здоровья. ",
+            "Agrega salud extra al corazón. ",
+            "Ekstra bir sağlık kalbi ekler. "
+        },
+        new string[]{ 
+            "Decreases the dash cooldown time. ",
+            "Reduz o tempo de recarga do puxão. ",
+            "Уменьшает время перезарядки рывка. ",
+            "Reduce el tiempo de recarga del tirón. ",
+            "Sarsıntının yeniden yükleme süresini azaltır. "
+        },
+        new string[]{ 
+            "Increases the light attack's damage. ",
+            "Aumenta o dano de ataque leve. ",
+            "Увеличивает урон легкой атаки. ",
+            "Aumenta el daño de ataque ligero. ",
+            "Hafif saldırı hasarını artırır. "
+        },
+        new string[]{ 
+            "Increases the heavy attack's damage. ",
+            "Aumenta o dano de ataque pesado. ",
+            "Увеличивает урон тяжелой атаки. ",
+            "Aumenta el daño de ataque pesado. ",
+            "Ağır saldırı hasarını artırır. "
+        },
+        new string[]{ 
+            "Adds an extra jump. You will be able to make a triple jump. ",
+            "Adiciona um salto extra. Você será capaz de fazer um salto triplo. ",
+            "Adds an extra jump. You will be able to make a triple jump. ",
+            "Agrega un salto extra. Podrás hacer un triple salto. ",
+            "Ekstra bir sıçrama ekler. Sen üçlü bir sıçrama yapmak mümkün olacak. "
+        }
+    };
+
+    string[] m_canBuyText =
+    {
+        "Click again to buy.",
+        "Clique novamente para comprar.",
+        "Нажмите еще раз, чтобы купить.",
+        "Haga clic de nuevo para comprar.",
+        "Satın almak için tekrar tıklayın."
+    };
+
+    string[] m_cantBuyText =
+    {
+        "But you don't have enough money, beggar.",
+        "Mas não tens dinheiro suficiente, mendigo.",
+        "Но у тебя недостаточно денег, нищий.",
+        "Pero no tienes suficiente dinero, mendigo.",
+        "Ama yeterli paran yok dilenci."
+    };
+
+    public int AllPrices { get; private set; }
+
 
     public float GetLowestPrice()
     {
@@ -51,6 +109,7 @@ public class ShopLayout : MonoBehaviour
             m_instance = this;
         }
 
+        AllPrices = m_prices.Sum();
         m_player = GameObject.FindGameObjectWithTag("Player");
         m_buySound = GetComponent<AudioSource>();
     }
@@ -61,8 +120,8 @@ public class ShopLayout : MonoBehaviour
             return;
         if (!m_clicked[index])
         {
-            m_dialogueText.text = m_dialogueTexts[index];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[index] ? " Click again to buy." : " But you don't have enough money, beggar.";
+            m_dialogueText.text = m_dialogueTexts[index][UIController.Instance.CurrentLanguage];
+            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[index] ? m_canBuyText[UIController.Instance.CurrentLanguage] : m_cantBuyText[UIController.Instance.CurrentLanguage];
             for (int i = 0; i < m_clicked.Length; i++)
             {
                 m_clicked[i] = false;
@@ -73,7 +132,7 @@ public class ShopLayout : MonoBehaviour
         {
             m_buySound.Play();
             UIController.Instance.AddMoney(-m_prices[index]);
-            m_dialogueText.text = m_startText;
+            m_dialogueText.text = m_startText[UIController.Instance.CurrentLanguage];
             func();
             m_clicked[index] = false;
             m_itemsCount[index]--;

@@ -3,7 +3,7 @@ using UnityEngine;
 public class WalkEnemy : MonoBehaviour, ISpawnChance
 {
     [SerializeField]
-    int m_cost;
+    float m_costCoeff;
     [SerializeField]
     float m_walkSpeed = 1.5f;
     [SerializeField]
@@ -153,9 +153,10 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
             if (m_coin != null)
             {
                 int coins = Random.Range(3, 7);
+                int cost = Mathf.CeilToInt(ShopLayout.Instance.AllPrices * m_costCoeff / (LevelBuilder.Instance.GetMaxRoomsCount() * 1.5f));
                 for (int i = 0; i < coins; i++)
                 {
-                    Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(m_cost / coins);
+                    Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(cost / coins);
                 }
             }
         }
