@@ -1,6 +1,7 @@
 using Cinemachine;
 using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,6 +19,11 @@ public class PlayerController : MonoBehaviour
     SpawnValues m_values;
     SoundController m_sound;
     CinemachineFramingTransposer m_transposer;
+
+    [Inject]
+    UIController m_UI;
+    [Inject]
+    FloatingCanvas m_enemyBar;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -63,6 +69,7 @@ public class PlayerController : MonoBehaviour
     float m_baseTransposer = 2.5f;
     float m_cameraBoundsHeight;
     float m_cameraSpeed = 13f;
+    float m_skinWidth = 0.02f;
     Vector2 m_gravity;
     float m_gravityScale;
     Vector3 m_fallCheckpoint;
@@ -120,7 +127,7 @@ public class PlayerController : MonoBehaviour
             {
                 m_blockMove = true;
                 m_anim.SetTrigger(m_HashDash);
-                UIController.Instance.SetDashSprite(0f);
+                m_UI.SetDashSprite(0f);
                 //remove garvity
                 m_rb.gravityScale = 0f;
                 m_dash = true;
@@ -142,13 +149,13 @@ public class PlayerController : MonoBehaviour
 
                 if (m_dashCooldown >= m_dashCooldownTime)
                 {
-                    UIController.Instance.SetDashSprite(1f);
+                    m_UI.SetDashSprite(1f);
                     m_canDash = true;
                     m_dashCooldown = 0f;
                 }
                 else
                 {
-                    UIController.Instance.SetDashSprite(m_dashCooldown / m_dashCooldownTime);
+                    m_UI.SetDashSprite(m_dashCooldown / m_dashCooldownTime);
                 }
             }
 
@@ -207,12 +214,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         if (m_falling && (m_fallCheckpoint.y - transform.position.y > 200/* || m_touchings.IsWallStuck()*/))
         {
             FallReset();
         }
-
 
         if (!m_dead)
         {
@@ -230,26 +235,6 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            if (m_touchings.IsGroundStuck())
-            {
-                Debug.Log("Ground stuck");
-                transform.position += Vector3.up * 0.6f;
-            }
-            if (m_touchings.IsWallStuckUp())
-            {
-                Debug.Log("Walls stuck up");
-                transform.position -= Vector3.up * 2f;
-            }
-            if (m_falling && m_touchings.IsWallStuckLeft())
-            {
-                Debug.Log("Walls stuck left");
-                transform.position += Vector3.right * 2f;
-            }
-            if (m_falling && m_touchings.IsWallStuckRight())
-            {
-                Debug.Log("Walls stuck right");
-                transform.position -= Vector3.right * 2f;
-            }
             // turn around
             if (m_currentDir * m_input.Move.x < 0 && !m_blockMove)
             {
@@ -329,8 +314,18 @@ public class PlayerController : MonoBehaviour
             if ((m_falling && !m_touchings.IsSlopeDown() && m_touchings.IsGrounded() && (!m_touchings.IsWalls() || Mathf.Approximately(m_rb.velocity.y, 0f))) || (m_touchings.IsSlopeDown() || m_touchings.IsSlopeUp()) && m_jumping)
             {
                 m_sound.PlaySound("Land");
+                m_rb.velocity = new Vector2(m_rb.velocity.x, 0f);
                 m_falling = m_jumping = false;
                 m_currentJumps = 0;
+            }
+
+            if (m_rb.velocity != Vector2.zero)
+            {
+                Vector2 move = new Vector2(m_touchings.WallsStuck(m_skinWidth, m_rb.velocity.x * Time.fixedDeltaTime),m_touchings.GroundStuck(m_skinWidth, m_rb.velocity.y * Time.fixedDeltaTime));
+                if (move != Vector2.zero)
+                {
+                    m_rb.MovePosition(m_rb.position + m_rb.velocity * Time.fixedDeltaTime + move);
+                }
             }
         }
         //stop moving if is dead
@@ -367,7 +362,7 @@ public class PlayerController : MonoBehaviour
             m_rb.velocity = Vector2.zero;
             m_dead = !m_dead;
             m_input.EnableRestart();
-            UIController.Instance.Die(true);
+            m_UI.Die(true);
 
         }
         else if (damage < 0)
@@ -438,7 +433,7 @@ public class PlayerController : MonoBehaviour
 
     public void Restart()
     {
-        EnemyHealthBar.Instance.HideBar();
+        m_enemyBar.HideBar();
         m_damagable.Reborn(true);
         m_dead = !m_dead;
         transform.SetPositionAndRotation(m_rebornCheckpoint, Quaternion.identity);

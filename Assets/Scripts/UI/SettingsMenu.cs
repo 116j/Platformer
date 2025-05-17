@@ -9,12 +9,10 @@ using UnityEngine.InputSystem;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.SmartFormat.Core.Parsing;
 using UnityEngine.UI;
+using Zenject;
 
 public class SettingsMenu : MonoBehaviour
 {
-    static SettingsMenu m_instance;
-    public static SettingsMenu Instance => m_instance;
-
     [Header("Layouts")]
     [SerializeField]
     TextMeshProUGUI m_header;
@@ -81,19 +79,15 @@ public class SettingsMenu : MonoBehaviour
     int m_roomsCount = 50;
     float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f };
 
+    [Inject]
     PlayerInput m_input;
-
-    private void Awake()
-    {
-        if (m_instance == null)
-        {
-            m_instance = this;
-        }
-    }
+    [Inject]
+    UIController m_UI;
+    [Inject]
+    LevelBuilder m_lvlBuilder;
 
     void Start()
     {
-        m_input = GameObject.FindWithTag("Player").GetComponent<PlayerInput>();
         for (int i = 0; i < m_resolutiions.Length; i++)
         {
             if (Screen.currentResolution.width == m_resolutiions[i].Key &&
@@ -105,7 +99,7 @@ public class SettingsMenu : MonoBehaviour
             }
         }
 
-        m_currentLanguageInd = UIController.Instance.CurrentLanguage;
+        m_currentLanguageInd = m_UI.CurrentLanguage;
         m_languageText.text = LocalizationSettings.AvailableLocales.Locales[m_currentLanguageInd].name.ToUpper();
     }
 
@@ -156,7 +150,7 @@ public class SettingsMenu : MonoBehaviour
 
     public void SaveDisplay()
     {
-        UIController.Instance.CurrentLanguage = m_currentLanguageInd;
+        m_UI.CurrentLanguage = m_currentLanguageInd;
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[m_currentLanguageInd];
         m_currentResolution = m_resolutiions[m_currentResolutionInd];
         Screen.SetResolution(m_currentResolution.Key, m_currentResolution.Key, m_fullScreen);
@@ -285,9 +279,9 @@ public class SettingsMenu : MonoBehaviour
     {
         for (int i = 0; i < m_strategyWeights.Length; i++)
         {
-            LevelBuilder.Instance.ChangeStrategyWeight(i, m_strategyWeights[i]);
+            m_lvlBuilder.ChangeStrategyWeight(i, m_strategyWeights[i]);
         }
 
-        LevelBuilder.Instance.ChangeMaxRoomsCount(m_roomsCount);
+        m_lvlBuilder.ChangeMaxRoomsCount(m_roomsCount);
     }
 }

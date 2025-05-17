@@ -4,17 +4,20 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 public class ShopLayout : MonoBehaviour
 {
     [SerializeField]
     TextMeshProUGUI m_dialogueText;
 
-    static ShopLayout m_instance;
-    public static ShopLayout Instance => m_instance;
-
     GameObject m_player;
     AudioSource m_buySound;
+
+    [Inject]
+    UIController m_UI;
+    [Inject]
+    LevelBuilder m_lvlBuilder;
 
     bool[] m_clicked = new bool[5];
     int[] m_itemsCount = { 3, 2, 2, 2, 1 };
@@ -28,35 +31,35 @@ public class ShopLayout : MonoBehaviour
     };
     string[][] m_dialogueTexts =
     {
-        new string[]{ 
+        new string[]{
             "Adds an extra health heart. ",
             "Adiciona saúde do coração extra. ",
             "Добавляет дополнительное сердце здоровья. ",
             "Agrega salud extra al corazón. ",
             "Ekstra bir sağlık kalbi ekler. "
         },
-        new string[]{ 
+        new string[]{
             "Decreases the dash cooldown time. ",
             "Reduz o tempo de recarga do puxão. ",
             "Уменьшает время перезарядки рывка. ",
             "Reduce el tiempo de recarga del tirón. ",
             "Sarsıntının yeniden yükleme süresini azaltır. "
         },
-        new string[]{ 
+        new string[]{
             "Increases the light attack's damage. ",
             "Aumenta o dano de ataque leve. ",
             "Увеличивает урон легкой атаки. ",
             "Aumenta el daño de ataque ligero. ",
             "Hafif saldırı hasarını artırır. "
         },
-        new string[]{ 
+        new string[]{
             "Increases the heavy attack's damage. ",
             "Aumenta o dano de ataque pesado. ",
             "Увеличивает урон тяжелой атаки. ",
             "Aumenta el daño de ataque pesado. ",
             "Ağır saldırı hasarını artırır. "
         },
-        new string[]{ 
+        new string[]{
             "Adds an extra jump. You will be able to make a triple jump. ",
             "Adiciona um salto extra. Você será capaz de fazer um salto triplo. ",
             "Adds an extra jump. You will be able to make a triple jump. ",
@@ -83,16 +86,20 @@ public class ShopLayout : MonoBehaviour
         "Ama yeterli paran yok dilenci."
     };
 
+    string[] m_greetingText =
+    {
+        "Hello, Stranger! Welcome to my shop! What would you like to purchase?",
+        "Olá, Estranho! Bem-vindo à minha loja! O que você gostaria de comprar?",
+        "Привет, Незнакомец! Добро пожаловать в мой магазин! Что бы ты хотел приобрести?",
+        "¡Hola, Forastero! Bienvenido a mi tienda! ¿Qué le gustaría comprar?",
+        "Merhaba Yabancı! Benim dükkana hoşgeldiniz! Ne satın almak istersiniz?"
+    };
+
     public int AllPrices { get; private set; }
 
 
     public float GetLowestPrice()
     {
-        if (m_prices.Length == 0)
-        {
-            m_prices = new int[] { 1000, 1500, 2000, 2000, 2500 };
-        }
-
         for (int i = 0; i < m_prices.Length; i++)
         {
             if (m_itemsCount[i] > 0)
@@ -102,16 +109,23 @@ public class ShopLayout : MonoBehaviour
         return float.MaxValue;
     }
 
-    private void Awake()
+    void InitializePrices()
     {
-        if (m_instance == null)
-        {
-            m_instance = this;
-        }
-
+        m_prices = new int[] { 1000, 1500, 2000, 2000, 2500 };
         AllPrices = m_prices.Sum();
+    }
+
+    private void Start()
+    {
         m_player = GameObject.FindGameObjectWithTag("Player");
         m_buySound = GetComponent<AudioSource>();
+        m_dialogueText.text = m_greetingText[m_UI.CurrentLanguage];
+        InitializePrices();
+    }
+
+    public void Greet()
+    {
+        m_dialogueText.text = m_greetingText[m_UI.CurrentLanguage];
     }
 
     void Buy(int index, TextMeshProUGUI price, Action func)
@@ -120,19 +134,19 @@ public class ShopLayout : MonoBehaviour
             return;
         if (!m_clicked[index])
         {
-            m_dialogueText.text = m_dialogueTexts[index][UIController.Instance.CurrentLanguage];
-            m_dialogueText.text += UIController.Instance.GetMoney() >= m_prices[index] ? m_canBuyText[UIController.Instance.CurrentLanguage] : m_cantBuyText[UIController.Instance.CurrentLanguage];
+            m_dialogueText.text = m_dialogueTexts[index][m_UI.CurrentLanguage];
+            m_dialogueText.text += m_UI.GetMoney() >= m_prices[index] ? m_canBuyText[m_UI.CurrentLanguage] : m_cantBuyText[m_UI.CurrentLanguage];
             for (int i = 0; i < m_clicked.Length; i++)
             {
                 m_clicked[i] = false;
             }
             m_clicked[index] = true;
         }
-        else if (UIController.Instance.GetMoney() >= m_prices[index])
+        else if (m_UI.GetMoney() >= m_prices[index])
         {
             m_buySound.Play();
-            UIController.Instance.AddMoney(-m_prices[index]);
-            m_dialogueText.text = m_startText[UIController.Instance.CurrentLanguage];
+            m_UI.AddMoney(-m_prices[index]);
+            m_dialogueText.text = m_startText[m_UI.CurrentLanguage];
             func();
             m_clicked[index] = false;
             m_itemsCount[index]--;
@@ -145,7 +159,7 @@ public class ShopLayout : MonoBehaviour
 
     public void AddHealth(TextMeshProUGUI price)
     {
-        Action func = UIController.Instance.AddHeart;
+        Action func = m_UI.AddHeart;
         func += m_player.GetComponent<Damagable>().IncreaseHealth;
         Buy(0, price, func);
     }
@@ -169,7 +183,7 @@ public class ShopLayout : MonoBehaviour
     public void AddJump(TextMeshProUGUI price)
     {
         Action func = m_player.GetComponent<PlayerController>().AddJump;
-        func += LevelBuilder.Instance.SetTripleJump;
+        func += m_lvlBuilder.SetTripleJump;
         Buy(4, price, func);
     }
 }

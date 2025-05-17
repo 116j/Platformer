@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class CeilStrategy : FillStrategy
 {
@@ -12,6 +13,7 @@ public class CeilStrategy : FillStrategy
     public CeilStrategy(LevelTheme levelTheme) : base(levelTheme)
     {
     }
+
     /// <summary>
     /// Creates elevations and lowlands for the room, adds ceil and places traps on it, adds landscape and draws tiles
     /// </summary>
@@ -44,6 +46,7 @@ public class CeilStrategy : FillStrategy
     {
         List<(GameObject, Vector3)> coins = new List<(GameObject, Vector3)>();
         Trap trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
+        m_container.Inject(trap);
         trap.SetTrapNum();
         int offset = Mathf.CeilToInt(trap.GetHeight());
 
@@ -94,10 +97,7 @@ public class CeilStrategy : FillStrategy
                 if (width > 1)
                 {
                     room.AddTiles(height, Mathf.Clamp(width, 0, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
-                    foreach (var t in AddCeilTraps(trap, groundWidth, new Vector3Int(groundStart, start.y + offset)))
-                    {
-                        room.AddEnviromentObject(t.gameObject);
-                    }
+                    AddCeilTraps(trap, groundWidth, new Vector3Int(groundStart, start.y + offset), room);
                     width = 1;
                     height += start.y - ground[i].y;
                     // if lowland - offset ground
@@ -125,18 +125,16 @@ public class CeilStrategy : FillStrategy
                     break;
                 groundStart = ground[i].x;
                 trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
+                m_container.Inject(trap);
                 trap.SetTrapNum();
-                Coin coin = Object.Instantiate(m_levelTheme.m_coin, ground[i], Quaternion.identity).GetComponent<Coin>();
+                Coin coin = m_container.InstantiatePrefabForComponent<Coin>(m_levelTheme.m_coin, ground[i], Quaternion.identity,null);
                 coin.SetCost(Random.Range(10, 100), false);
                 room.AddEnviromentObject(coin.gameObject);
                 coins.Add((coin.gameObject, new Vector3(ground[i].x + m_levelTheme.m_coin.GetOffset().x, ground[i].y + m_levelTheme.m_coin.GetOffset().y)));
             }
         }
         room.AddTiles(height, Mathf.Clamp(width, 0, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
-        foreach (var t in AddCeilTraps(trap, groundWidth, new Vector3Int(groundStart, start.y + offset)))
-        {
-            room.AddEnviromentObject(t.gameObject);
-        }
+        AddCeilTraps(trap, groundWidth, new Vector3Int(groundStart, start.y + offset), room);
         room.DrawTiles((HashSet<Vector3Int> groundTiles) => { 
             AddLandscape(room, groundTiles, offset, true);
             foreach(var (obj,pos) in coins)
@@ -144,7 +142,6 @@ public class CeilStrategy : FillStrategy
                 obj.transform.position = pos;
             }
         });
-        //AddLandscape(room, offset, true);
     }
     /// <summary>
     /// Adds a series of traps with offsets
@@ -153,21 +150,18 @@ public class CeilStrategy : FillStrategy
     /// <param name="width"></param>
     /// <param name="start"></param>
     /// <returns></returns>
-    List<Trap> AddCeilTraps(Trap trap, int width, Vector3Int start)
+    void AddCeilTraps(Trap trap, int width, Vector3Int start, Room room)
     {
-        List<Trap> traps = new List<Trap>();
         float offset = Random.Range(1.5f * m_playerWidth, 2 * m_playerWidth);
         float leftBorder = start.x - trap.GetLeftBorder() + offset;
         float rightBorder = start.x + width - trap.GetRightBorder();
 
         for (float x = leftBorder; x <= rightBorder;)
         {
-            Trap newTrap = Object.Instantiate(trap, new Vector3(x, start.y), Quaternion.identity);
+            Trap newTrap = m_container.InstantiatePrefabForComponent<Trap>(trap, new Vector3(x, start.y), Quaternion.identity,null);
             newTrap.SetTrap(trap.GetTrapNum());
-            traps.Add(newTrap);
+            room.AddEnviromentObject(newTrap.gameObject);
             x += trap.GetRightBorder() + offset;
         }
-
-        return traps;
     }
 }

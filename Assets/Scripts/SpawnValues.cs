@@ -10,10 +10,6 @@ public interface IMetrics
     public void SetOffset();
 }
 
-public interface ISpawnChance
-{
-    public float GetSpawnChance();
-}
 
 public class SpawnValues : MonoBehaviour, IMetrics
 {

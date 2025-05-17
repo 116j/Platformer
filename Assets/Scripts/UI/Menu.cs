@@ -2,35 +2,30 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Zenject;
 
 public class Menu : MonoBehaviour
 {
-    static Menu m_instance;
-    public static Menu Instance => m_instance;
-
     [SerializeField]
     Button m_playButton;
     [SerializeField]
     Button m_resumeButton;
     [SerializeField]
     Button m_displayButton;
+    [SerializeField]
+    GameObject m_maimMenuTitle;
 
+    [Inject]
     PlayerInput m_input;
+    [Inject]
+    UIController m_UI;
+
     Animator m_pauseLayoutAnim;
     Image m_backgroundTint;
-
-    private void Awake()
-    {
-        if (m_instance == null)
-        {
-            m_instance = this;
-        }
-    }
 
     // Start is called before the first frame update
     void Start()
     {
-        m_input = GameObject.FindWithTag("Player").GetComponent<PlayerInput>();
         m_pauseLayoutAnim = GetComponent<Animator>();
         m_backgroundTint = GetComponent<Image>();
     }
@@ -40,6 +35,7 @@ public class Menu : MonoBehaviour
         m_backgroundTint.enabled = show;
         if (show)
         {
+            m_maimMenuTitle.SetActive(false);
             m_pauseLayoutAnim.SetBool("OpenOptions", true);
         }
         else
@@ -58,7 +54,7 @@ public class Menu : MonoBehaviour
     {
         Time.timeScale = 1;
         m_input.LockInput();
-        UIController.Instance.SetStats(false);
+        m_UI.SetStats(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -88,7 +84,7 @@ public class Menu : MonoBehaviour
     {
         m_input.LockInput();
         m_pauseLayoutAnim.SetBool("Close", true);
-        UIController.Instance.SetStats(true);
+        m_UI.SetStats(true);
     }
 
     public void SelectPlay()

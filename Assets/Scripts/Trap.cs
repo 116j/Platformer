@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Zenject;
 
 public class Trap : MonoBehaviour, IMetrics
 {
@@ -19,6 +21,9 @@ public class Trap : MonoBehaviour, IMetrics
     bool m_series;
 
     protected Animator m_anim;
+    [Inject]
+    protected LevelBuilder m_lvlBuilder;
+
     int m_trapNumber;
     bool m_numberSet = false;
 
@@ -53,13 +58,13 @@ public class Trap : MonoBehaviour, IMetrics
     /// <summary>
     /// Get random trap variant based on their spawn chances
     /// </summary>
-    public void SetTrapNum(int num=-1)
+    public void SetTrapNum()
     {
         m_numberSet = true;
         List<float> chances = new List<float>();
         foreach (var spawnChance in m_spawnChances)
         {
-            chances.Add(spawnChance.Evaluate(LevelBuilder.Instance.LevelProgress()));
+            chances.Add(spawnChance.Evaluate(m_lvlBuilder.LevelProgress()));
         }
 
         float value = Random.Range(0, chances.Sum());
@@ -73,15 +78,14 @@ public class Trap : MonoBehaviour, IMetrics
                 return;
             }
         }
-        m_trapNumber =  chances.Count - 1;       
+        m_trapNumber =  chances.Count - 1;
+
     }
 
     public void SetTrap(int num)
     {
-        SetAnimations(num);
         m_trapNumber = num;
         m_numberSet = true;
-        SetOffset();
     }
 
     public int GetTrapNum() => m_trapNumber;

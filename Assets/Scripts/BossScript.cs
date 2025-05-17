@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 public class BossScript : WalkEnemy
 {
@@ -22,10 +23,13 @@ public class BossScript : WalkEnemy
     float m_closeAttackCooldownTimer;
     bool m_canCloseAttack = true;
 
+    [Inject]
+    FloatingCanvas m_healthBar;
+
     protected override void Start()
     {
         base.Start();
-        m_damageable.SetHealth((int)m_bossHealth.Evaluate(LevelBuilder.Instance.GetMaxRoomsCount() / 150f));
+        m_damageable.SetHealth((int)m_bossHealth.Evaluate(m_lvlBuilder.GetMaxRoomsCount() / 150f));
     }
 
     protected override void FixedUpdate()
@@ -98,18 +102,17 @@ public class BossScript : WalkEnemy
     {
         if (damage == 0)
         {
-            UIController.Instance.Win();
+            m_UI.Win();
         }
         else if (damage < 0)
         {
             if (m_showHealth)
             {
-                EnemyHealthBar.Instance.ShowBar(transform);
-                EnemyHealthBar.Instance.ChangeRotation(m_currentDir);
+                m_healthBar.ShowBar(transform);
                 m_showHealth = false;
             }
 
-            EnemyHealthBar.Instance.SetHealthSprite(m_damageable.GetHealthPercentage());
+            m_healthBar.SetHealthSprite(m_damageable.GetHealthPercentage());
         }
         base.ReceiveDamage(damage);
     }
@@ -123,15 +126,9 @@ public class BossScript : WalkEnemy
         zone.offset = new Vector2(m_baseAttackZoneOffsetX, zone.offset.y);
     }
 
-    protected override void TurnAround()
-    {
-        base.TurnAround();
-        EnemyHealthBar.Instance.ChangeRotation(m_currentDir);
-    }
-
     public override void Reset()
     {
-        EnemyHealthBar.Instance.HideBar();
+        m_healthBar.HideBar();
         m_showHealth = true;
         base.Reset();
     }

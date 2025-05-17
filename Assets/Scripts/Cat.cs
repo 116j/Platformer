@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using Zenject;
 
 public class Cat : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class Cat : MonoBehaviour
     Animator m_anim;
     TouchingCheck m_touchings;
     Rigidbody2D m_rb;
+
+    [Inject]
+    LevelBuilder m_lvlBuilder;
+
     readonly UnityEvent<int> m_addHeart = new();
 
     readonly int m_HashWalk = Animator.StringToHash("Walk");
@@ -47,7 +52,7 @@ public class Cat : MonoBehaviour
         m_rb = GetComponent<Rigidbody2D>();
         m_walkTime = Random.Range(m_walkRecoverTimeMin, m_walkRecoverTimeMax);
         m_addHeart.AddListener(GameObject.FindGameObjectWithTag("Player").GetComponent<Damagable>().ApplyHealth);
-        m_addHeart.AddListener(LevelBuilder.Instance.CatPetted);
+        m_addHeart.AddListener(m_lvlBuilder.CatPetted);
     }
 
     // Update is called once per frame
@@ -113,7 +118,7 @@ public class Cat : MonoBehaviour
     {
         m_walking = !stop;
         m_speed = m_walking ? m_walkSpeed : 0f;
-        m_anim.SetBool(m_HashCanMove,!stop);
+        m_anim.SetBool(m_HashCanMove, !stop);
     }
     /// <summary>
     /// Stop when start pettng and sleep when end
@@ -144,7 +149,7 @@ public class Cat : MonoBehaviour
     {
         if (!m_anim.GetBool(m_HashSleep))
         {
-            LevelBuilder.Instance.CatPetted(1);
+            m_lvlBuilder.CatPetted(1);
         }
     }
 }

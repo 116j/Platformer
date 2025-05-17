@@ -1,10 +1,14 @@
 using UnityEngine;
+using Zenject;
 
 public class Coin : MonoBehaviour
 {
     Rigidbody2D m_rb;
     Collider2D m_col;
     AudioSource m_coinGain;
+
+    [Inject]
+    UIController m_UI;
 
     int m_cost;
     // Start is called before the first frame update
@@ -32,7 +36,7 @@ public class Coin : MonoBehaviour
         {
             m_coinGain.Play();
             m_col.isTrigger = true;
-            UIController.Instance.AddMoney(m_cost);
+            m_UI.AddMoney(m_cost);
             Destroy(gameObject,0.2f);
         }
     }

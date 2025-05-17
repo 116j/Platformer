@@ -186,6 +186,40 @@ MonoBehaviour:
     m_Localized: PAUSE
     m_Metadata:
       m_Items: []
+  - m_Id: 6108615272480768
+    m_Localized: PRESS B TO PET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108273596088320
+    m_Localized: "PRESS ENTER \nTO PET"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108617147334656
+    m_Localized: 'PRESS SELECT
+
+      TO OPEN THE SHOP'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108287227576320
+    m_Localized: "PRESS S \nTO OPEN THE SHOP"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6109848213307392
+    m_Localized: press SELECT to RESTART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6109798238175232
+    m_Localized: PRESS R TO RESTART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6110272475545600
+    m_Localized: press SELECT to go to the MAIN MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6110216678719488
+    m_Localized: PRESS M TO GO TO THE MAIN MENU
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

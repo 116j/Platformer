@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6bb8506771e372d4199ffb3dc652adc7, type: 2}
   analogTiles: {fileID: 11400000, guid: 2752b35f9abd0c74db94b29005349d49, type: 2}
   addGrass: 0
-  checkMoreSurroundings: 1
+  makeGround: 1
   changeTiles:
   - {fileID: 11400000, guid: 18b6b9e851620e04cbc52322e71a4597, type: 2}
   - {fileID: 11400000, guid: 89f32a011feec58498b01d0b46a7fa85, type: 2}

@@ -1,6 +1,7 @@
 using UnityEngine;
+using Zenject;
 
-public class WalkEnemy : MonoBehaviour, ISpawnChance
+public class WalkEnemy : MonoBehaviour
 {
     [SerializeField]
     float m_costCoeff;
@@ -29,6 +30,14 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected BoxCollider2D m_col;
     protected MovingPlatform m_platform;
     protected Damagable m_damageable;
+    [Inject]
+    protected UIController m_UI;
+    [Inject]
+    protected LevelBuilder m_lvlBuilder;
+    [Inject]
+    protected ShopLayout m_shop;
+    [Inject]
+    DiContainer m_container;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -45,6 +54,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
     protected int m_currentDir = 1;
     protected float m_speed = 0f;
     float m_waitTimer;
+
 
     protected virtual void Start()
     {
@@ -153,10 +163,10 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
             if (m_coin != null)
             {
                 int coins = Random.Range(3, 7);
-                int cost = Mathf.CeilToInt(ShopLayout.Instance.AllPrices * m_costCoeff / (LevelBuilder.Instance.GetMaxRoomsCount() * 1.5f));
+                int cost = Mathf.CeilToInt(m_shop.AllPrices * m_costCoeff / m_lvlBuilder.GetMaxRoomsCount());
                 for (int i = 0; i < coins; i++)
                 {
-                    Instantiate(m_coin, transform.position, Quaternion.identity).SetCost(cost / coins);
+                    m_container.InstantiatePrefabForComponent<Coin>(m_coin, transform.position, Quaternion.identity,null).SetCost(cost / coins);
                 }
             }
         }
@@ -177,7 +187,7 @@ public class WalkEnemy : MonoBehaviour, ISpawnChance
 
     public float GetSpawnChance()
     {
-        return m_spawnChance.Evaluate(LevelBuilder.Instance.LevelProgress());
+        return m_spawnChance.Evaluate(m_lvlBuilder.LevelProgress());
     }
 
     public virtual void Reset()

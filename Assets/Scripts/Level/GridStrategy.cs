@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GridStrategy : FillStrategy
@@ -15,7 +16,8 @@ public class GridStrategy : FillStrategy
     readonly int m_maxWidth = 6;
     readonly int m_minDist = 3;
 
-    int m_maxAttempts = 3;
+    readonly int m_maxAttempts = 3;
+    readonly int m_platformMaxAttempts = 100;
 
     public GridStrategy(LevelTheme levelTheme) : base(levelTheme)
     {
@@ -73,8 +75,7 @@ public class GridStrategy : FillStrategy
         prevRoom.GetNextTransition().Clear();
         prevRoom.AddTransition(transition);
         room.AddTransition(new Room(end, end));
-        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room,groundTiles, int.MaxValue, false));
-        //AddLandscape(room, int.MaxValue, false);
+        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, false));
         return room;
     }
 
@@ -102,7 +103,7 @@ public class GridStrategy : FillStrategy
         transition.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
         transition.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(transition, groundTiles, int.MaxValue, false));
-       // AddLandscape(transition, int.MaxValue, false);
+        // AddLandscape(transition, int.MaxValue, false);
         return transition;
     }
 
@@ -113,12 +114,11 @@ public class GridStrategy : FillStrategy
         Vector3Int lastPoint = start;
         Vector3Int lastOffset = start;
         int attempts = 0;
-        const int maxAttempts = 100;
         int lastWidth = 0;
         int w1 = 0;
         int platformsOffsetY = 0;
 
-        while (attempts < maxAttempts)
+        while (attempts < m_platformMaxAttempts)
         {
             // Check if we've reached the end
             if ((lastPoint.x + lastWidth >= end.x - m_minWidth) &&
@@ -362,5 +362,3 @@ public class GridStrategy : FillStrategy
                room.PositionIsUsed(new Vector3Int(pos.x + 1, pos.y - 1)));
     }
 }
-
-

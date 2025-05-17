@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 using static UnityEditor.Recorder.OutputPath;
 
 public class FillStrategy
@@ -33,6 +34,15 @@ public class FillStrategy
     protected float m_rightOffset;
 
     protected readonly LevelTheme m_levelTheme;
+
+    [Inject]
+    UIController m_UI;
+    [Inject]
+    protected LevelBuilder m_lvlBuilder;
+    [Inject]
+    protected ShopLayout m_shop;
+    [Inject]
+    protected DiContainer m_container;
 
     protected AnimationCurve m_enemiesCount;
     protected AnimationCurve m_trapsCount;
@@ -94,9 +104,9 @@ public class FillStrategy
         int startWidth = Random.Range(m_minStraightSection, end.x - start.x);
         Room room = new Room(end, startWidth, prevRoom.GetNextTransition());
 
-        m_enemiesPerLevel = (int)m_enemiesCount.Evaluate(LevelBuilder.Instance.LevelProgress());
-        m_trapsPerLevel = (int)m_trapsCount.Evaluate(LevelBuilder.Instance.LevelProgress());
-        m_catsLeft = UIController.Instance.AllHerats - UIController.Instance.CurrentHearts - m_catsSpawned;
+        m_enemiesPerLevel = (int)m_enemiesCount.Evaluate(m_lvlBuilder.LevelProgress());
+        m_trapsPerLevel = (int)m_trapsCount.Evaluate(m_lvlBuilder.LevelProgress());
+        m_catsLeft = m_UI.AllHerats - m_UI.CurrentHearts - m_catsSpawned;
 
         int height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
         if (height > m_playerJumpHeight)
@@ -217,7 +227,7 @@ public class FillStrategy
 
         room.CreateElevationOrLowland(-m_finalRoomHeight, m_finalRoomWidth, start + m_minStraightSection * Vector3Int.right);
         room.CreateElevationOrLowland(m_finalRoomHeight, m_minStraightSection, start + new Vector3Int(m_minStraightSection + m_finalRoomWidth, -m_finalRoomHeight));
-        room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_boss, new Vector3(start.x + (m_minStraightSection + m_finalRoomWidth - m_levelTheme.m_boss.GetWidth()) / 2, start.y - m_finalRoomHeight), Quaternion.identity).gameObject);
+        room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_boss, new Vector3(start.x + (m_minStraightSection + m_finalRoomWidth - m_levelTheme.m_boss.GetWidth()) / 2, start.y - m_finalRoomHeight), Quaternion.identity,null));
         room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true));
         //AddLandscape(room, int.MaxValue, true);
         return room;
@@ -271,7 +281,7 @@ public class FillStrategy
                     }
                     else
                     {
-                        Jumper jumper = Object.Instantiate(m_levelTheme.m_jumper, lastPoint, Quaternion.identity).GetComponent<Jumper>();
+                        Jumper jumper = m_container.InstantiatePrefabForComponent<Jumper>(m_levelTheme.m_jumper, lastPoint, Quaternion.identity,null);
                         jumper.SetWallHeight(height);
                         room.AddEnviromentObject(jumper.gameObject);
                     }
@@ -399,9 +409,11 @@ public class FillStrategy
     int GetEnemyNum()
     {
         List<float> chances = new List<float>();
-        foreach (var enemy in m_levelTheme.m_enemies)
+        foreach (var obj in m_levelTheme.m_enemies)
         {
-            chances.Add(enemy.gameObject.GetComponent<WalkEnemy>().GetSpawnChance());
+            WalkEnemy enemy = obj.gameObject.GetComponent<WalkEnemy>();
+            m_container.Inject(enemy);
+            chances.Add(enemy.GetSpawnChance());
         }
 
         float value = Random.Range(0, chances.Sum());
@@ -427,32 +439,33 @@ public class FillStrategy
     {
         if (m_catsLeft > 0 && (m_catsSpawned == 0 || Random.value < m_catsSpawned / m_catsLeft) && m_rightOffset != m_levelTheme.m_jumper.GetOffset().x*2)
         {
-            room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_cat.gameObject, new Vector3(startPos.x + (sectionWidth - m_levelTheme.m_cat.GetWidth() + m_rightOffset) / 2, startPos.y), Quaternion.identity));
+            room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_cat, new Vector3(startPos.x + (sectionWidth - m_levelTheme.m_cat.GetWidth() + m_rightOffset) / 2, startPos.y), Quaternion.identity,null));
             m_catsLeft--;
             m_catsSpawned++;
             m_wasLastEnemy = false;
         }
-        else if (!m_shopSpawned && UIController.Instance.GetMoney() >= ShopLayout.Instance.GetLowestPrice() && sectionWidth > m_levelTheme.m_shop.GetWidth() && Random.value > 0.6f)
+        else if (!m_shopSpawned && m_UI.GetMoney() >= m_shop.GetLowestPrice() && sectionWidth > m_levelTheme.m_shop.GetWidth() && Random.value > 0.6f)
         {
-            room.AddEnviromentObject(Object.Instantiate(m_levelTheme.m_shop, new Vector3(Random.Range(startPos.x, startPos.x + sectionWidth + m_rightOffset - m_levelTheme.m_shop.GetWidth()), startPos.y), Quaternion.identity).gameObject);
+            room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_shop, new Vector3(Random.Range(startPos.x, startPos.x + sectionWidth + m_rightOffset - m_levelTheme.m_shop.GetWidth()), startPos.y), Quaternion.identity, null));
             m_shopSpawned = true;
             m_wasLastEnemy = false;
         }
-        else if (m_rightOffset != m_levelTheme.m_jumper.GetOffset().x*2 && sectionWidth > m_minEnemyWidth && m_enemiesPerLevel > 0 && Random.value < (m_enemiesPerLevel / m_enemiesCount.Evaluate(LevelBuilder.Instance.LevelProgress())))
+        else if (m_rightOffset != m_levelTheme.m_jumper.GetOffset().x*2 && sectionWidth > m_minEnemyWidth && m_enemiesPerLevel > 0 && Random.value < (m_enemiesPerLevel / m_enemiesCount.Evaluate(m_lvlBuilder.LevelProgress())))
         {
             SpawnValues enemy = m_levelTheme.m_enemies[GetEnemyNum()];
             Vector3 pos = new Vector3(startPos.x + (sectionWidth - enemy.GetWidth() + m_rightOffset)/2, startPos.y);
-            m_lastEnemy = Object.Instantiate(m_levelTheme.m_enemies[GetEnemyNum()], pos, Quaternion.identity).GetComponent<WalkEnemy>();
+            m_lastEnemy = m_container.InstantiatePrefabForComponent<WalkEnemy>(enemy, pos, Quaternion.identity,null);
             m_wasLastEnemy = true;
             room.AddEnviromentObject(m_lastEnemy.gameObject);
             m_enemiesPerLevel--;
         }
-        else if (m_trapsPerLevel > 0 && Random.value < (m_trapsPerLevel / m_trapsCount.Evaluate(LevelBuilder.Instance.LevelProgress())) && sectionWidth > 0)
+        else if (m_trapsPerLevel > 0 && Random.value < (m_trapsPerLevel / m_trapsCount.Evaluate(m_lvlBuilder.LevelProgress())) && sectionWidth > 0)
         {
             List<Trap> traps = new List<Trap>();
             while (traps.Count == 0)
             {
                 Trap trap = m_levelTheme.m_floorTraps[Random.Range(0, m_levelTheme.m_floorTraps.Length)];
+                m_container.Inject(trap);
                 trap.SetTrapNum();
                 if (trap.GetWidth() > sectionWidth || trap.GetHeight() > height)
                 {
@@ -487,7 +500,7 @@ public class FillStrategy
                     Vector3 pos = new Vector3(Random.Range(leftBorder - trap.GetRightBorder(), rightBorder - trap.GetRightBorder() - m_trapsNum * trap.GetWidth()), startPos.y);
                     for (int i = 0; i < m_trapsNum; i++)
                     {
-                        traps.Add(Object.Instantiate(trap, pos + i * trap.GetWidth() * Vector3.right, Quaternion.identity));
+                        traps.Add(m_container.InstantiatePrefabForComponent<Trap>(trap, pos + i * trap.GetWidth() * Vector3.right, Quaternion.identity,null));
                     }
                 }
                 else
@@ -512,7 +525,7 @@ public class FillStrategy
             return;
         float posX = Random.Range(leftBorder - trap.GetLeftBorder(), rightBorder - trap.GetRightBorder());
         m_trapsNum--;
-        traps.Add(Object.Instantiate(trap, new Vector3(posX, posY), Quaternion.identity));
+        traps.Add(m_container.InstantiatePrefabForComponent<Trap>(trap, new Vector3(posX, posY), Quaternion.identity, null));
 
         SpawnTrap(leftBorder, posX + trap.GetLeftBorder() - m_playerWidth, posY, trap, traps);
         SpawnTrap(posX + trap.GetRightBorder() + m_playerWidth, rightBorder, posY, trap, traps);

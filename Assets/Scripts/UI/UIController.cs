@@ -7,12 +7,10 @@ using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 using UnityEngine.Windows;
+using Zenject;
 
 public class UIController : MonoBehaviour
 {
-    static UIController m_instance;
-    public static UIController Instance => m_instance;
-
     [Header("Health")]
     [SerializeField]
     GameObject m_healthLayout;
@@ -41,13 +39,17 @@ public class UIController : MonoBehaviour
     [SerializeField]
     GameObject m_winLayout;
     [SerializeField]
-    TextMeshProUGUI m_winText;
+    TextMeshProUGUI m_winTextKB;
+    [SerializeField]
+    TextMeshProUGUI m_winTextG;
 
     [Header("Die")]
     [SerializeField]
     GameObject m_dieLayout;
     [SerializeField]
-    TextMeshProUGUI m_dieText;
+    TextMeshProUGUI m_dieTextKB;
+    [SerializeField]
+    TextMeshProUGUI m_dieTextG;
 
     List<Image> m_hearts;
     int m_currentHeart;
@@ -60,54 +62,16 @@ public class UIController : MonoBehaviour
     int m_currentMoney = 0;
 
     public int CurrentLanguage { get; set; }
+    [Inject]
     PlayerInput m_input;
+    [Inject]
+    ShopLayout m_shop;
 
-    string[][] m_restartTexts ={
-        new string[]{
-        "press SELECT to RESTART",
-        "pressione SELECT para REINICIAR",
-        "нажмите SELECT для ПЕРЕЗАПУСКА",
-        "presione SELECT para REINICIAR",
-        "YENİDEN başlatmak için SELECT tuşuna basın"
-        },
-        new string[]{
-        "PRESS R TO RESTART",
-        "PRESSIONE R PARA REINICIAR",
-        "НАЖМИТЕ R ДЛЯ ПЕРЕЗАПУСКА",
-        "PRESIONE R PARA REINICIAR",
-        "YENİDEN BAŞLATMAK İÇİN R TUŞUNA BASIN"
-        }
-        };
-    string[][] m_winTexts ={
-        new string[]{
-        "press SELECT to go to the MAIN MENU",
-        "pressione SELECT para ir para o MENU PRINCIPAL", 
-        "нажмите SELECT, чтобы перейти в ГЛАВНОЕ МЕНЮ",
-        "haga clic en SELECCIONAR para ir al MENÚ PRINCIPAL",
-        "ANA MENÜYE gitmek için SELECT tuşuna basın"
-        },
-        new string[]{
-        "PRESS M TO GO TO THE MAIN MENU",
-        "PRESSIONE M PARA IR PARA O MENU PRINCIPAL",
-        "НАЖМИТЕ M, ЧТОБЫ ПЕРЕЙТИ В ГЛАВНОЕ МЕНЮ",
-        "PRESIONE M PARA IR AL MENÚ PRINCIPAL",
-        "ANA MENÜYE GİTMEK İÇİN M TUŞUNA BASIN"
-        }
-        };
-
-    private void Awake()
-    {
-        if (m_instance == null)
-        {
-            m_instance = this;
-        }
-    }
     // Start is called before the first frame update
     void Start()
     {
         m_hearts = m_healthLayout.GetComponentsInChildren<Image>().ToList();
         m_currentHeart = m_hearts.Count - 1;
-        m_input = GameObject.FindWithTag("Player").GetComponent<PlayerInput>();
 
         for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
         {
@@ -201,33 +165,22 @@ public class UIController : MonoBehaviour
     public void OpenShop()
     {
         m_shopLayout.SetActive(!m_shopLayout.activeInHierarchy);
+        m_shop.Greet();
     }
 
     public void Win()
     {
         m_input.LockInput();
-        if (m_input.GetCurrebtDeviceType() == "Gamepad")
-        {
-            m_dieText.text = m_winTexts[0][CurrentLanguage];
-        }
-        else
-        {
-            m_winText.text = m_winTexts[1][CurrentLanguage];
-        }
         m_winLayout.SetActive(true);
+        m_winTextG.gameObject.SetActive(m_input.GetCurrebtDeviceType() == "Gamepad");
+        m_winTextKB.gameObject.SetActive(!m_winTextG.isActiveAndEnabled);
     }
 
     public void Die(bool active)
     {
-        if (m_input.GetCurrebtDeviceType() == "Gamepad")
-        {
-            m_dieText.text = m_restartTexts[0][CurrentLanguage];
-        }
-        else
-        {
-            m_dieText.text = m_restartTexts[1][CurrentLanguage];
-        }
         m_dieLayout.SetActive(active);
+        m_dieTextG.gameObject.SetActive(m_input.GetCurrebtDeviceType() == "Gamepad");
+        m_dieTextKB.gameObject.SetActive(!m_dieTextG.isActiveAndEnabled);
     }
 
     private void OnApplicationPause(bool pause)

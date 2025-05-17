@@ -182,6 +182,38 @@ MonoBehaviour:
     m_Localized: DURAKLAT
     m_Metadata:
       m_Items: []
+  - m_Id: 6108615272480768
+    m_Localized: "EVC\u0130L HAYVAN \u0130\xC7\u0130N \nB TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108273596088320
+    m_Localized: "EVC\u0130L HAYVAN \u0130\xC7\u0130N \nENTER TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108617147334656
+    m_Localized: "D\xDCKKANI A\xC7MAK \u0130\xC7\u0130N\nSELECT TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108287227576320
+    m_Localized: "D\xDCKKANI A\xC7MAK \u0130\xC7\u0130N \nS TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6109848213307392
+    m_Localized: "YEN\u0130DEN ba\u015Flatmak i\xE7in SELECT tu\u015Funa bas\u0131n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6109798238175232
+    m_Localized: "YEN\u0130DEN BA\u015ELATMAK \u0130\xC7\u0130N R TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6110272475545600
+    m_Localized: "ANA MEN\xDCYE gitmek i\xE7in SELECT tu\u015Funa bas\u0131n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6110216678719488
+    m_Localized: "ANA MEN\xDCYE G\u0130TMEK \u0130\xC7\u0130N M TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

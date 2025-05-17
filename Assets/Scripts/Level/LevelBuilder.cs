@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 public class LevelBuilder : MonoBehaviour
 {
-    public static LevelBuilder Instance { get; private set; }
-
     [SerializeField]
     LevelTheme[] m_themes;
     [SerializeField]
@@ -30,6 +29,8 @@ public class LevelBuilder : MonoBehaviour
 
     PlayerController m_player;
     LevelTheme m_currentTheme;
+    [Inject]
+    DiContainer m_container;
 
     List<Room> m_rooms;
     List<FillStrategy> m_usedStrategies = new List<FillStrategy>();
@@ -42,13 +43,9 @@ public class LevelBuilder : MonoBehaviour
     //Count of spawned rooms
     int m_roomsCount = 1;
     int m_roomIndex = 0;
+    int m_newRoomIndex = 1;
 
     AudioSource m_audio;
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -70,14 +67,18 @@ public class LevelBuilder : MonoBehaviour
             new MazeStrategy(m_currentTheme, m_enemiesCountPerRoom,m_trapsCountPerRoom)
         };
 
+        m_container.Inject(m_strategies[0]);
+        m_container.Inject(m_strategies[1]);
+        m_container.Inject(m_strategies[3]);
+
         m_rooms = new List<Room>
         {
             m_strategies[0].FillStratRoom(m_startPosition,m_strategies[Random.Range(0, 4)])
         };
         m_usedStrategies.Add(m_strategies[0]);
         m_currentRoom = m_rooms[0];
-        SpawnRoom(false);
-        SpawnRoom(false);
+        SpawnRoom();
+        SpawnRoom();
 
         m_player.transform.position = m_startPosition + m_player.gameObject.GetComponent<SpawnValues>().GetOffset();
         m_player.SetRebornCheckpoint(m_startPosition);
@@ -111,26 +112,29 @@ public class LevelBuilder : MonoBehaviour
             }
         }
         else if (m_currentRoom != null && m_player.transform.position.x > m_currentRoom.GetEndPosition().x)
-        { 
+        {
             if (m_usedStrategies[m_roomIndex] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
             {
                 m_roomBounds = true;
                 m_transitionBounds = false;
             }
 
-            m_player.SetLevelCheckpoint(m_currentRoom.GetEndPosition());
-            m_currentRoom = m_rooms[++m_roomIndex];
-            if (m_roomsCount <= m_maxRoomsCount)
+            if (m_newRoomIndex==m_roomIndex+1&& m_roomsCount <= m_maxRoomsCount)
             {
                 SpawnRoom();
+                m_newRoomIndex++;
             }
             ClearRoom();
 
+            m_player.SetLevelCheckpoint(m_currentRoom.GetEndPosition());
+            m_currentRoom = m_rooms[++m_roomIndex];
+
             if (m_usedStrategies[m_roomIndex] is GridStrategy || m_usedStrategies[m_roomIndex] is MovingPlatformStrategy)
             {
                 m_roomBounds = true;
                 m_transitionBounds = false;
             }
+
         }
         //resize camera bounds and camera offset
         else if (m_currentRoom != null && m_player.transform.position.x < m_currentRoom.GetStartPosition().x && m_transitionBounds)
@@ -183,7 +187,7 @@ public class LevelBuilder : MonoBehaviour
 
     public void SetTripleJump()
     {
-        foreach(var s in m_strategies)
+        foreach (var s in m_strategies)
         {
             s.SetTripleJump();
         }
@@ -191,7 +195,7 @@ public class LevelBuilder : MonoBehaviour
     /// <summary>
     /// Creates room from random strategy
     /// </summary>
-    void SpawnRoom(bool isInitial = false)
+    void SpawnRoom()
     {
         m_roomsCount++;
         if (m_roomsCount > m_maxRoomsCount)
@@ -240,6 +244,7 @@ public class LevelBuilder : MonoBehaviour
             m_usedStrategies.RemoveAt(0);
             int i = m_usedStrategies[0] is GridStrategy || m_usedStrategies[0] is MovingPlatformStrategy ? 1 : 0;
             m_roomIndex--;
+            m_newRoomIndex--;
 
             m_rooms[i].AddEnviromentObject(m_usedStrategies[i].CreateVerticalBounds(m_rooms[i].GetStartPosition()));
             m_player.SetRebornCheckpoint(m_rooms[i].GetStartPosition());

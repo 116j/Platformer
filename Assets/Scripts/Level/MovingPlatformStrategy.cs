@@ -18,6 +18,9 @@ public class MovingPlatformStrategy : FillStrategy
 
     AnimationCurve m_speed;
 
+    enum Trajectory { Horizontal, Vertical, Diagonal, Circular }
+
+
     public MovingPlatformStrategy(LevelTheme levelTheme, AnimationCurve speed) : base(levelTheme)
     {
         m_speed = speed;
@@ -43,39 +46,72 @@ public class MovingPlatformStrategy : FillStrategy
         MovingPlatform movingPlatform = m_levelTheme.m_movingPlatform.GetComponent<MovingPlatform>();
         Vector3 lastPoint = start + new Vector3(m_levelTheme.m_movingPlatform.GetWidth(), 1 - m_levelTheme.m_movingPlatform.GetHeight());
         float prev = 0;
+
         while (lastPoint.x < end.x - m_levelTheme.m_movingPlatform.GetWidth())
         {
-            float value = Random.value;
-            float speed = m_speed.Evaluate(LevelBuilder.Instance.LevelProgress());
+            float speed = m_speed.Evaluate(m_lvlBuilder.LevelProgress());
             Vector3 first = lastPoint;
-            MovingPlatform platform;
-            if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist &&
-                (value <= 0.65f && Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) || value >= 0.75f)
-                || Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_minHorizontalDist)
+            Vector3 second;
+            MovingPlatform platform = movingPlatform;
+
+            float hSpace = end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x;  // 
+            float vSpace = Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y); // доступ по Y
+
+            Trajectory currentTrajectory;
+            if (vSpace > m_minVerticalDist
+                && hSpace > m_minHorizontalDist)
             {
-                Vector3 second;
-                if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_minHorizontalDist)
+                float weightH = hSpace;                           // горизонталь Ч чем шире, тем чаще
+                float weightV = vSpace;                           // вертикаль  Ч чем выше, тем чаще
+                float weightD = Mathf.Min(vSpace, hSpace);         // диагональ Ч чем Ђквадратнееї, тем чаще
+                float weightC = (height + vSpace) * 0.5f;           // кругова€ Ч растЄт с размерами комнаты
+
+                float pick = Random.value * (weightV + weightH + weightD + weightC);
+                if (pick < weightH)
                 {
-                    second = first + Vector3.up * Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) * (height < 0 ? -1 : 1);
-                    if (prev != 0)
-                    {
-                        platform = Object.Instantiate(movingPlatform, second, Quaternion.identity);
-                        prev = 0;
-                        platform.AddCheckpoint(first);
-                    }
-                    else
-                    {
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                        prev = Mathf.Abs(second.y - first.y) / speed;
-                        platform.AddCheckpoint(second);
-                    }
+                    currentTrajectory = Trajectory.Horizontal;
+                }
+                else if (pick < weightH + weightV)
+                {
+                    currentTrajectory = Trajectory.Vertical;
+                }
+                else if (pick < weightV + weightH + weightD)
+                {
+                    currentTrajectory = Trajectory.Diagonal;
                 }
                 else
                 {
+                    currentTrajectory = Trajectory.Circular;
+                }
+            }
+            else
+            {
+                if (vSpace > m_minVerticalDist
+                && vSpace < m_maxWidth
+                && hSpace < m_minHorizontalDist)
+                {
+                    currentTrajectory = Trajectory.Vertical;
+                }
+                else if (vSpace < m_minVerticalDist
+                && hSpace > m_minHorizontalDist
+                && hSpace < m_maxWidth)
+                {
+                    currentTrajectory = Trajectory.Horizontal;
+                }
+                else
+                {
+                    currentTrajectory = Trajectory.Diagonal;
+                }
+            }
+
+            switch (currentTrajectory)
+            {
+                case Trajectory.Vertical:
+
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (m_minWidth / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y)) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
+                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, vSpace) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
                         {
@@ -87,57 +123,26 @@ public class MovingPlatformStrategy : FillStrategy
                             n = Random.Range(1, maxN + 1);
                             second = first + Vector3.up * speed * (height < 0 ? -1 : 1) * (n * prev + (n - 1) * movingPlatform.GetWaitTime());
                         }
-                        if (n % 2 == 0)
-                        {
-                            platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                            prev = Mathf.Abs(second.y - first.y) / speed;
-                            platform.AddCheckpoint(second);
-                        }
-                        else
-                        {
-                            platform = Object.Instantiate(movingPlatform, second, Quaternion.identity);
-                            prev = 0;
-                            platform.AddCheckpoint(first);
-                        }
-                    }
-                    else
-                    {
-                        second = first + Vector3.up * (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y));
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                        prev = Mathf.Abs(second.y - first.y) / speed;
-                        platform.AddCheckpoint(second);
-                    }
-                }
 
-                lastPoint = second;
-            }
-            else if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist
-                && (value >= 0.65f && Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) && value <= 0.5f)
-                || Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth)
-            {
-                Vector3 second;
-                if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth)
-                {
-                    second = first + Vector3.right * (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x);
-                    if (prev != 0)
-                    {
-                        platform = Object.Instantiate(movingPlatform, second, Quaternion.identity);
-                        prev = 0;
-                        platform.AddCheckpoint(first);
+                        platform = PlacePlatform(movingPlatform, first, second, ref prev, speed, n % 2 != 0);
                     }
                     else
                     {
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                        prev = (second.x - first.x) / speed;
-                        platform.AddCheckpoint(second);
+                        second = first + Vector3.up * (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, vSpace);
+                        platform = AddPlatform(movingPlatform, first, second);
+                        prev = Mathf.Abs(second.y - first.y) / speed;
                     }
-                }
-                else
-                {
+
+
+                    lastPoint = second;
+                    break;
+
+                case Trajectory.Horizontal:
+
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (m_minWidth / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
+                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, hSpace) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
                         {
@@ -149,57 +154,24 @@ public class MovingPlatformStrategy : FillStrategy
                             n = Random.Range(1, maxN + 1);
                             second = first + Vector3.right * speed * (n * prev + (n - 1) * movingPlatform.GetWaitTime());
                         }
-                        if (n % 2 == 0)
-                        {
-                            platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                            prev = (second.x - first.x) / speed;
-                            platform.AddCheckpoint(second);
-                        }
-                        else
-                        {
-                            platform = Object.Instantiate(movingPlatform, second, Quaternion.identity);
-                            prev = 0;
-                            platform.AddCheckpoint(first);
-                        }
+                        platform = PlacePlatform(movingPlatform, first, second, ref prev, speed, n % 2 != 0);
                     }
                     else
                     {
-                        second = first + Vector3.right * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x);
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
+                        second = first + Vector3.right * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, hSpace);
+                        platform = AddPlatform(movingPlatform, first, second);
                         prev = (second.x - first.x) / speed;
-                        platform.AddCheckpoint(second);
                     }
-                }
-                lastPoint = second;
 
-            }
-            else if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth || (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth ||
-                Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) > m_minVerticalDist && (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) > m_minHorizontalDist & value <= 0.65f)
-            {
-                Vector3 second;
-                //last 
-                if (Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) < m_maxWidth + m_minWidth || (end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x) < m_maxWidth + m_minWidth)
-                {
-                    second = first + new Vector3(end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y) * (height < 0 ? -1 : 1));
-                    if (prev != 0)
-                    {
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                        prev = 0;
-                        platform.AddCheckpoint(second);
-                    }
-                    else
-                    {
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                        prev = Mathf.Sqrt(Mathf.Pow(second.y - first.y, 2) + Mathf.Pow(second.x - first.x, 2)) / speed;
-                        platform.AddCheckpoint(second);
-                    }
-                }
-                else
-                {
+                    lastPoint = second;
+                    break;
+
+                case Trajectory.Diagonal:
+
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (Mathf.Sqrt(Mathf.Pow(m_minWidth, 2) + Mathf.Pow(m_minWidth, 2)) / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), 0, Mathf.Min(Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y), end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x)) / speed
+                        int maxN = Mathf.FloorToInt((Mathf.Clamp(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), 0, Mathf.Min(vSpace, hSpace)) / speed
                             + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
@@ -216,67 +188,61 @@ public class MovingPlatformStrategy : FillStrategy
                         second = first + (Random.value > 0.5f ? new Vector3(Mathf.Sqrt(a), Mathf.Sqrt(prev * prev * speed * speed - a) * (height < 0 ? -1 : 1)) : new Vector3(Mathf.Sqrt(prev * prev * speed * speed - a), Mathf.Sqrt(a) * (height < 0 ? -1 : 1)));
                         if (n % 2 == 0)
                         {
-                            platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                            platform.AddCheckpoint(second);
+                            platform = AddPlatform(movingPlatform, first, second);
                         }
                         else
                         {
-                            platform = Object.Instantiate(movingPlatform, second, Quaternion.identity);
+                            platform = AddPlatform(movingPlatform, second, first);
                             prev = 0;
-                            platform.AddCheckpoint(first);
                         }
                     }
                     else
                     {
                         second = first +
-                        new Vector3(Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x), (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y)));
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
+                        new Vector3(Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, hSpace), (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, vSpace));
+                        platform = AddPlatform(movingPlatform, first, second);
                         prev = Mathf.Sqrt(Mathf.Pow(second.y - first.y, 2) + Mathf.Pow(second.x - first.x, 2)) / speed;
-                        platform.AddCheckpoint(second);
                     }
-                }
-                lastPoint = second;
-            }
-            else
-            {
-                float d;
-                Vector3 fifth;
-                if (prev != 0)
-                {
-                    int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (Mathf.Sqrt(Mathf.Pow(m_minWidth, 2) + Mathf.Pow(m_minWidth, 2)) / speed + movingPlatform.GetWaitTime()));
-                    int maxN = Mathf.FloorToInt((Mathf.Clamp(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), 0, Mathf.Min(Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y), end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x)) / speed
-                        + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
-                    int n;
-                    if (Random.value > 0.5f)
+
+                    lastPoint = second;
+                    break;
+
+                case Trajectory.Circular:
+                    float d;
+                    Vector3 fifth;
+                    bool reverse = false;
+                    if (prev != 0)
                     {
-                        n = Random.Range(1, minN + 1);
-                        d = (prev - (n - 1) * movingPlatform.GetWaitTime()) / n * speed;
+                        int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (Mathf.Sqrt(Mathf.Pow(m_minWidth, 2) + Mathf.Pow(m_minWidth, 2)) / speed + movingPlatform.GetWaitTime()));
+                        int maxN = Mathf.FloorToInt((Mathf.Clamp(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), 0, Mathf.Min(vSpace, hSpace)) / speed
+                            + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
+                        int n;
+                        if (Random.value > 0.5f)
+                        {
+                            n = Random.Range(1, minN + 1);
+                            d = (prev - (n - 1) * movingPlatform.GetWaitTime()) / n * speed;
+                        }
+                        else
+                        {
+                            n = Random.Range(1, maxN + 1);
+                            d = n * prev * speed + (n - 1) * movingPlatform.GetWaitTime() * speed;
+                        }
+                        reverse = n % 2 != 0;
                     }
                     else
                     {
-                        n = Random.Range(1, maxN + 1);
-                        d = n * prev * speed + (n - 1) * movingPlatform.GetWaitTime() * speed;
+                        d = Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Min(vSpace, hSpace));
                     }
-                    Vector3 second = first + new Vector3(1, 1) * d / 4;
+
+                    second = first + new Vector3(1, 1) * d / 4;
                     Vector3 third = first + new Vector3(1, 1) * d / 2;
                     Vector3 fourth = first + new Vector3(d * 3, d) / 4;
                     fifth = first + Vector3.right * d;
                     Vector3 sixth = first + new Vector3(d * 3, -d) / 4;
                     Vector3 seventh = first + new Vector3(d, -d) / 2;
                     Vector3 eighth = first + new Vector3(d, -d) / 4;
-                    if (n % 2 == 0)
-                    {
-                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                        prev = 4 * Mathf.Sqrt(d * d / 8) / speed;
-                        platform.AddCheckpoint(second, false);
-                        platform.AddCheckpoint(third, false);
-                        platform.AddCheckpoint(fourth, false);
-                        platform.AddCheckpoint(fifth);
-                        platform.AddCheckpoint(sixth, false);
-                        platform.AddCheckpoint(seventh, false);
-                        platform.AddCheckpoint(eighth, false);
-                    }
-                    else
+
+                    if (reverse)
                     {
                         platform = Object.Instantiate(movingPlatform, fifth, Quaternion.identity);
                         prev = 0;
@@ -288,46 +254,59 @@ public class MovingPlatformStrategy : FillStrategy
                         platform.AddCheckpoint(third, false);
                         platform.AddCheckpoint(fourth, false);
                     }
+                    else
+                    {
+                        platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
+                        prev = 4 * Mathf.Sqrt(d * d / 8) / speed;
+                        platform.AddCheckpoint(second, false);
+                        platform.AddCheckpoint(third, false);
+                        platform.AddCheckpoint(fourth, false);
+                        platform.AddCheckpoint(fifth);
+                        platform.AddCheckpoint(sixth, false);
+                        platform.AddCheckpoint(seventh, false);
+                        platform.AddCheckpoint(eighth, false);
+                    }
 
-                }
-                else
-                {
-                    d = Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Min(Mathf.Abs(end.y + 1 - m_levelTheme.m_movingPlatform.GetHeight() - lastPoint.y), end.x - lastPoint.x + m_levelTheme.m_movingPlatform.GetOffset().x));
-
-                    Vector3 second = first + new Vector3(1, 1) * d / 4;
-                    Vector3 third = first + new Vector3(1, 1) * d / 2;
-                    Vector3 fourth = first + new Vector3(d * 3, d) / 4;
-                    fifth = first + Vector3.right * d;
-                    Vector3 sixth = first + new Vector3(d * 3, -d) / 4;
-                    Vector3 seventh = first + new Vector3(d, -d) / 2;
-                    Vector3 eighth = first + new Vector3(d, -d) / 4;
-
-                    platform = Object.Instantiate(movingPlatform, first, Quaternion.identity);
-                    prev = 4 * Mathf.Sqrt(d * d / 8) / speed;
-                    platform.AddCheckpoint(second, false);
-                    platform.AddCheckpoint(third, false);
-                    platform.AddCheckpoint(fourth, false);
-                    platform.AddCheckpoint(fifth);
-                    platform.AddCheckpoint(sixth, false);
-                    platform.AddCheckpoint(seventh, false);
-                    platform.AddCheckpoint(eighth, false);
-                }
-
-                lastPoint = fifth;
+                    lastPoint = fifth;
+                    break;
             }
 
             platform.SetSpeed(speed);
-            transition.AddEnviromentObject(platform.gameObject);
+            room.AddEnviromentObject(platform.gameObject);
             lastPoint += Vector3.right * (m_levelTheme.m_movingPlatform.GetWidth() + 1);
         }
         // create bounds for player's fall
-        room.AddEnviromentObject(CreateHorizontalBounds(start, lastPoint-Vector3.up, width, height));
+        room.AddEnviromentObject(CreateHorizontalBounds(start, lastPoint - Vector3.up, width, height));
 
         end = new Vector3Int(Mathf.CeilToInt(lastPoint.x) - 1, Mathf.CeilToInt(lastPoint.y) - 1);
         room.SetEndPosition(end);
         room.AddTransition(new Room(end, end));
         return room;
     }
+
+    MovingPlatform AddPlatform(MovingPlatform prefab, Vector3 first, Vector3 second)
+    {
+        MovingPlatform platform = Object.Instantiate(prefab, first, Quaternion.identity);
+        platform.AddCheckpoint(second);
+        return platform;
+    }
+
+    MovingPlatform PlacePlatform(MovingPlatform prefab, Vector3 first, Vector3 second, ref float prev, float speed, bool cond)
+    {
+        MovingPlatform platform = AddPlatform(prefab, cond ? second : first, cond ? first : second);
+        platform.SetSpeed(speed);
+
+        // ƒобавл€ем чекпоинт в нужном пор€дке
+        if (cond)
+            platform.AddCheckpoint(first);
+        else
+            platform.AddCheckpoint(second);
+
+        // ¬ычисл€ем новое prev
+        prev = cond ? 0f : Vector3.Distance(first, second) / speed;
+        return platform;
+    }
+
 
     public override Room FillTransition(Room room)
     {
@@ -346,7 +325,7 @@ public class MovingPlatformStrategy : FillStrategy
         transition.AddEnviromentObject(platform.gameObject);
 
         // create bounds for player's fall
-        transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(),end,width,height));
+        transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(), end, width, height));
 
         return transition;
     }

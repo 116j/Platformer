@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
+using Zenject;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -79,11 +80,18 @@ public class PlayerInput : MonoBehaviour
 
     UnityEngine.InputSystem.PlayerInput m_input;
 
-    private void Start()
+    [Inject]
+    LevelBuilder m_lvlBuilder;
+    [Inject]
+    UIController m_UI;
+    [Inject]
+    Menu m_menu;
+
+    private void Awake()
     {
         Cursor.visible = true;
         m_input = GetComponent<UnityEngine.InputSystem.PlayerInput>();
-        m_input.uiInputModule.cancel.action.performed += Menu.Instance.CloseLayout;
+        m_input.uiInputModule.cancel.action.performed += m_menu.CloseLayout;
     }
 
     public void LockInput()
@@ -108,7 +116,7 @@ public class PlayerInput : MonoBehaviour
         m_pause = !m_pause;
         Time.timeScale = m_pause ? 0 : 1;
         LockInput();
-        Menu.Instance.Pause(m_pause);
+        m_menu.Pause(m_pause);
     }
 
     void OnMove(InputValue value)
@@ -156,7 +164,7 @@ public class PlayerInput : MonoBehaviour
         if (m_shop)
         {
             LockInput();
-            UIController.Instance.OpenShop();
+            m_UI.OpenShop();
         }
     }
 
@@ -164,8 +172,8 @@ public class PlayerInput : MonoBehaviour
     {
         if (m_restart)
         {
-            LevelBuilder.Instance.Restart();
-            UIController.Instance.Die(false);
+            m_lvlBuilder.Restart();
+            m_UI.Die(false);
             m_restart = false;
         }
     }

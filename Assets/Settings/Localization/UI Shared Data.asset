@@ -179,6 +179,38 @@ MonoBehaviour:
     m_Key: pause
     m_Metadata:
       m_Items: []
+  - m_Id: 6108273596088320
+    m_Key: pet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108287227576320
+    m_Key: shopKB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108615272480768
+    m_Key: petG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6108617147334656
+    m_Key: shopG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6109798238175232
+    m_Key: dieRestartKB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6109848213307392
+    m_Key: dieRestartG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6110216678719488
+    m_Key: mainMenuKB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6110272475545600
+    m_Key: mainMenuG
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

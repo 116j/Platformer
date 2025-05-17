@@ -21,7 +21,7 @@ public class TileEditor : MonoBehaviour
     Tilemap m_destroyable;
 
     Dictionary<TileBase, TileChanger> m_tileToChanger = new Dictionary<TileBase, TileChanger>();
-    const int TILES_PER_FRAME = 50;
+    const int TILES_PER_FRAME = 20;
 
     int m_tilePaletteIndex;
 
@@ -84,6 +84,10 @@ public class TileEditor : MonoBehaviour
                 {
                     m_notCollidable.SetTile(new Vector3Int(pos.x, pos.y + 1), null);
                 }
+                if (m_tileToChanger[tile].makeGround)
+                {
+                    m_ground.SetTile(pos,null);
+                }
             }
         }
     }
@@ -134,10 +138,13 @@ public class TileEditor : MonoBehaviour
             if (i % TILES_PER_FRAME == 0)          // раз в 50 итераций Ч отдаЄм кадр
                 yield return null;
         }
-
+        i = 0;
         foreach (var (pos, tile) in tilemap)
         {
             SetTile(m_tileToChanger[tile], tile, pos);
+            i++;
+            if (i % TILES_PER_FRAME == 0)          // раз в 50 итераций Ч отдаЄм кадр
+                yield return null;
         }
 
         callback?.Invoke();
@@ -158,7 +165,14 @@ public class TileEditor : MonoBehaviour
 
         foreach (var (pos, tile) in tilemap)
         {
-            SetTile(m_tileToChanger[tile], tile, pos);
+            if (m_tileToChanger[tile].makeGround)
+            {
+                m_ground.SetTile(pos, tile);
+            }
+            else
+            {
+                SetTile(m_tileToChanger[tile], tile, pos);
+            }
         }
 
         callback?.Invoke();
@@ -192,8 +206,7 @@ public class TileEditor : MonoBehaviour
                     }
                 }
                 while (tiles.Count > 0)
-                {
-                    
+                {                  
                     tile = tiles[Random.Range(0, tiles.Count)];
                     if (tile == null)
                     {
@@ -209,8 +222,8 @@ public class TileEditor : MonoBehaviour
                     {
                         surPosition = new Vector3Int(position.x + (int)Mathf.Pow(-1, i) * (3 - i) / 2, position.y + (int)Mathf.Pow(-1, i) * i / 2);
                         TileBase surTile;
-
                         tilemap.TryGetValue(surPosition, out surTile);
+
                         if (newChanger.analogTiles.surroundings[i])
                         {
                             //if surrounding's tiles doesnt match with change tile group or surrounding's tile is changed and change tile group doesnt contain it - change tile

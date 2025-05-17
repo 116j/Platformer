@@ -19,10 +19,8 @@ public class TouchingCheck : MonoBehaviour
     readonly float m_groundHitDist = 0.05f;
     //distance to detect slope
     readonly float m_slopeHitDist = 0.2f;
-    readonly float m_stuckHitDist = 0.6f;
 
     RaycastHit2D[] m_rayHits = new RaycastHit2D[5];
-    Collider2D[] m_colHits = new Collider2D[5];
 
     // Start is called before the first frame update
     void Start()
@@ -30,34 +28,28 @@ public class TouchingCheck : MonoBehaviour
         m_col = GetComponent<Collider2D>();
     }
 
-    public bool IsWallStuckLeft()
+    public float WallsStuck(float skinWidth, float dist)
     {
-        return m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0&&
-            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-            m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-            Physics2D.OverlapBoxNonAlloc(transform.position + Vector3.right * 2, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0;
-    }
-    public bool IsWallStuckRight()
-    {
-        return m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0&&
-            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-           m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-           Physics2D.OverlapBoxNonAlloc(transform.position - Vector3.right * 2, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0;
-    }
-    public bool IsWallStuckUp()
-    {
-        return m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0&&
-            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-           m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-           Physics2D.OverlapBoxNonAlloc(transform.position - Vector3.up * 2, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0;
+        var hit = Physics2D.BoxCast(
+            transform.position,
+            m_col.bounds.size + Vector3.one * skinWidth, 0f,
+            Vector3.right * Mathf.Sign(dist),
+            Mathf.Abs(dist) + skinWidth,
+            m_stuckCastFilter.layerMask
+        );
+        return hit.collider != null ? hit.distance : 0f;
     }
 
-    public bool IsGroundStuck()
+    public float GroundStuck(float skinWidth, float dist)
     {
-        return m_col.Cast(-transform.up, m_stuckCastFilter, m_rayHits, m_stuckHitDist) > 0 &&
-            m_col.Cast(transform.right, m_stuckCastFilter, m_rayHits, m_wallHitDist) > 0 &&
-            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_wallHitDist) > 0&&
-            Physics2D.OverlapBoxNonAlloc(transform.position + Vector3.up * 0.6f, m_col.bounds.size, transform.eulerAngles.z, m_colHits, m_stuckCastFilter.layerMask.value) == 0; ;
+        var hit = Physics2D.BoxCast(
+            transform.position,
+            m_col.bounds.size + Vector3.one * skinWidth, 0f,
+            Vector3.up * Mathf.Sign(dist),
+            Mathf.Abs(dist) + skinWidth,
+            m_stuckCastFilter.layerMask
+        );
+        return hit.collider != null ? hit.distance : 0f;
     }
 
     public bool IsGrounded()
