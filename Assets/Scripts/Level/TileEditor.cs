@@ -1,14 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEditor.PlayerSettings;
 
 public class TileEditor : MonoBehaviour
 {
-    public static TileEditor Instance { get; private set; }
     [SerializeField]
     TileChanger[] m_tileChangers;
     [SerializeField]
@@ -18,7 +15,6 @@ public class TileEditor : MonoBehaviour
     Tilemap m_slope;
     Tilemap m_walls;
     Tilemap m_notCollidable;
-    Tilemap m_destroyable;
 
     Dictionary<TileBase, TileChanger> m_tileToChanger = new Dictionary<TileBase, TileChanger>();
     const int TILES_PER_FRAME = 20;
@@ -28,16 +24,10 @@ public class TileEditor : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-
         m_ground = transform.GetChild(0).GetComponent<Tilemap>();
         m_slope = transform.GetChild(1).GetComponent<Tilemap>();
         m_walls = transform.GetChild(2).GetComponent<Tilemap>();
         m_notCollidable = transform.GetChild(3).GetComponent<Tilemap>();
-        m_destroyable = transform.GetChild(4).GetComponent<Tilemap>();
 
         foreach (var changer in m_tileChangers)
         {
@@ -72,9 +62,33 @@ public class TileEditor : MonoBehaviour
     /// <summary>
     /// Reset if tiles are changed
     /// </summary>
-    public void ClearTiles(HashSet<Vector3Int> tilePositions)
+    public void ClearTiles(HashSet<Vector3Int> tilePositions, bool async)
+    {
+        if (async)
+        {
+            StartCoroutine(ClearTilesAsync(tilePositions));
+        }
+        else
+        {
+            TileBase tile = null;
+            foreach (var pos in tilePositions)
+            {
+                if (tile = GetTileFromTilemap(pos))
+                {
+                    SetTile(m_tileToChanger[tile], null, pos);
+                    if (m_tileToChanger[tile].addGrass)
+                    {
+                        m_notCollidable.SetTile(new Vector3Int(pos.x, pos.y + 1), null);
+                    }
+                }
+            }
+        }
+    }
+
+    public IEnumerator ClearTilesAsync(HashSet<Vector3Int> tilePositions)
     {
         TileBase tile = null;
+        int i = 0;
         foreach (var pos in tilePositions)
         {
             if (tile = GetTileFromTilemap(pos))
@@ -84,10 +98,9 @@ public class TileEditor : MonoBehaviour
                 {
                     m_notCollidable.SetTile(new Vector3Int(pos.x, pos.y + 1), null);
                 }
-                if (m_tileToChanger[tile].makeGround)
-                {
-                    m_ground.SetTile(pos,null);
-                }
+                i++;
+                if (i % TILES_PER_FRAME == 0)          // раз в 50 итераций Ч отдаЄм кадр
+                    yield return null;
             }
         }
     }
@@ -97,26 +110,13 @@ public class TileEditor : MonoBehaviour
     /// <param name="tilePositions"></param>
     public void SetTiles(HashSet<Vector3Int> tilePositions, System.Action callback, bool isInitial)
     {
-        if(isInitial)
+        if (isInitial)
         {
             ChangeTiles(tilePositions, callback);
         }
         else
         {
             StartCoroutine(ChangeTilesAsync(tilePositions, callback));
-        }
-    }
-
-    /// <summary>
-    /// Sets tile analog on tiles' positions
-    /// </summary>
-    /// <param name="tilePositions"></param>
-    /// <param name="analog"></param>
-    public void SetTiles(HashSet<Vector3Int> tilePositions, TilePlaceAnalog analog)
-    {
-        foreach (var pos in tilePositions)
-        {
-            m_destroyable.SetTile(pos, GetTilesAnalog(analog)[0]);
         }
     }
     /// <summary>
@@ -133,7 +133,7 @@ public class TileEditor : MonoBehaviour
 
         foreach (var pos in tilePositions)
         {
-            ChangeTile(pos, tilePositionsUsage,tilemap);
+            ChangeTile(pos, tilePositionsUsage, tilemap);
             i++;
             if (i % TILES_PER_FRAME == 0)          // раз в 50 итераций Ч отдаЄм кадр
                 yield return null;
@@ -165,14 +165,7 @@ public class TileEditor : MonoBehaviour
 
         foreach (var (pos, tile) in tilemap)
         {
-            if (m_tileToChanger[tile].makeGround)
-            {
-                m_ground.SetTile(pos, tile);
-            }
-            else
-            {
-                SetTile(m_tileToChanger[tile], tile, pos);
-            }
+            SetTile(m_tileToChanger[tile], tile, pos);
         }
 
         callback?.Invoke();
@@ -183,7 +176,7 @@ public class TileEditor : MonoBehaviour
     /// <param name="position">grid position</param>
     void ChangeTile(Vector3Int position, Dictionary<Vector3Int, bool> tilePositionsUsage, Dictionary<Vector3Int, TileBase> tilemap)
     {
-        TilePlaceAnalog analog = GetTileAnalog(position,tilePositionsUsage);
+        TilePlaceAnalog analog = GetTileAnalog(position, tilePositionsUsage);
         if (!tilePositionsUsage[position] && analog != null)
         {
             TileBase tile = null;
@@ -206,7 +199,7 @@ public class TileEditor : MonoBehaviour
                     }
                 }
                 while (tiles.Count > 0)
-                {                  
+                {
                     tile = tiles[Random.Range(0, tiles.Count)];
                     if (tile == null)
                     {
@@ -227,7 +220,7 @@ public class TileEditor : MonoBehaviour
                         if (newChanger.analogTiles.surroundings[i])
                         {
                             //if surrounding's tiles doesnt match with change tile group or surrounding's tile is changed and change tile group doesnt contain it - change tile
-                            if (tilePositionsUsage.ContainsKey(surPosition) && CheckSurrounding(tile, surPosition, i,tilePositionsUsage,tilemap))
+                            if (tilePositionsUsage.ContainsKey(surPosition) && CheckSurrounding(tile, surPosition, i, tilePositionsUsage, tilemap))
                             {
                                 tiles.Remove(tile);
                                 break;
@@ -391,14 +384,14 @@ public class TileEditor : MonoBehaviour
         if (result != null && result.placeAnalog != null)
         {
             bool isSlopeConditionMet = result.tilemapTag == "slope"
-            && (tilePositionsUsage.ContainsKey(new Vector3Int(position.x + 1, position.y)) 
-            && GetTileAnalog(new Vector3Int(position.x + 1, position.y),tilePositionsUsage) == GetTileAnalog(new Vector3Int(position.x, position.y - 1), tilePositionsUsage)
-             || tilePositionsUsage.ContainsKey(new Vector3Int(position.x - 1, position.y)) 
-             && GetTileAnalog(new Vector3Int(position.x - 1, position.y),tilePositionsUsage) == GetTileAnalog(new Vector3Int(position.x, position.y - 1), tilePositionsUsage)
-             || tilePositionsUsage.ContainsKey(new Vector3Int(position.x - 1, position.y - 1)) 
+            && (tilePositionsUsage.ContainsKey(new Vector3Int(position.x + 1, position.y))
+            && GetTileAnalog(new Vector3Int(position.x + 1, position.y), tilePositionsUsage) == GetTileAnalog(new Vector3Int(position.x, position.y - 1), tilePositionsUsage)
+             || tilePositionsUsage.ContainsKey(new Vector3Int(position.x - 1, position.y))
+             && GetTileAnalog(new Vector3Int(position.x - 1, position.y), tilePositionsUsage) == GetTileAnalog(new Vector3Int(position.x, position.y - 1), tilePositionsUsage)
+             || tilePositionsUsage.ContainsKey(new Vector3Int(position.x - 1, position.y - 1))
              && result == GetTileAnalog(new Vector3Int(position.x - 1, position.y - 1), tilePositionsUsage)
-             || tilePositionsUsage.ContainsKey(new Vector3Int(position.x + 1, position.y - 1)) 
-             && result == GetTileAnalog(new Vector3Int(position.x + 1, position.y - 1),tilePositionsUsage))
+             || tilePositionsUsage.ContainsKey(new Vector3Int(position.x + 1, position.y - 1))
+             && result == GetTileAnalog(new Vector3Int(position.x + 1, position.y - 1), tilePositionsUsage))
              || result.tilemapTag == "ground";
 
             return isSlopeConditionMet ? result : result.placeAnalog;

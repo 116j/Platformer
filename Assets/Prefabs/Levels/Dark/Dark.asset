@@ -67,6 +67,7 @@ MonoBehaviour:
   - {fileID: -8002097554922568567, guid: b4955812be12af24cac5e51f443c38f6, type: 3}
   - {fileID: 8048282060642596268, guid: dd73b1e738ee1344f8745540754525b4, type: 3}
   - {fileID: 5935189479541290356, guid: 6b62111a89fb99e4e95d4450abb6ff5e, type: 3}
+  m_destroyableTile: {fileID: -1547541880, guid: f0f5a0be555bb804eb3e01deb6eb7473, type: 3}
   m_enemies:
   - {fileID: 5941363652571959847, guid: 4e6f793879d0b884ba7c8aecd87a302f, type: 3}
   - {fileID: 7631193312752605007, guid: b147f65db48882d4ab56110feb89d6de, type: 3}

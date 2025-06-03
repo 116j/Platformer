@@ -12,6 +12,7 @@ TagManager:
   - enemyAttack
   - slope
   - shop
+  - destroyable
   layers:
   - Default
   - TransparentFX

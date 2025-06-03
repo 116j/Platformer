@@ -119,15 +119,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 20624187768832
-    m_Localized: RECUENTO DE HABITACIONES
+    m_Localized: RECUENTO DE SALAS
     m_Metadata:
       m_Items: []
   - m_Id: 20650360225792
-    m_Localized: "FRECUENCIA DE GENERACI\xD3N DE HABITACIONES"
+    m_Localized: "FRECUENCIA DE GENERACI\xD3N DE SALAS"
     m_Metadata:
       m_Items: []
   - m_Id: 20704886177792
-    m_Localized: "Habitaci\xF3n base"
+    m_Localized: Sala base
     m_Metadata:
       m_Items: []
   - m_Id: 20736116965376
@@ -189,15 +189,17 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6108273596088320
-    m_Localized: "PRESIONE ENTER \nPARA ACARICIAR"
+    m_Localized: "PRESIONE CTRL \nPARA ACARICIAR"
     m_Metadata:
       m_Items: []
   - m_Id: 6108617147334656
-    m_Localized: "PRESIONE SELECT \nPARA ABRIR LA TIENDA"
+    m_Localized: "PRESIONE B \nPARA ABRIR LA TIENDA"
     m_Metadata:
       m_Items: []
   - m_Id: 6108287227576320
-    m_Localized: "PRESIONE S \nPARA ABRIR LA TIENDA"
+    m_Localized: 'PRESIONE CTRL
+
+      PARA ABRIR LA TIENDA'
     m_Metadata:
       m_Items: []
   - m_Id: 6109848213307392
@@ -214,6 +216,44 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 6110216678719488
     m_Localized: "PRESIONE M PARA IR AL MEN\xDA PRINCIPAL"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8312222965219328
+    m_Localized: Sala destruible
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12711559031865344
+    m_Localized: POR DEFECTO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057984500514816
+    m_Localized: TIPOS DE HABITACIONES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057887209439232
+    m_Localized: "Descripci\xF3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057949494853632
+    m_Localized: "Especifica cu\xE1ntas \"habitaciones\" individuales (fragmentos)
+      consecutivas habr\xE1 en el nivel."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058096987553792
+    m_Localized: "Hay cinco tipos de habitaciones:\n\n\u2022 La sala base es una
+      sala con enemigos y trampas.\n\n\u2022 La sala del techo es una habitaci\xF3n
+      con techo y trampas.\n\n\u2022 La sala de plataformas de malla es una sala
+      con plataformas sobre las que salta el jugador.\n\n\u2022 La sala de plataformas
+      m\xF3viles es una sala con plataformas m\xF3viles que se acercan entre s\xED.\n\n\u2022
+      La sala destruible es una habitaci\xF3n con un piso que se derrumba."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058139958198272
+    m_Localized: "Cada vista de la sala tiene un valor de 0.00\u20131.00 (el m\xEDnimo
+      b\xE1sico es 0.3). Para cada nueva sala, el juego toma la suma de todos los
+      valores y elige una estrategia en proporci\xF3n a su participaci\xF3n.\nPor
+      ejemplo, si la base = 0.8, con el techo = 0.4, el resto de 0.2, entonces las
+      probabilidades son:\n44% - b\xE1sico, 22% - con techo, 11% \u2013 otros."
     m_Metadata:
       m_Items: []
   references:

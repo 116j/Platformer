@@ -57,7 +57,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ba7e389568d8f4647846ed68ba1c12da, type: 3}
   - {fileID: 8300000, guid: e3ed6b93fdf9ed34ab26937416c56d47, type: 3}
   - {fileID: 8300000, guid: 9970cc45a79cab045be62faae8474e6d, type: 3}
-  m_destroyableTile: {fileID: 11400000, guid: a369bd4836c75cc4da34127c44e5356e, type: 2}
+  m_brick: {fileID: 2340521542611145314, guid: be13a00c777e91e458215c38b16254d1, type: 3}
   m_enemiesCountPerRoom:
     serializedVersion: 2
     m_Curve:
@@ -130,7 +130,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_startPosition: {x: 262, y: 25, z: 0}
+  m_startPosition: {x: 0, y: 0, z: 0}
   m_maxRoomsCount: 50
 --- !u!82 &3544023340118429585
 AudioSource:
@@ -143,7 +143,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 5836907705764678863, guid: fec4151c0eb2b5444af142439c06bfcf, type: 2}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.15
   m_Pitch: 1
   Loop: 1

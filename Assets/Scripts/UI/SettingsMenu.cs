@@ -1,13 +1,10 @@
-using System;
+﻿using ModestTree;
 using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.SmartFormat.Core.Parsing;
 using UnityEngine.UI;
 using Zenject;
 
@@ -40,6 +37,8 @@ public class SettingsMenu : MonoBehaviour
     TextMeshProUGUI m_resolutionText;
     [SerializeField]
     TextMeshProUGUI m_languageText;
+    [SerializeField]
+    Toggle m_fullScreenToggle;
 
     [Header("Controls")]
     [SerializeField]
@@ -55,13 +54,9 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI m_roomsCountText;
     [SerializeField]
-    TextMeshProUGUI m_baseRoomWeight;
+    TextMeshProUGUI[] m_roomStrategyWeightTexts;
     [SerializeField]
-    TextMeshProUGUI m_ceilRoomWeight;
-    [SerializeField]
-    TextMeshProUGUI m_gridRoomWeight;
-    [SerializeField]
-    TextMeshProUGUI m_movPlatfRoomWeight;
+    Slider[] m_roomStrategySliders;
 
 
     KeyValuePair<int, int>[] m_resolutiions = {
@@ -77,7 +72,45 @@ public class SettingsMenu : MonoBehaviour
     bool m_fullScreen = true;
 
     int m_roomsCount = 50;
-    float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f };
+    readonly int m_defaultRoomsCount = 50;
+    float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f, 0.3f };
+    readonly float[] m_defaultStrategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f, 0.3f };
+
+    string[][] m_layoutNames =
+    {
+        new string[]
+        {
+            "DISPLAY",
+            "PANTALHA",
+            "ЭКРАН",
+            "PANTALLA",
+            "EKRAN"
+        },
+        new string[]
+        {
+            "AUDIO",
+            "ÁUDIO",
+            "АУДИО",
+            "AUDIO",
+            "SES"
+        },
+        new string[]
+        {
+            "CONTROLS",
+            "CONTROLOS",
+            "УПРАВЛЕНИЕ",
+            "CONTROLES",
+            "KONTROLLER"
+        },
+        new string[]
+        {
+            "LEVEL BUILDER",
+            "CONSTRUTOR DE NÍVEIS",
+            "СОЗДАТЕЛЬ УРОВНЕЙ",
+            "CONSTRUCTOR DE NIVELES",
+            "SEVİYE OLUŞTURUCU"
+        }
+    };
 
     [Inject]
     PlayerInput m_input;
@@ -95,18 +128,27 @@ public class SettingsMenu : MonoBehaviour
             {
                 m_currentResolutionInd = i;
                 m_currentResolution = m_resolutiions[i];
-                m_resolutionText.text = $"{m_resolutiions[m_currentResolutionInd].Key} x {m_resolutiions[m_currentResolutionInd].Value}";
+                m_resolutionText.text = $"{m_currentResolution.Key} x {m_currentResolution.Value}";
             }
         }
-
+        m_fullScreenToggle.isOn = m_fullScreen = Screen.fullScreen;
         m_currentLanguageInd = m_UI.CurrentLanguage;
         m_languageText.text = LocalizationSettings.AvailableLocales.Locales[m_currentLanguageInd].name.ToUpper();
     }
 
     public void Display()
     {
-        m_header.text = "DISPLAY";
-        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 270);
+        m_header.text = m_layoutNames[0][m_UI.CurrentLanguage];
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 260);
+        SetDisplayValues();
+    }
+
+    void SetDisplayValues()
+    {
+        m_fullScreenToggle.isOn = m_fullScreen = Screen.fullScreen;
+        m_languageText.text = LocalizationSettings.AvailableLocales.Locales[m_UI.CurrentLanguage].name.ToUpper();
+        m_currentResolutionInd = m_resolutiions.IndexOf(m_currentResolution);
+        m_resolutionText.text = $"{m_currentResolution.Key} x {m_currentResolution.Value}";
     }
 
     public void SetResolutionUp()
@@ -158,8 +200,8 @@ public class SettingsMenu : MonoBehaviour
 
     public void Audio()
     {
-        m_header.text = "AUDIO";
-        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 300);
+        m_header.text = m_layoutNames[1][m_UI.CurrentLanguage];
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 290);
     }
 
     public void ChangeGameVolume(float value)
@@ -213,15 +255,16 @@ public class SettingsMenu : MonoBehaviour
 
     public void Controls()
     {
-        m_header.text = "CONTROLS";
-        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 375);
-        if (m_input.GetCurrebtDeviceType() == "Gamepad")
+        m_header.text = m_layoutNames[2][m_UI.CurrentLanguage];
+        if (m_input.GetCurrentDeviceType() == "Gamepad")
         {
+            m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 350);
             m_gamepadContent.SetActive(true);
             m_keyboardContent.SetActive(false);
         }
         else
         {
+            m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 400);
             m_gamepadContent.SetActive(false);
             m_keyboardContent.SetActive(true);
         }
@@ -229,13 +272,13 @@ public class SettingsMenu : MonoBehaviour
 
     public void LvlBuilder()
     {
-        m_header.text = "LEVEL BUILDER";
-        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 410);
+        m_header.text = m_layoutNames[3][m_UI.CurrentLanguage];
+        m_layout.sizeDelta = new Vector2(m_layout.sizeDelta.x, 450);
+        SetSliders();
     }
 
     public void ChangeRoomsCount(float value)
     {
-        m_roomsCount = (int)value;
         m_roomsCountText.text = value.ToString();
 
         int num = Mathf.RoundToInt(value / m_roomsCountSlider.maxValue * m_roomsCountFill.childCount) - 1;
@@ -252,36 +295,59 @@ public class SettingsMenu : MonoBehaviour
 
     public void ChangeBaseRoomWeight(float value)
     {
-        m_baseRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
-        m_strategyWeights[0] = value;
+        m_roomStrategyWeightTexts[0].text = value.ToString("F3", CultureInfo.InvariantCulture);
     }
 
     public void ChangeCeilRoomWeight(float value)
     {
-        m_ceilRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
-        m_strategyWeights[1] = value;
+        m_roomStrategyWeightTexts[1].text = value.ToString("F3", CultureInfo.InvariantCulture);
     }
 
     public void ChangeGridRoomWeight(float value)
     {
-        m_gridRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
-        m_strategyWeights[2] = value;
+        m_roomStrategyWeightTexts[2].text = value.ToString("F3", CultureInfo.InvariantCulture);
     }
 
     public void ChangeMovingPlatformRoomWeight(float value)
     {
-        m_movPlatfRoomWeight.text = value.ToString("F3", CultureInfo.InvariantCulture);
-        m_strategyWeights[3] = value;
+        m_roomStrategyWeightTexts[3].text = value.ToString("F3", CultureInfo.InvariantCulture);
+    }
+    
+    public void ChangeDestroyableRoomWeight(float value)
+    {
+        m_roomStrategyWeightTexts[4].text = value.ToString("F3", CultureInfo.InvariantCulture);
     }
 
+    void SetSliders()
+    {
+        for (int i = 0; i < m_roomStrategySliders.Length; i++)
+        {
+            m_roomStrategySliders[i].value = m_strategyWeights[i];
+        }
+        m_roomsCountSlider.value = m_roomsCount;
+    }
 
     public void SaveLevelBuilder()
     {
         for (int i = 0; i < m_strategyWeights.Length; i++)
         {
+            m_strategyWeights[i] = m_roomStrategySliders[i].value;
             m_lvlBuilder.ChangeStrategyWeight(i, m_strategyWeights[i]);
         }
-
+        m_roomsCount = (int)m_roomsCountSlider.value;
         m_lvlBuilder.ChangeMaxRoomsCount(m_roomsCount);
+    }
+
+    public void SetDefault()
+    {
+        for (int i = 0; i < m_strategyWeights.Length; i++)
+        {
+            m_strategyWeights[i] = m_defaultStrategyWeights[i];
+        }
+
+        m_roomsCount = m_defaultRoomsCount;
+
+        SetSliders();
+        SaveLevelBuilder();
     }
 }

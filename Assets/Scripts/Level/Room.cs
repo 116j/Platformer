@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Room
@@ -47,9 +45,9 @@ public class Room
         // adds tiles so the end of the level can't be seen if transition is increasing
         if (GetTransitionHeight() > 0)
         {
-            m_polygons[0].AddTiles(m_prevTransition.m_transitionRightPoint, Mathf.Clamp(startwWidth, 0, m_minWidth), m_startPosition - Vector3Int.up * m_minHeight);
+            m_polygons[0].AddTiles(m_prevTransition.m_transitionRightPoint, Mathf.Min(startwWidth, m_minWidth), m_startPosition - Vector3Int.up * m_minHeight);
             m_roomHeight += m_prevTransition.m_transitionRightPoint;
-            m_lastWidthPoint += new Vector3Int(Mathf.Clamp(startwWidth, 0, m_minWidth), -m_prevTransition.m_transitionRightPoint);
+            m_lastWidthPoint += new Vector3Int(Mathf.Min(startwWidth, m_minWidth), -m_prevTransition.m_transitionRightPoint);
             m_lowestPoint = m_startPosition.y - m_roomHeight;
         }
     }
@@ -62,20 +60,67 @@ public class Room
         m_lastElevationPoint = start.x;
         m_roomHeight = Mathf.Abs(end.y - start.y) + m_minHeight;
         m_transitionLeftPoint = m_transitionRightPoint = Mathf.Abs(start.y - end.y);
-        m_lowestPoint = m_cameraBoundsStart = (end.y - start.y > 0 ? end.y : start.y) - m_roomHeight;
+        m_lowestPoint = m_cameraBoundsStart = (end.y > start.y ? end.y : start.y) - m_roomHeight;
         m_lastWidthPoint = start - Vector3Int.up * m_minHeight;
     }
 
     public Vector3Int GetEndPosition() => m_endPosition;
 
     public Vector3Int GetStartPosition() => m_startPosition;
+    /// <summary>
+    /// if the point is lower than the lowest point - change the lowest point, the camera bounds start and add the room height
+    /// </summary>
+    /// <param name="point"></param>
+    void SetLowestPoint(int point)
+    {
+        if (m_lowestPoint > point - m_minHeight)
+        {
+            m_roomHeight += m_lowestPoint - point + m_minHeight;
+            m_lowestPoint = point - m_minHeight;
+        }
+
+        if (m_cameraBoundsStart > point - m_minHeight)
+        {
+            m_cameraBoundsStart = point - m_minHeight;
+        }
+    }
+    /// <summary>
+    /// if the point is higher than the highest point - increase the room height
+    /// </summary>
+    /// <param name="point"></param>
+    void SetHighestPoint(int point)
+    {
+        if (m_lowestPoint + m_roomHeight < point)
+        {
+            m_roomHeight = point - m_lowestPoint;
+        }
+    }
+
+    int SetTransitionSidePoint(Vector3Int end, Vector3Int pos, int value)
+    {
+        return end.x - pos.x <= m_minWidth && value == 0 ? Mathf.Abs(end.y - pos.y) :
+            end.x - pos.x > m_minWidth && value != 0 ? 0 : value;
+    }
 
     public void SetEndPosition(Vector3Int end)
     {
+        m_transitionLeftPoint = SetTransitionSidePoint(end, m_startPosition, m_transitionLeftPoint);
+
         m_endPosition = end;
-        m_roomHeight = Mathf.Abs(end.y - m_startPosition.y) + m_minHeight;
-        m_transitionLeftPoint = m_transitionRightPoint = Mathf.Abs(m_startPosition.y - end.y);
-        m_lowestPoint = m_cameraBoundsStart = (end.y - m_startPosition.y > 0 ? end.y : m_startPosition.y) - m_roomHeight;
+
+        SetLowestPoint(end.y);
+        SetHighestPoint(end.y);
+    }
+
+
+    public void SetStartPosition(Vector3Int start)
+    {
+        m_transitionRightPoint = SetTransitionSidePoint(m_endPosition, start, m_transitionRightPoint);
+
+        m_startPosition = start;
+
+        SetLowestPoint(start.y);
+        SetHighestPoint(start.y);
     }
 
     public Room GetNextTransition() => m_nextTransition;
@@ -106,16 +151,16 @@ public class Room
     /// <summary>
     /// Deletes tiles and enviroment objects
     /// </summary>
-    public void Clear()
+    public void Clear(TileEditor editor, bool async = false)
     {
-        m_nextTransition?.Clear();
-        foreach (Polygon poly in m_polygons)
-        {
-            poly.ClearTiles();
-        }
+        m_nextTransition?.Clear(editor, async);
         foreach (var obj in m_enviroment)
         {
-            GameObject.Destroy(obj);
+            Object.Destroy(obj);
+        }
+        foreach (Polygon poly in m_polygons)
+        {
+            poly.ClearTiles(editor, async);
         }
     }
 
@@ -126,9 +171,11 @@ public class Room
 
     public void Restart()
     {
+        m_nextTransition?.Restart();
         WalkEnemy enemy;
         MovingPlatform platform;
         Cat cat;
+        DestroyableBrick brick;
         foreach (var obj in m_enviroment)
         {
             if (obj != null)
@@ -144,6 +191,10 @@ public class Room
                 if (obj.TryGetComponent(out cat))
                 {
                     cat.Reset();
+                }
+                if (obj.TryGetComponent(out brick))
+                {
+                    brick.Restart();
                 }
             }
         }
@@ -174,44 +225,35 @@ public class Room
     {
         if (height >= 0)
         {
-            // if elevation is higher than the highest point - add room height
-            if (m_lowestPoint + m_roomHeight < startPos.y + height)
-            {
-                m_roomHeight = startPos.y + height - m_lowestPoint;
-            }
+            SetHighestPoint(startPos.y + height);
             // add height
-            m_polygons[0].AddTiles(height + m_minHeight, Mathf.Clamp(m_minWidth, 0, width), startPos + height * Vector3Int.up);
+            int w = Mathf.Min(m_minWidth, width);
+            m_polygons[0].AddTiles(height + m_minHeight, w, startPos + height * Vector3Int.up);
             // add width
-            m_polygons[0].AddTiles(m_minHeight, Mathf.Clamp(width - m_minWidth, 0, int.MaxValue), new Vector3Int(startPos.x + Mathf.Clamp(m_minWidth, 0, width), startPos.y + height));
-            m_lastWidthPoint = new Vector3Int(startPos.x + Mathf.Clamp(m_minWidth, 0, width), startPos.y - m_minHeight);
+            m_polygons[0].AddTiles(m_minHeight, Mathf.Max(width - m_minWidth, 0), new Vector3Int(startPos.x + w, startPos.y + height));
+            m_lastWidthPoint = new Vector3Int(startPos.x + w, startPos.y - m_minHeight);
         }
         else
         {
-            // if lowland's end is lower than the lowest point- change the lowest point and add room height
-            if (m_lowestPoint > startPos.y + height - m_minHeight)
-            {
-                m_roomHeight += m_lowestPoint - startPos.y - height + m_minHeight;
-                m_lowestPoint = startPos.y + height - m_minHeight;
-            }
-
-            if (m_cameraBoundsStart > startPos.y + height - m_minHeight)
-            {
-                m_cameraBoundsStart = startPos.y + height - m_minHeight;
-            }
+            SetLowestPoint(startPos.y + height);
             // add lowland tiles
             m_polygons[0].AddTiles(m_minHeight, width, new Vector3Int(startPos.x, startPos.y + height));
             //add tiles between previous lowland or elevation and new lowland
+            int w;
             //if previous lowland or elevation width's last point is the same as start, add tiles below previous lowland or elevation
             if (startPos.x == m_lastWidthPoint.x)
             {
-                m_polygons[0].AddTiles(m_lastWidthPoint.y - startPos.y - height + m_minHeight, Mathf.Clamp(m_minWidth, 0, startPos.x - m_lastElevationPoint), new Vector3Int(startPos.x - Mathf.Clamp(m_minWidth, 0, startPos.x - m_lastElevationPoint), m_lastWidthPoint.y));
+                w = Mathf.Min(m_minWidth, startPos.x - m_lastElevationPoint);
             }
             // if previous lowland or elevation width's last point is farther then start, add tiles below previous lowland or elevation and bettween start and lowland or elevation width's last point
             else
             {
-                m_polygons[0].AddTiles(-height, Mathf.Clamp(m_minWidth, 0, startPos.x - m_lastWidthPoint.x), new Vector3Int(startPos.x - Mathf.Clamp(m_minWidth, 0, startPos.x - m_lastWidthPoint.x), startPos.y - m_minHeight));
-                m_polygons[0].AddTiles(m_lastWidthPoint.y - startPos.y - height + m_minHeight, Mathf.Clamp(m_minWidth - Mathf.Clamp(m_minWidth, 0, startPos.x - m_lastWidthPoint.x), 0, m_lastWidthPoint.x - m_lastElevationPoint), new Vector3Int(m_lastWidthPoint.x - Mathf.Clamp(m_minWidth - Mathf.Clamp(m_minWidth, 0, startPos.x - m_lastWidthPoint.x), 0, m_lastWidthPoint.x - m_lastElevationPoint), m_lastWidthPoint.y));
+                w = Mathf.Min(m_minWidth, startPos.x - m_lastWidthPoint.x);
+                m_polygons[0].AddTiles(-height, w, new Vector3Int(startPos.x - w, startPos.y - m_minHeight));
+                w = Mathf.Min(m_minWidth - w, m_lastWidthPoint.x - m_lastElevationPoint);
             }
+
+            m_polygons[0].AddTiles(m_lastWidthPoint.y - startPos.y - height + m_minHeight, w, new Vector3Int(m_lastWidthPoint.x - w, m_lastWidthPoint.y));
         }
         m_polygons[0].AddGround(width, startPos + Vector3Int.up * height);
         m_lastElevationPoint = startPos.x;
@@ -230,15 +272,8 @@ public class Room
         if (addGround)
         {
             m_polygons[m_polygons.Count - 1].AddGround(width, startPos);
-            if (m_lowestPoint + m_roomHeight < startPos.y + height)
-            {
-                m_roomHeight = startPos.y + height - m_lowestPoint;
-            }
-            else if (m_lowestPoint > startPos.y + height - m_minHeight)
-            {
-                m_roomHeight += m_lowestPoint - startPos.y - height + m_minHeight;
-                m_lowestPoint = startPos.y + height - m_minHeight;
-            }
+            SetLowestPoint(startPos.y + height);
+            SetHighestPoint(startPos.y + height);
         }
     }
     /// <summary>
@@ -251,20 +286,17 @@ public class Room
     {
         for (int j = 1; j <= height; j++)
         {
-            for (int i = startPos.x + j; i < startPos.x + height * 2 + straightSection - j; i++)
+            for (int i = startPos.x + j; i <= startPos.x + height * 2 + straightSection - j + 1; i++)
             {
                 m_polygons[0].AddTile(new Vector3Int(i, startPos.y + j));
             }
         }
-        if (m_lowestPoint + m_roomHeight < startPos.y + height)
-        {
-            m_roomHeight = startPos.y + height - m_lowestPoint;
-        }
+        SetHighestPoint(startPos.y + height);
         m_polygons[0].AddGround(1, startPos);
-        m_polygons[0].AddGround(straightSection - 2, new Vector3Int(startPos.x + height + 1, startPos.y + height));
-        m_polygons[0].AddGround(m_minHeight, new Vector3Int(startPos.x + height * 2 + straightSection, startPos.y));
+        m_polygons[0].AddGround(straightSection, new Vector3Int(startPos.x + height + 1, startPos.y + height));
+        m_polygons[0].AddGround(m_minHeight, new Vector3Int(startPos.x + height * 2 + straightSection + 1, startPos.y));
 
-        m_polygons[0].AddTiles(m_minHeight, height * 2 + straightSection + m_minHeight, startPos);
+        m_polygons[0].AddTiles(m_minHeight, height * 2 + straightSection + 1 + m_minHeight, startPos);
     }
     /// <summary>
     /// Create ledge for transition
@@ -278,6 +310,7 @@ public class Room
         {
             polygon.AddTile(new Vector3Int(pos.x, pos.y - j));
         }
+
         if (m_endPosition.x - pos.x <= m_minWidth && m_transitionLeftPoint != Mathf.Abs(m_startPosition.y - m_endPosition.y))
         {
             m_transitionRightPoint = Mathf.Abs(m_endPosition.y - pos.y);
@@ -286,6 +319,7 @@ public class Room
         {
             m_transitionLeftPoint = Mathf.Abs(pos.y - m_startPosition.y);
         }
+
         polygon.AddGround(1, pos);
         m_polygons.Add(polygon);
     }
@@ -295,22 +329,13 @@ public class Room
         Polygon polygon = new Polygon(m_startPosition);
         polygon.AddTiles(1, width, pos);
         polygon.AddGround(width, pos);
-        if (m_endPosition.x - pos.x <= m_minWidth && m_transitionRightPoint == 0)
-        {
-            m_transitionRightPoint = Mathf.Abs(m_endPosition.y - pos.y);
-        }
-        else if (m_endPosition.x - pos.x > m_minWidth && m_transitionRightPoint != 0)
-        {
-            m_transitionRightPoint = 0;
-        }
-        if (pos.x - m_startPosition.x >= m_minWidth && m_transitionLeftPoint == 0)
-        {
-            m_transitionLeftPoint = Mathf.Abs(pos.y - m_startPosition.y);
-        }
-        else if (pos.x - m_startPosition.x < m_minWidth && m_transitionLeftPoint != 0)
-        {
-            m_transitionLeftPoint = 0;
-        }
+
+        m_transitionRightPoint = SetTransitionSidePoint(m_endPosition, pos, m_transitionRightPoint);
+        m_transitionLeftPoint = SetTransitionSidePoint(pos, m_startPosition, m_transitionLeftPoint);
+
+        SetHighestPoint(pos.y);
+        SetLowestPoint(pos.y);
+
         m_polygons.Add(polygon);
     }
 
@@ -324,21 +349,11 @@ public class Room
         return false;
     }
 
-    public void DrawTiles(System.Action<HashSet<Vector3Int>> callback, bool isInitial = false, TilePlaceAnalog analog = null)
+    public void DrawTiles(TileEditor editor, System.Action<HashSet<Vector3Int>> callback, bool isInitial = false)
     {
-        if (analog == null)
+        foreach (var poly in m_polygons)
         {
-                foreach (var poly in m_polygons)
-                {
-                    poly.DrawTiles(callback,isInitial);
-                }            
-        }
-        else
-        {
-            foreach (var poly in m_polygons)
-            {
-                poly.DrawTilesWithAnalog(analog);
-            }
+            poly.DrawTiles(editor, callback, isInitial);
         }
     }
 
@@ -354,9 +369,9 @@ public class Room
     {
         m_nextTransition = transition;
 
-        if (addExtraTiles && transition.m_endPosition.y < m_endPosition.y)
-        {
-            m_polygons[0].AddTiles(m_nextTransition.m_transitionLeftPoint, Mathf.Clamp(m_minWidth, 0, m_endPosition.x - m_lastElevationPoint), new Vector3Int(m_endPosition.x - Mathf.Clamp(m_minWidth, 0, m_endPosition.x - m_lastElevationPoint), m_endPosition.y - m_minHeight));
-        }
+        if (!addExtraTiles || transition.m_endPosition.y >= m_endPosition.y)
+            return;
+        int w = Mathf.Min(m_minWidth, m_endPosition.x - m_lastElevationPoint);
+        m_polygons[0].AddTiles(m_nextTransition.m_transitionLeftPoint, w, new Vector3Int(m_endPosition.x - w, m_endPosition.y - m_minHeight));
     }
 }

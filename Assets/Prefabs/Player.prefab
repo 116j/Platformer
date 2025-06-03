@@ -46,7 +46,7 @@ Transform:
   - {fileID: 6132449907414876550}
   - {fileID: 6350651510031812783}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1107239528939950938
 SpriteRenderer:
@@ -265,8 +265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHealth: 4
-  m_health: 203
-  m_recoverTime: 4
+  m_recoverTime: 1
   m_receiver:
     m_PersistentCalls:
       m_Calls:
@@ -332,7 +331,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 2
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -408,7 +407,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -5609437264129779904, guid: fec4151c0eb2b5444af142439c06bfcf, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.7
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -890,4 +889,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f01954ef97d78047bc5f51a3972a75c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 3
+  m_damage: 2

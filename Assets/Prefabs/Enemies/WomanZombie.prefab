@@ -232,6 +232,10 @@ PrefabInstance:
       propertyPath: m_spawnOffset.y
       value: 2.465
       objectReference: {fileID: 0}
+    - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_maxHealth
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8630340042612713785, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_Name
       value: attack

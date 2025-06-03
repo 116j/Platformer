@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.Windows;
 using Zenject;
 
 public class PlayerInput : MonoBehaviour
 {
-    Vector2 m_move;
-    Vector2 m_moveCamera;
+    float m_move;
+    float m_moveCamera;
     bool m_attack;
     bool m_heavyAttack;
     bool m_jump;
@@ -18,8 +17,8 @@ public class PlayerInput : MonoBehaviour
     bool m_shop;
     bool m_pause;
 
-    public Vector2 Move => m_inputLocked ? Vector2.zero : m_move;
-    public Vector2 MoveCamera => m_inputLocked ? Vector2.zero : m_moveCamera;
+    public float Move => m_inputLocked ? 0f : m_move;
+    public float MoveCamera => m_inputLocked ? 0f : m_moveCamera;
     public bool Jump => !m_inputLocked && m_jump;
     public bool Dash
     {
@@ -77,6 +76,9 @@ public class PlayerInput : MonoBehaviour
     public bool HeavyAttack => !m_inputLocked && m_heavyAttack;
 
     bool m_inputLocked = true;
+    bool m_gameStarted = false;
+    bool m_gameEnded = false;
+    bool m_shopOpened = false;
 
     UnityEngine.InputSystem.PlayerInput m_input;
 
@@ -90,20 +92,33 @@ public class PlayerInput : MonoBehaviour
     private void Awake()
     {
         Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         m_input = GetComponent<UnityEngine.InputSystem.PlayerInput>();
         m_input.uiInputModule.cancel.action.performed += m_menu.CloseLayout;
     }
 
-    public void LockInput()
+    public void LockInput(bool toLock)
     {
-        m_inputLocked = !m_inputLocked;
+        m_inputLocked = toLock;
     }
 
-    public string GetCurrebtDeviceType() => m_input.currentControlScheme;
+    public string GetCurrentDeviceType() => m_input.currentControlScheme;
 
     public void EnableShop()
     {
         m_shop = !m_shop;
+    }
+
+    public void StartGame()
+    {
+        m_gameStarted = true;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void EndGame()
+    {
+        m_gameEnded = true;
     }
 
     public void EnableRestart()
@@ -113,20 +128,25 @@ public class PlayerInput : MonoBehaviour
 
     public void OnPause()
     {
-        m_pause = !m_pause;
-        Time.timeScale = m_pause ? 0 : 1;
-        LockInput();
-        m_menu.Pause(m_pause);
+        if (m_gameStarted&&!m_shopOpened)
+        {
+            Cursor.lockState = m_pause? CursorLockMode.Locked: CursorLockMode.None;
+            m_pause = !m_pause;
+            Cursor.visible = m_pause;
+            Time.timeScale = m_pause ? 0 : 1;
+            LockInput(m_pause);
+            m_menu.Pause(m_pause);
+        }
     }
 
     void OnMove(InputValue value)
     {
-        m_move = value.Get<Vector2>();
+        m_move = value.Get<Vector2>().x;
     }
 
     void OnMoveCamera(InputValue value)
     {
-        m_moveCamera = value.Get<Vector2>();
+        m_moveCamera = value.Get<Vector2>().y;
     }
 
     void OnAttack(InputValue value)
@@ -163,7 +183,8 @@ public class PlayerInput : MonoBehaviour
     {
         if (m_shop)
         {
-            LockInput();
+            m_shopOpened = !m_shopOpened;
+            LockInput(m_shopOpened);
             m_UI.OpenShop();
         }
     }
@@ -180,6 +201,7 @@ public class PlayerInput : MonoBehaviour
 
     void OnMenu()
     {
+        if(m_gameEnded)
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

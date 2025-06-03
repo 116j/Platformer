@@ -51,14 +51,14 @@ public class FloatingCanvas : MonoBehaviour
 
     public void ShowPlayerText(bool show)
     {
-        m_playerTextG.gameObject.SetActive(show && m_input.GetCurrebtDeviceType() == "Gamepad");
+        m_playerTextG.gameObject.SetActive(show && m_input.GetCurrentDeviceType() == "Gamepad");
         m_playerTextKB.gameObject.SetActive(show && !m_playerTextG.isActiveAndEnabled);
         m_showPlayerText = show;
     }
 
     public void ShowShopText(bool show, Vector3 shopLocation)
     {
-        m_shopTextG.gameObject.SetActive(show && m_input.GetCurrebtDeviceType() == "Gamepad");
+        m_shopTextG.gameObject.SetActive(show && m_input.GetCurrentDeviceType() == "Gamepad");
         m_shopTextKB.gameObject.SetActive(show && !m_shopTextG.isActiveAndEnabled);
         m_showPlayerText = show;
         m_shopOffset = shopLocation;

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public class CeilStrategy : FillStrategy
 {
@@ -64,7 +63,7 @@ public class CeilStrategy : FillStrategy
         // if new room is lower than previous - set ceil height higher so palayer can't jump on it
         if (room.GetTransitionHeight() < 0)
         {
-            height = Mathf.Clamp(room.GetNextTransition().GetTransitionRightHeight() + m_minStraightSection, height, int.MaxValue);
+            height = Mathf.Max(room.GetNextTransition().GetTransitionRightHeight() + m_minStraightSection, height);
         }
         // ceil polygon
         room.MakePolygon(0, start, false);
@@ -96,7 +95,7 @@ public class CeilStrategy : FillStrategy
 
                 if (width > 1)
                 {
-                    room.AddTiles(height, Mathf.Clamp(width, 0, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
+                    room.AddTiles(height, Mathf.Min(width, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
                     AddCeilTraps(trap, groundWidth, new Vector3Int(groundStart, start.y + offset), room);
                     width = 1;
                     height += start.y - ground[i].y;
@@ -133,9 +132,9 @@ public class CeilStrategy : FillStrategy
                 coins.Add((coin.gameObject, new Vector3(ground[i].x + m_levelTheme.m_coin.GetOffset().x, ground[i].y + m_levelTheme.m_coin.GetOffset().y)));
             }
         }
-        room.AddTiles(height, Mathf.Clamp(width, 0, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
+        room.AddTiles(height, Mathf.Min(width, room.GetEndPosition().x - start.x), start + Vector3Int.up * (height + offset), false);
         AddCeilTraps(trap, groundWidth, new Vector3Int(groundStart, start.y + offset), room);
-        room.DrawTiles((HashSet<Vector3Int> groundTiles) => { 
+        room.DrawTiles(m_editor,(HashSet<Vector3Int> groundTiles) => { 
             AddLandscape(room, groundTiles, offset, true);
             foreach(var (obj,pos) in coins)
             {

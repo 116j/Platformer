@@ -1,5 +1,5 @@
 using Cinemachine;
-using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     UIController m_UI;
     [Inject]
     FloatingCanvas m_enemyBar;
+    [Inject]
+    LevelBuilder m_lvlBuilder;
 
     readonly int m_HashHorizontal = Animator.StringToHash("Horizontal");
     readonly int m_HashHit = Animator.StringToHash("Hit");
@@ -68,7 +70,7 @@ public class PlayerController : MonoBehaviour
     float m_dashCooldown = 0f;
     float m_baseTransposer = 2.5f;
     float m_cameraBoundsHeight;
-    float m_cameraSpeed = 13f;
+    float m_cameraSpeed = 7f;
     float m_skinWidth = 0.02f;
     Vector2 m_gravity;
     float m_gravityScale;
@@ -90,6 +92,9 @@ public class PlayerController : MonoBehaviour
         m_gravityScale = m_rb.gravityScale;
         m_gravity = new Vector2(0f, -Physics2D.gravity.y);
         m_transposer = m_playerCam.GetCinemachineComponent<CinemachineFramingTransposer>();
+
+        SetRebornCheckpoint(transform.position);
+        SetLevelCheckpoint(transform.position,true);
     }
 
     // Update is called once per frame
@@ -166,7 +171,7 @@ public class PlayerController : MonoBehaviour
                 {
                     m_blockMove = true;
                     m_attack = true;
-                    m_rb.velocity = new Vector2(0f, 0f);
+                    m_rb.velocity = Vector2.zero;
                     m_rb.gravityScale = 0;
                 }
                 //if is attacking - go to another animation
@@ -177,7 +182,7 @@ public class PlayerController : MonoBehaviour
             {
                 m_blockMove = true;
                 m_attack = true;
-                m_rb.velocity = new Vector2(0f, 0f);
+                m_rb.velocity = Vector2.zero;
             }
 
             if (m_canPet && m_input.Pet)
@@ -199,10 +204,9 @@ public class PlayerController : MonoBehaviour
     {
         float targetY = 0;
         //camera offset 
-        if (!Mathf.Approximately(m_input.MoveCamera.y, 0))
-
+        if (!Mathf.Approximately(m_input.MoveCamera, 0))
         {
-            targetY = Mathf.Clamp(m_transposer.m_TrackedObjectOffset.y + m_input.MoveCamera.y * m_cameraSpeed * Time.fixedDeltaTime, -m_cameraBoundsHeight, m_cameraBoundsHeight);
+            targetY = Mathf.Clamp(m_transposer.m_TrackedObjectOffset.y + m_input.MoveCamera * m_cameraSpeed * Time.fixedDeltaTime, -m_cameraBoundsHeight, m_cameraBoundsHeight);
         }
         else
         {
@@ -214,7 +218,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (m_falling && (m_fallCheckpoint.y - transform.position.y > 200/* || m_touchings.IsWallStuck()*/))
+        if (m_falling && (m_fallCheckpoint.y - transform.position.y > 100))
         {
             FallReset();
         }
@@ -236,7 +240,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // turn around
-            if (m_currentDir * m_input.Move.x < 0 && !m_blockMove)
+            if (m_currentDir * m_input.Move < 0 && !m_blockMove)
             {
                 m_currentDir *= -1;
                 transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
@@ -253,13 +257,13 @@ public class PlayerController : MonoBehaviour
                 {
                     m_falling = false;
                     m_onSlope = m_rb.isKinematic = true;
-                    m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, Mathf.Abs(m_input.Move.x) * m_runSpeed);
+                    m_rb.velocity = new Vector2(m_input.Move * m_runSpeed, Mathf.Abs(m_input.Move) * m_runSpeed);
                 }
                 else if (m_touchings.IsSlopeDown())
                 {
                     m_falling = false;
                     m_onSlope = m_rb.isKinematic = true;
-                    m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, -Mathf.Abs(m_input.Move.x) * m_runSpeed);
+                    m_rb.velocity = new Vector2(m_input.Move * m_runSpeed, -Mathf.Abs(m_input.Move) * m_runSpeed);
                 }
                 else
                 {
@@ -267,7 +271,7 @@ public class PlayerController : MonoBehaviour
                     {
                         m_onSlope = m_rb.isKinematic = false;
                     }
-                    m_rb.velocity = new Vector2(m_input.Move.x * m_runSpeed, m_rb.velocity.y);
+                    m_rb.velocity = new Vector2(m_input.Move * m_runSpeed, m_rb.velocity.y);
                 }
             }
             // if is not in attack or dash  - start jump
@@ -396,18 +400,19 @@ public class PlayerController : MonoBehaviour
 
     public void SetRebornCheckpoint(Vector3 checkpoint)
     {
-        m_rebornCheckpoint = checkpoint + m_values.GetOffset();
+        m_rebornCheckpoint = checkpoint + new Vector3(m_values.GetRightBorder(), m_values.GetOffset().y);
     }
 
-    public void SetLevelCheckpoint(Vector3 checkpoint)
+    public void SetLevelCheckpoint(Vector3 checkpoint,bool start)
     {
-        m_fallCheckpoint = checkpoint + m_values.GetOffset().y * Vector3.up;
+        m_fallCheckpoint = checkpoint + new Vector3(start? m_values.GetRightBorder(): m_values.GetLeftBorder(), m_values.GetOffset().y);
     }
 
     public void FallReset()
     {
-        //DestroyableTile.Instance?.Restart(m_fallCheckpoint);
+        m_lvlBuilder.RestartBricks();
         transform.SetPositionAndRotation(m_fallCheckpoint, Quaternion.identity);
+        m_rb.velocity = Vector2.zero;
         m_currentDir = 1;
     }
 

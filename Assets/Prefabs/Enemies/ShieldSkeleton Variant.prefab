@@ -240,6 +240,10 @@ PrefabInstance:
       value: 2.465
       objectReference: {fileID: 0}
     - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
+      propertyPath: m_maxHealth
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8493135385743088861, guid: 7589c4885b0e16045bc336705bf112db, type: 3}
       propertyPath: m_receiver.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}

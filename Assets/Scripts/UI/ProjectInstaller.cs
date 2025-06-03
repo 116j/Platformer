@@ -7,6 +7,10 @@ public class ProjectInstaller : MonoInstaller
         Container
             .Bind<LevelBuilder>()
             .FromComponentInHierarchy()
+            .AsSingle();       
+        Container
+            .Bind<TileEditor>()
+            .FromComponentInHierarchy()
             .AsSingle();
         Container
             .Bind<FloatingCanvas>()
@@ -26,6 +30,10 @@ public class ProjectInstaller : MonoInstaller
             .AsSingle();
         Container
             .Bind<PlayerInput>()
+            .FromComponentInHierarchy()
+            .AsSingle();
+        Container
+            .Bind<PlayerController>()
             .FromComponentInHierarchy()
             .AsSingle();
     }

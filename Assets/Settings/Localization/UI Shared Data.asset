@@ -211,6 +211,34 @@ MonoBehaviour:
     m_Key: mainMenuG
     m_Metadata:
       m_Items: []
+  - m_Id: 8312222965219328
+    m_Key: destroyable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12711559031865344
+    m_Key: default
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057887209439232
+    m_Key: discription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057949494853632
+    m_Key: roomsCountDiscription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057984500514816
+    m_Key: roomsType
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058096987553792
+    m_Key: roomsTypeDiscroption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058139958198272
+    m_Key: frequencyDiscription
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

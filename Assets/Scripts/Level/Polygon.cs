@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class Polygon
 {
@@ -8,25 +8,21 @@ public class Polygon
     HashSet<Vector3Int> m_ground = new HashSet<Vector3Int>();
     Vector3Int m_start;
 
+
     public Polygon(Vector3Int start)
     {
         m_start = start;
     }
 
 
-    public void DrawTiles(System.Action<HashSet<Vector3Int>> callback, bool isInitial)
+    public void DrawTiles(TileEditor editor, System.Action<HashSet<Vector3Int>> callback, bool isInitial)
     {
-        TileEditor.Instance.SetTiles(m_tilePositions,()=>callback?.Invoke(m_ground),isInitial);
+        editor.SetTiles(m_tilePositions,()=>callback?.Invoke(m_ground),isInitial);
     }
 
-    public void DrawTilesWithAnalog(TilePlaceAnalog analog)
+    public void ClearTiles(TileEditor editor, bool async)
     {
-        TileEditor.Instance.SetTiles(m_tilePositions, analog);
-    }
-
-    public void ClearTiles()
-    {
-        TileEditor.Instance.ClearTiles(m_tilePositions);
+        editor.ClearTiles(m_tilePositions, async);
     }
     /// <summary>
     /// add tiles from startPosition to (startPosition.x+width,startPosition.y-height)
@@ -55,10 +51,6 @@ public class Polygon
 
     public void AddTile(Vector3Int tilePos)
     {
-        //if (m_start.x > tilePos.x || m_start.y > tilePos.y)
-        //{
-        //    Debug.Log(tilePos);
-        //}
         if (!m_tilePositions.Contains(tilePos))
         {
             m_tilePositions.Add(tilePos);

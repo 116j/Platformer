@@ -135,7 +135,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 20750046248960
-    m_Localized: "Izgara platformlar\u0131 Odas\u0131"
+    m_Localized: "Izgara platformlar\u0131 odas\u0131"
     m_Metadata:
       m_Items: []
   - m_Id: 20774792642560
@@ -155,7 +155,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 23436841893888
-    m_Localized: ATLATMAK
+    m_Localized: "KA\xC7MAK"
     m_Metadata:
       m_Items: []
   - m_Id: 23189612838912
@@ -163,7 +163,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 23151595667456
-    m_Localized: "ATLAMA\n(Y\xDCKSE\u011EE ZIPLAMAK \u0130\xC7\u0130N BASILI TUTUN)"
+    m_Localized: "ATLAMA\n(DAHA Y\xDCKSE\u011EE ATLAMAK I\xC7IN BASILI TUTUN)"
     m_Metadata:
       m_Items: []
   - m_Id: 23103445057536
@@ -187,15 +187,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6108273596088320
-    m_Localized: "EVC\u0130L HAYVAN \u0130\xC7\u0130N \nENTER TU\u015EUNA BASIN"
+    m_Localized: "EVC\u0130L HAYVAN \u0130\xC7\u0130N \nCTRL TU\u015EUNA BASIN"
     m_Metadata:
       m_Items: []
   - m_Id: 6108617147334656
-    m_Localized: "D\xDCKKANI A\xC7MAK \u0130\xC7\u0130N\nSELECT TU\u015EUNA BASIN"
+    m_Localized: "D\xDCKKANI A\xC7MAK \u0130\xC7\u0130N\nB TU\u015EUNA BASIN"
     m_Metadata:
       m_Items: []
   - m_Id: 6108287227576320
-    m_Localized: "D\xDCKKANI A\xC7MAK \u0130\xC7\u0130N \nS TU\u015EUNA BASIN"
+    m_Localized: "D\xDCKKANI A\xC7MAK \u0130\xC7\u0130N \nCTRL TU\u015EUNA BASIN"
     m_Metadata:
       m_Items: []
   - m_Id: 6109848213307392
@@ -212,6 +212,45 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 6110216678719488
     m_Localized: "ANA MEN\xDCYE G\u0130TMEK \u0130\xC7\u0130N M TU\u015EUNA BASIN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8312222965219328
+    m_Localized: "Y\u0131k\u0131labilir oda"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12711559031865344
+    m_Localized: VARSAYILAN OLARAK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057984500514816
+    m_Localized: "ODA \xC7E\u015E\u0130TLER\u0130"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057887209439232
+    m_Localized: "Tan\u0131mlamas\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057949494853632
+    m_Localized: "Arka arkaya ka\xE7 ayr\u0131 \xABoda\xBB n\u0131n (par\xE7an\u0131n)
+      seviyede olaca\u011F\u0131n\u0131 belirler."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058096987553792
+    m_Localized: "Be\u015F tip oda vard\u0131r:\n\n\u2022 Temel oda, d\xFC\u015Fmanlar\u0131
+      ve tuzaklar\u0131 olan bir odad\u0131r.\n\n\u2022 Tavan odas\u0131, tavan\u0131
+      ve \xFCzerinde tuzaklar\u0131 olan bir odad\u0131r.\n\n\u2022 Izgara platformlar\u0131
+      odas\u0131, oyuncunun atlad\u0131\u011F\u0131 platformlara sahip bir odad\u0131r.\n\n\u2022
+      Hareketli platformlar odas\u0131, birbirine yakla\u015Fan hareketli platformlara
+      sahip bir odad\u0131r.\n\n\u2022 Y\u0131k\u0131labilir oda, \xE7\xF6kmekte
+      olan bir zemine sahip bir odad\u0131r."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058139958198272
+    m_Localized: "Her oda tipinin de\u011Feri 0.00\u20131.00'd\u0131r (temel minimum
+      0.3't\xFCr). Her yeni oda i\xE7in oyun, t\xFCm de\u011Ferlerin toplam\u0131n\u0131
+      al\u0131r ve pay\u0131yla orant\u0131l\u0131 olarak bir strateji se\xE7er.\n\xD6rne\u011Fin,
+      taban \\ u003d 0.8, tavanl\u0131 \\ u003d 0.4, gerisi 0.2 ise, oranlar:\n%
+      44'\xFC temel,% 22'si tavanl\u0131, her biri% 11'i farkl\u0131."
     m_Metadata:
       m_Items: []
   references:

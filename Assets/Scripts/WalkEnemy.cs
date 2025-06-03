@@ -30,6 +30,7 @@ public class WalkEnemy : MonoBehaviour
     protected BoxCollider2D m_col;
     protected MovingPlatform m_platform;
     protected Damagable m_damageable;
+    protected SpawnValues m_values;
     [Inject]
     protected UIController m_UI;
     [Inject]
@@ -49,12 +50,17 @@ public class WalkEnemy : MonoBehaviour
     protected bool m_waiting = false;
 
     readonly float m_waitTime = 3f;
-    readonly int m_attackCount = 3;
+    int m_attackCount = 3;
 
+    protected Vector3 m_startPos;
     protected int m_currentDir = 1;
     protected float m_speed = 0f;
     float m_waitTimer;
 
+    public void SetAttacksCount(int count)
+    {
+        m_attackCount = count;
+    }
 
     protected virtual void Start()
     {
@@ -63,6 +69,9 @@ public class WalkEnemy : MonoBehaviour
         m_touchings = GetComponent<TouchingCheck>();
         m_col = GetComponent<BoxCollider2D>();
         m_damageable = GetComponent<Damagable>();
+        m_values = GetComponent<SpawnValues>();
+
+        m_startPos = transform.position;
     }
 
     protected virtual void Update()
@@ -163,7 +172,7 @@ public class WalkEnemy : MonoBehaviour
             if (m_coin != null)
             {
                 int coins = Random.Range(3, 7);
-                int cost = Mathf.CeilToInt(m_shop.AllPrices * m_costCoeff / m_lvlBuilder.GetMaxRoomsCount());
+                int cost = Mathf.CeilToInt(m_shop.AllPrices * m_costCoeff / (m_lvlBuilder.GetMaxRoomsCount()*m_lvlBuilder.GetEnemySpawnChance()));
                 for (int i = 0; i < coins; i++)
                 {
                     m_container.InstantiatePrefabForComponent<Coin>(m_coin, transform.position, Quaternion.identity,null).SetCost(cost / coins);
@@ -192,6 +201,8 @@ public class WalkEnemy : MonoBehaviour
 
     public virtual void Reset()
     {
+        transform.SetPositionAndRotation(m_startPos + m_values.GetOffset(),Quaternion.identity);
+        m_currentDir = 1;
         m_col.isTrigger = false;
         m_dead = false;
         m_damageable.Reborn();

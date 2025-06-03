@@ -1,12 +1,10 @@
 ﻿using DG.Tweening;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 using Zenject;
 
 public class UIController : MonoBehaviour
@@ -34,6 +32,8 @@ public class UIController : MonoBehaviour
     [Header("Shop")]
     [SerializeField]
     GameObject m_shopLayout;
+    [SerializeField]
+    Button m_firstShopItem;
 
     [Header("Win")]
     [SerializeField]
@@ -68,7 +68,7 @@ public class UIController : MonoBehaviour
     ShopLayout m_shop;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         m_hearts = m_healthLayout.GetComponentsInChildren<Image>().ToList();
         m_currentHeart = m_hearts.Count - 1;
@@ -108,7 +108,8 @@ public class UIController : MonoBehaviour
         m_money += amount;
         DOTween.To(
             () => m_currentMoney,
-            x => {
+            x =>
+            {
                 m_currentMoney = x;
                 UpdateMoneyText();
             },
@@ -165,21 +166,23 @@ public class UIController : MonoBehaviour
     public void OpenShop()
     {
         m_shopLayout.SetActive(!m_shopLayout.activeInHierarchy);
+        m_firstShopItem.Select();
         m_shop.Greet();
     }
 
     public void Win()
     {
-        m_input.LockInput();
+        m_input.EndGame();
+        m_input.LockInput(true);
         m_winLayout.SetActive(true);
-        m_winTextG.gameObject.SetActive(m_input.GetCurrebtDeviceType() == "Gamepad");
+        m_winTextG.gameObject.SetActive(m_input.GetCurrentDeviceType() == "Gamepad");
         m_winTextKB.gameObject.SetActive(!m_winTextG.isActiveAndEnabled);
     }
 
     public void Die(bool active)
     {
         m_dieLayout.SetActive(active);
-        m_dieTextG.gameObject.SetActive(m_input.GetCurrebtDeviceType() == "Gamepad");
+        m_dieTextG.gameObject.SetActive(m_input.GetCurrentDeviceType() == "Gamepad");
         m_dieTextKB.gameObject.SetActive(!m_dieTextG.isActiveAndEnabled);
     }
 

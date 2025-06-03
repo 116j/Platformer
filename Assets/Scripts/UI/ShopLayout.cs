@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -18,6 +16,8 @@ public class ShopLayout : MonoBehaviour
     UIController m_UI;
     [Inject]
     LevelBuilder m_lvlBuilder;
+    [Inject]
+    PlayerInput m_input;
 
     bool[] m_clicked = new bool[5];
     int[] m_itemsCount = { 3, 2, 2, 2, 1 };
@@ -62,19 +62,30 @@ public class ShopLayout : MonoBehaviour
         new string[]{
             "Adds an extra jump. You will be able to make a triple jump. ",
             "Adiciona um salto extra. Você será capaz de fazer um salto triplo. ",
-            "Adds an extra jump. You will be able to make a triple jump. ",
+            "Добавляет дополнительный прыжок. Вы сможете совершить тройной прыжок. ",
             "Agrega un salto extra. Podrás hacer un triple salto. ",
             "Ekstra bir sıçrama ekler. Sen üçlü bir sıçrama yapmak mümkün olacak. "
         }
     };
 
-    string[] m_canBuyText =
+    string[][] m_canBuyText =
     {
-        "Click again to buy.",
-        "Clique novamente para comprar.",
-        "Нажмите еще раз, чтобы купить.",
-        "Haga clic de nuevo para comprar.",
-        "Satın almak için tekrar tıklayın."
+        new string[]
+        {
+            "Press ENTER to buy.",
+            "Pressione ENTER para comprar.",
+            "Нажмите ENTER, чтобы купить.",
+            "Pulse ENTER para comprar.",
+            "Satın almak için ENTER'a basın."
+        },
+        new string[]
+        {
+            "Press A to buy.",
+            "Pressione A para comprar.",
+            "Нажмите A, чтобы купить.",
+            "Pulse A para comprar.",
+            "Satın almak için A'a basın."
+        }
     };
 
     string[] m_cantBuyText =
@@ -112,7 +123,10 @@ public class ShopLayout : MonoBehaviour
     void InitializePrices()
     {
         m_prices = new int[] { 1000, 1500, 2000, 2000, 2500 };
-        AllPrices = m_prices.Sum();
+        for (int i = 0; i < m_itemsCount.Length; i++)
+        {
+            AllPrices += m_itemsCount[i] * m_prices[i];
+        }
     }
 
     private void Start()
@@ -128,6 +142,17 @@ public class ShopLayout : MonoBehaviour
         m_dialogueText.text = m_greetingText[m_UI.CurrentLanguage];
     }
 
+    public void ShowItemText(int index)
+    {
+        m_dialogueText.text = m_dialogueTexts[index][m_UI.CurrentLanguage];
+        m_dialogueText.text += m_UI.GetMoney() >= m_prices[index] ? m_canBuyText[m_input.GetCurrentDeviceType()=="Gamepad"?1:0][m_UI.CurrentLanguage] : m_cantBuyText[m_UI.CurrentLanguage];
+        for (int i = 0; i < m_clicked.Length; i++)
+        {
+            m_clicked[i] = false;
+        }
+        m_clicked[index] = true;
+    }
+
     void Buy(int index, TextMeshProUGUI price, Action func)
     {
         if (m_itemsCount[index] <= 0)
@@ -135,7 +160,7 @@ public class ShopLayout : MonoBehaviour
         if (!m_clicked[index])
         {
             m_dialogueText.text = m_dialogueTexts[index][m_UI.CurrentLanguage];
-            m_dialogueText.text += m_UI.GetMoney() >= m_prices[index] ? m_canBuyText[m_UI.CurrentLanguage] : m_cantBuyText[m_UI.CurrentLanguage];
+            m_dialogueText.text += m_UI.GetMoney() >= m_prices[index] ? m_canBuyText[m_input.GetCurrentDeviceType() == "Gamepad" ? 1 : 0][m_UI.CurrentLanguage] : m_cantBuyText[m_UI.CurrentLanguage];
             for (int i = 0; i < m_clicked.Length; i++)
             {
                 m_clicked[i] = false;

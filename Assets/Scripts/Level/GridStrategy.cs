@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class GridStrategy : FillStrategy
@@ -51,31 +50,12 @@ public class GridStrategy : FillStrategy
         // create bounds for player's fall
         room.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
-        if (height < 0)
-        {
-            BoxCollider2D boundsL = new GameObject().AddComponent<BoxCollider2D>();
-            boundsL.gameObject.transform.position = new Vector3(start.x + 1, start.y - room.GetTransitionLeftHeight() - m_roomHeight + 1);
-            boundsL.isTrigger = true;
-            boundsL.gameObject.tag = "bounds";
-            boundsL.size = new Vector2(m_minStraightSection, boundsL.gameObject.transform.position.y - end.y + m_roomHeight);
-            boundsL.offset = new Vector2(-boundsL.size.x / 2, -boundsL.size.y / 2);
-            room.AddEnviromentObject(boundsL.gameObject);
-        }
-        else
-        {
-            BoxCollider2D boundsR = new GameObject().AddComponent<BoxCollider2D>();
-            boundsR.gameObject.transform.position = new Vector3(end.x, end.y - room.GetTransitionRightHeight() - m_roomHeight + 1);
-            boundsR.isTrigger = true;
-            boundsR.gameObject.tag = "bounds";
-            boundsR.size = new Vector2(m_minStraightSection, boundsR.gameObject.transform.position.y - start.y + m_roomHeight);
-            boundsR.offset = new Vector2(boundsR.size.x / 2, -boundsR.size.y / 2);
-            room.AddEnviromentObject(boundsR.gameObject);
-        }
+        CreateSideBound(room, height < 0);
 
-        prevRoom.GetNextTransition().Clear();
+        prevRoom.GetNextTransition().Clear(m_editor);
         prevRoom.AddTransition(transition);
         room.AddTransition(new Room(end, end));
-        room.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, false));
+        room.DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, false));
         return room;
     }
 
@@ -102,8 +82,7 @@ public class GridStrategy : FillStrategy
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(start, end, width + 1, height));
 
-        transition.DrawTiles((HashSet<Vector3Int> groundTiles) => AddLandscape(transition, groundTiles, int.MaxValue, false));
-        // AddLandscape(transition, int.MaxValue, false);
+        transition.DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(transition, groundTiles, int.MaxValue, false));
         return transition;
     }
 

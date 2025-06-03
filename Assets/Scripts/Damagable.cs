@@ -6,8 +6,6 @@ public class Damagable : MonoBehaviour
     [SerializeField]
     int m_maxHealth = 4;
     [SerializeField]
-    int m_health = 4;
-    [SerializeField]
     float m_recoverTime = 2f;
     [SerializeField]
     UnityEvent<int> m_receiver;
@@ -18,8 +16,15 @@ public class Damagable : MonoBehaviour
     float m_recoverTimer = 0f;
     float m_freezeTime = 0f;
 
+    int m_health = 4;
+
     public bool Invinsible { get; set; } = false;
     public bool Freezed { get; set; } = false;
+
+    private void Start()
+    {
+        m_health = m_maxHealth;
+    }
 
     private void Update()
     {
@@ -38,7 +43,7 @@ public class Damagable : MonoBehaviour
             if (m_freezeTime <= 0)
             {
                 Freezed = false;
-                GetComponent<PlayerInput>().LockInput();
+                GetComponent<PlayerInput>().LockInput(false);
             }
         }
     }
@@ -48,7 +53,7 @@ public class Damagable : MonoBehaviour
         if (m_dead || m_recovering) return;
 
         m_recovering = true;
-        m_health = Mathf.Clamp(m_health - damage, 0, m_maxHealth);
+        m_health = Mathf.Min(m_health - damage, m_maxHealth);
 
         m_receiver.Invoke(-damage);
         if (m_health <= 0)
@@ -62,7 +67,7 @@ public class Damagable : MonoBehaviour
     public void Freeze(float time)
     {
         Freezed = true;
-        GetComponent<PlayerInput>().LockInput();
+        GetComponent<PlayerInput>().LockInput(true);
         m_freezeTime = time;
     }
 
@@ -75,6 +80,7 @@ public class Damagable : MonoBehaviour
         m_receiver.Invoke(healPoints);
         if (m_health <= 0)
         {
+            m_health = 0;
             m_dead = false;
             m_receiver.Invoke(0);
         }
@@ -92,7 +98,7 @@ public class Damagable : MonoBehaviour
         m_health = health;
     }
 
-    public float GetHealthPercentage() => m_health / (1.0f * m_maxHealth);
+    public float GetHealthPercentage() => Mathf.Max(0,m_health) / (1.0f * m_maxHealth);
 
     public void Reborn(bool invinsible = false)
     {

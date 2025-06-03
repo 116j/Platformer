@@ -293,6 +293,17 @@
                 },
                 {
                     "name": "",
+                    "id": "ee44d3c0-bb03-4166-aaf1-32a719d9e65b",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "d0c00f3c-bba5-4b44-8ffd-ee27fcf98699",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
@@ -315,8 +326,19 @@
                 },
                 {
                     "name": "",
+                    "id": "e7e41780-3dec-4f5c-9b7d-ec8f9a38e33c",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "HeavyAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "9bee9b10-ae6a-4b20-95ac-806b4e51715c",
-                    "path": "<Keyboard>/enter",
+                    "path": "<Keyboard>/ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -338,7 +360,7 @@
                 {
                     "name": "",
                     "id": "48ac4808-b4a5-4778-a431-0cd2e72f9ac6",
-                    "path": "<Gamepad>/select",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -349,7 +371,7 @@
                 {
                     "name": "",
                     "id": "438116b8-a8a2-48f0-94b4-d8f3afed68bc",
-                    "path": "<Keyboard>/s",
+                    "path": "<Keyboard>/ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -945,7 +967,18 @@
                     "path": "*/{Cancel}",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
+                    "groups": "Gamepad;Touch;Joystick;XR",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fb2f90bf-2d16-4084-a595-ef89b36c9af6",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
                     "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -1034,6 +1067,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0955361b-c36a-4334-9286-319e0d7c3ff6",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "ScrollWheel",
                     "isComposite": false,
                     "isPartOfComposite": false

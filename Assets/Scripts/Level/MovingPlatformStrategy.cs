@@ -28,11 +28,9 @@ public class MovingPlatformStrategy : FillStrategy
 
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
-        prevRoom.GetNextTransition().Clear();
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
-        prevRoom.AddTransition(transition);
 
-        Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
+        Vector3Int start = prevRoom.GetEndPosition();
         int width = Random.Range(m_minRoomSize, m_maxRoomSize);
         int height = Random.Range(m_minRoomSize, m_maxRoomSize);
         if (Random.value > 0.5)
@@ -111,7 +109,7 @@ public class MovingPlatformStrategy : FillStrategy
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (m_minWidth / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, vSpace) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
+                        int maxN = Mathf.FloorToInt((Mathf.Min(m_maxWidth, vSpace) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
                         {
@@ -128,7 +126,7 @@ public class MovingPlatformStrategy : FillStrategy
                     }
                     else
                     {
-                        second = first + Vector3.up * (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, vSpace);
+                        second = first + Vector3.up * (height < 0 ? -1 : 1) * Mathf.Min(Random.Range(m_minWidth, m_maxWidth), vSpace);
                         platform = AddPlatform(movingPlatform, first, second);
                         prev = Mathf.Abs(second.y - first.y) / speed;
                     }
@@ -142,7 +140,7 @@ public class MovingPlatformStrategy : FillStrategy
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (m_minWidth / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(m_maxWidth, 0, hSpace) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
+                        int maxN = Mathf.FloorToInt((Mathf.Min(m_maxWidth, hSpace) / speed + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
                         {
@@ -158,7 +156,7 @@ public class MovingPlatformStrategy : FillStrategy
                     }
                     else
                     {
-                        second = first + Vector3.right * Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, hSpace);
+                        second = first + Vector3.right * Mathf.Min(Random.Range(m_minWidth, m_maxWidth), hSpace);
                         platform = AddPlatform(movingPlatform, first, second);
                         prev = (second.x - first.x) / speed;
                     }
@@ -171,7 +169,7 @@ public class MovingPlatformStrategy : FillStrategy
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (Mathf.Sqrt(Mathf.Pow(m_minWidth, 2) + Mathf.Pow(m_minWidth, 2)) / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), 0, Mathf.Min(vSpace, hSpace)) / speed
+                        int maxN = Mathf.FloorToInt((Mathf.Min(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), Mathf.Min(vSpace, hSpace)) / speed
                             + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
@@ -199,7 +197,7 @@ public class MovingPlatformStrategy : FillStrategy
                     else
                     {
                         second = first +
-                        new Vector3(Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, hSpace), (height < 0 ? -1 : 1) * Mathf.Clamp(Random.Range(m_minWidth / 2, m_maxWidth / 2), 0, vSpace));
+                        new Vector3(Mathf.Min(Random.Range(m_minWidth / 2, m_maxWidth / 2), hSpace), (height < 0 ? -1 : 1) * Mathf.Min(Random.Range(m_minWidth / 2, m_maxWidth / 2), vSpace));
                         platform = AddPlatform(movingPlatform, first, second);
                         prev = Mathf.Sqrt(Mathf.Pow(second.y - first.y, 2) + Mathf.Pow(second.x - first.x, 2)) / speed;
                     }
@@ -214,7 +212,7 @@ public class MovingPlatformStrategy : FillStrategy
                     if (prev != 0)
                     {
                         int minN = Mathf.FloorToInt((prev + movingPlatform.GetWaitTime()) / (Mathf.Sqrt(Mathf.Pow(m_minWidth, 2) + Mathf.Pow(m_minWidth, 2)) / speed + movingPlatform.GetWaitTime()));
-                        int maxN = Mathf.FloorToInt((Mathf.Clamp(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), 0, Mathf.Min(vSpace, hSpace)) / speed
+                        int maxN = Mathf.FloorToInt((Mathf.Min(Mathf.Sqrt(Mathf.Pow(m_maxWidth, 2) + Mathf.Pow(m_maxWidth, 2)), Mathf.Min(vSpace, hSpace)) / speed
                             + movingPlatform.GetWaitTime()) / (prev + movingPlatform.GetWaitTime()));
                         int n;
                         if (Random.value > 0.5f)
@@ -231,7 +229,7 @@ public class MovingPlatformStrategy : FillStrategy
                     }
                     else
                     {
-                        d = Mathf.Clamp(Random.Range(m_minWidth, m_maxWidth), 0, Mathf.Min(vSpace, hSpace));
+                        d = Mathf.Min(Random.Range(m_minWidth, m_maxWidth), Mathf.Min(vSpace, hSpace));
                     }
 
                     second = first + new Vector3(1, 1) * d / 4;
@@ -273,14 +271,21 @@ public class MovingPlatformStrategy : FillStrategy
 
             platform.SetSpeed(speed);
             room.AddEnviromentObject(platform.gameObject);
+            room.CreatePlatform(Vector3Int.CeilToInt(lastPoint) -Vector3Int.right,2);
             lastPoint += Vector3.right * (m_levelTheme.m_movingPlatform.GetWidth() + 1);
         }
         // create bounds for player's fall
-        room.AddEnviromentObject(CreateHorizontalBounds(start, lastPoint - Vector3.up, width, height));
 
         end = new Vector3Int(Mathf.CeilToInt(lastPoint.x) - 1, Mathf.CeilToInt(lastPoint.y) - 1);
         room.SetEndPosition(end);
         room.AddTransition(new Room(end, end));
+
+        room.AddEnviromentObject(CreateHorizontalBounds(start, end, width, height));
+        CreateSideBound(room, height < 0);
+
+        prevRoom.GetNextTransition().Clear(m_editor);
+        prevRoom.AddTransition(transition);
+
         return room;
     }
 
@@ -325,7 +330,7 @@ public class MovingPlatformStrategy : FillStrategy
         transition.AddEnviromentObject(platform.gameObject);
 
         // create bounds for player's fall
-        transition.AddEnviromentObject(CreateHorizontalBounds(room.GetEndPosition(), end, width, height));
+        transition.AddEnviromentObject(CreateHorizontalBounds(transition.GetStartPosition(), end, width, height));
 
         return transition;
     }

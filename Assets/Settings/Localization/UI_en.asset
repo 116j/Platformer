@@ -191,17 +191,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6108273596088320
-    m_Localized: "PRESS ENTER \nTO PET"
+    m_Localized: 'PRESS CTRL
+
+      TO PET'
     m_Metadata:
       m_Items: []
   - m_Id: 6108617147334656
-    m_Localized: 'PRESS SELECT
-
-      TO OPEN THE SHOP'
+    m_Localized: PRESS B TO OPEN THE SHOP
     m_Metadata:
       m_Items: []
   - m_Id: 6108287227576320
-    m_Localized: "PRESS S \nTO OPEN THE SHOP"
+    m_Localized: 'PRESS CTRL
+
+      TO OPEN THE SHOP'
     m_Metadata:
       m_Items: []
   - m_Id: 6109848213307392
@@ -218,6 +220,44 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 6110216678719488
     m_Localized: PRESS M TO GO TO THE MAIN MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8312222965219328
+    m_Localized: Destroyable room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12711559031865344
+    m_Localized: DEFAULT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057887209439232
+    m_Localized: Discription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057984500514816
+    m_Localized: ROOM TYPES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057949494853632
+    m_Localized: Sets how many separate "rooms" (fragments) there will be in a row
+      in a level.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058096987553792
+    m_Localized: "There are five types of rooms:\n\n\u2022 The base room is a room
+      with enemies and traps.\n\n\u2022 The ceiling room is a room with a ceiling
+      and traps on it.\n\n\u2022 The grid platforms room is a room with platforms
+      on which the player jumps.\n\n\u2022 The moving platforms room is a room with
+      moving platforms that approach each other.\n\n\u2022 The destroyable room is
+      a room with a collapsing floor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13058139958198272
+    m_Localized: "Each type of room has a value of 0.00\u20131.00 (the base has a
+      minimum of 0.3). For each new room, the game takes the sum of all the values
+      and chooses a strategy in proportion to its share.\nFor example, if base =
+      0.8, with ceiling = 0.4, and the rest are 0.2, then the chances\nare 44% for
+      base, 22% for ceiling, and 11% for others."
     m_Metadata:
       m_Items: []
   references:

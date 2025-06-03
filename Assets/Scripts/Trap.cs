@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 
 public class Trap : MonoBehaviour, IMetrics
@@ -28,7 +27,7 @@ public class Trap : MonoBehaviour, IMetrics
     bool m_numberSet = false;
 
     // Start is called before the first frame update
-    void Awake()
+    protected virtual void Awake()
     {
         m_anim = GetComponent<Animator>();
     }
@@ -60,25 +59,33 @@ public class Trap : MonoBehaviour, IMetrics
     /// </summary>
     public void SetTrapNum()
     {
-        m_numberSet = true;
-        List<float> chances = new List<float>();
-        foreach (var spawnChance in m_spawnChances)
+        try
         {
-            chances.Add(spawnChance.Evaluate(m_lvlBuilder.LevelProgress()));
+            m_numberSet = true;
+            List<float> chances = new List<float>();
+            foreach (var spawnChance in m_spawnChances)
+            {
+                chances.Add(spawnChance.Evaluate(m_lvlBuilder.LevelProgress()));
+            }
+
+            float value = Random.Range(0, chances.Sum());
+            float sum = 0;
+            for (int i = 0; i < chances.Count; i++)
+            {
+                sum += chances[i];
+                if (value < sum)
+                {
+                    m_trapNumber = i;
+                    return;
+                }
+            }
+            m_trapNumber = chances.Count - 1;
         }
 
-        float value = Random.Range(0, chances.Sum());
-        float sum = 0;
-        for (int i = 0; i < chances.Count; i++)
+        catch (System.NullReferenceException e)
         {
-            sum += chances[i];
-            if (value<sum)
-            {
-                m_trapNumber =  i;
-                return;
-            }
+            Debug.Log("Null reference at obj " + gameObject + "\n" + e.Message);
         }
-        m_trapNumber =  chances.Count - 1;
 
     }
 

@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [CreateAssetMenu]
 public class LevelTheme : ScriptableObject
@@ -11,6 +9,7 @@ public class LevelTheme : ScriptableObject
     public EnviromentObject[] m_grass;
     public EnviromentObject[] m_bushes;
     public EnviromentObject[] m_trees;
+    public Sprite m_destroyableTile;
 
     public SpawnValues[] m_enemies;
     public Trap[] m_ceilTraps;
@@ -22,6 +21,6 @@ public class LevelTheme : ScriptableObject
     public Trap m_jumper;
     public SpawnValues m_movingPlatform;
     public SpawnValues m_coin;
-    
+
     public int m_themeNum;
 }

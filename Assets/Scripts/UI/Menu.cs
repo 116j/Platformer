@@ -24,7 +24,7 @@ public class Menu : MonoBehaviour
     Image m_backgroundTint;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         m_pauseLayoutAnim = GetComponent<Animator>();
         m_backgroundTint = GetComponent<Image>();
@@ -53,8 +53,9 @@ public class Menu : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1;
-        m_input.LockInput();
         m_UI.SetStats(false);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -66,25 +67,37 @@ public class Menu : MonoBehaviour
 
     public void Back()
     {
-        m_pauseLayoutAnim.SetTrigger("CloseSettings");
+        m_pauseLayoutAnim?.SetTrigger("CloseSettings");
     }
 
     public void SettingsLayout()
     {
+        m_pauseLayoutAnim.ResetTrigger("CloseLayout");
         m_pauseLayoutAnim.SetTrigger("OpenSettingsLayout");
     }
 
 
     public void CloseLayout(InputAction.CallbackContext ctx)
     {
+        if(m_pauseLayoutAnim)
         m_pauseLayoutAnim.SetTrigger("CloseLayout");
     }
 
     public void Play()
     {
-        m_input.LockInput();
+        m_input.StartGame();
+        m_input.LockInput(false);
         m_pauseLayoutAnim.SetBool("Close", true);
         m_UI.SetStats(true);
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+				Application.Quit();
+#endif
     }
 
     public void SelectPlay()
