@@ -25,6 +25,8 @@ public class Room
     int m_transitionRightPoint;
     readonly int m_minHeight = 6;
     readonly int m_minWidth = 12;
+
+    bool m_tilesFilled = false;
     /// <summary>
     /// 
     /// </summary>
@@ -139,6 +141,11 @@ public class Room
 
     public int GetRoomCameraHeight() => m_roomHeight - m_cameraBoundsStart + m_lowestPoint;
 
+    public void DontFillTiles()
+    {
+        m_tilesFilled = true;
+    }
+
     public void SetCameraBounds()
     {
         CameraBounds.Instance.SetHeight(new Vector3(m_startPosition.x, GetRoomHighestPoint()), GetRoomCameraHeight());
@@ -158,9 +165,12 @@ public class Room
         {
             Object.Destroy(obj);
         }
-        foreach (Polygon poly in m_polygons)
+        if (m_tilesFilled)
         {
-            poly.ClearTiles(editor, async);
+            foreach (Polygon poly in m_polygons)
+            {
+                poly.ClearTiles(editor, async);
+            }
         }
     }
 
@@ -351,9 +361,13 @@ public class Room
 
     public void DrawTiles(TileEditor editor, System.Action<HashSet<Vector3Int>> callback, bool isInitial = false)
     {
-        foreach (var poly in m_polygons)
+        if (!m_tilesFilled)
         {
-            poly.DrawTiles(editor, callback, isInitial);
+            m_tilesFilled = true;
+            foreach (var poly in m_polygons)
+            {
+                poly.DrawTiles(editor, callback, isInitial);
+            }
         }
     }
 

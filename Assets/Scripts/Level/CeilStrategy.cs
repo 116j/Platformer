@@ -21,6 +21,8 @@ public class CeilStrategy : FillStrategy
     /// <returns></returns>
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
+        prevRoom.GetNextTransition().DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(prevRoom.GetNextTransition(), groundTiles, int.MaxValue, false));
+
         Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
         //width of start straight section
@@ -29,9 +31,8 @@ public class CeilStrategy : FillStrategy
         // no slopes
         m_slopeChance = 1f;
         int height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
-        if (height > m_playerJumpHeight)
-            m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
-        CreateElevations(room, start + startWidth * Vector3Int.right, height, false);
+        SetRightOffset(height);
+        CreateElevations(room, start + startWidth * Vector3Int.right, startWidth, height, false);
         room.AddTransition(transitionStrategy.FillTransition(room));
         MakeCeil(room);
         return room;

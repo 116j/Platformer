@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ public class Menu : MonoBehaviour
 
     Animator m_pauseLayoutAnim;
     Image m_backgroundTint;
+    GameObject m_selected;
 
     // Start is called before the first frame update
     void Awake()
@@ -113,5 +115,17 @@ public class Menu : MonoBehaviour
     public void SelectResume()
     {
         m_resumeButton.Select();
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if (focus)
+        {
+            EventSystem.current.SetSelectedGameObject(m_selected);
+        }
+        else
+        {
+            m_selected = EventSystem.current.currentSelectedGameObject;
+        }
     }
 }

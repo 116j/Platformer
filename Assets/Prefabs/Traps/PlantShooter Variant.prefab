@@ -43,6 +43,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlantShooter Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4851061651080796284, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_TagString
+      value: enemyAttack
+      objectReference: {fileID: 0}
     - target: {fileID: 5068443204209693425, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_attacks.Array.size
       value: 2
@@ -203,6 +207,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1072537091, guid: 8251bc6cae66aaf41acd3041245df879, type: 3}
+    - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_SortingLayer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 227588397
+      objectReference: {fileID: 0}
     - target: {fileID: 6129711738921822312, guid: 5261515ee55bf7b49a01299ca2bc0009, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1

@@ -260,6 +260,10 @@ MonoBehaviour:
       base, 22% for ceiling, and 11% for others."
     m_Metadata:
       m_Items: []
+  - m_Id: 13442591293095936
+    m_Localized: BLOCK
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

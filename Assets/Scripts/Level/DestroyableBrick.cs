@@ -56,21 +56,27 @@ public class DestroyableBrick : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (m_behaviour == BrickBehaviour.OnEnter && !m_destroyed)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            DestroyBrick();
-        }
-        else if (m_behaviour == BrickBehaviour.Timer && !m_destroyed)
-        {
-            m_timer = m_destroyTime;
+            if (m_behaviour == BrickBehaviour.OnEnter && !m_destroyed)
+            {
+                DestroyBrick();
+            }
+            else if (m_behaviour == BrickBehaviour.Timer && !m_destroyed)
+            {
+                m_timer = m_destroyTime;
+            }
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (m_behaviour == BrickBehaviour.OnExit && !m_destroyed)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            DestroyBrick();
+            if (m_behaviour == BrickBehaviour.OnExit && !m_destroyed)
+            {
+                DestroyBrick();
+            }
         }
     }
 

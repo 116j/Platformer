@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 403599224382486056}
   m_Layer: 7
   m_Name: Arrow
-  m_TagString: Untagged
+  m_TagString: enemyAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

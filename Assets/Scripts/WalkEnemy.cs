@@ -4,6 +4,8 @@ using Zenject;
 public class WalkEnemy : MonoBehaviour
 {
     [SerializeField]
+    float m_turnOffset;
+    [SerializeField]
     float m_costCoeff;
     [SerializeField]
     float m_walkSpeed = 1.5f;
@@ -44,13 +46,18 @@ public class WalkEnemy : MonoBehaviour
     readonly int m_HashHit = Animator.StringToHash("Hit");
     readonly int m_HashDie = Animator.StringToHash("Die");
     readonly int m_HashCanMove = Animator.StringToHash("CanMove");
+    readonly int m_HashParry = Animator.StringToHash("Parry");
     protected readonly int m_HashAttackNum = Animator.StringToHash("AttackNum");
+    protected readonly int m_HashAttack = Animator.StringToHash("Attack");
 
     protected bool m_dead = false;
     protected bool m_waiting = false;
+    protected bool m_canMove = true;
+    bool m_coinsSpawned = false;
 
     readonly float m_waitTime = 3f;
     int m_attackCount = 3;
+    int m_cost;
 
     protected Vector3 m_startPos;
     protected int m_currentDir = 1;
@@ -72,18 +79,25 @@ public class WalkEnemy : MonoBehaviour
         m_values = GetComponent<SpawnValues>();
 
         m_startPos = transform.position;
+        m_cost = Mathf.CeilToInt(m_shop.AllPrices * m_costCoeff / (m_lvlBuilder.GetMaxRoomsCount() * m_lvlBuilder.GetEnemySpawnChance()));
     }
 
     protected virtual void Update()
     {
         m_anim.SetBool(m_HashDie, m_dead);
         m_anim.SetFloat(m_HashHorizontal, m_speed);
+        m_anim.SetBool(m_HashParry, m_damageable.Freezed);
     }
 
     protected virtual void FixedUpdate()
     {
         if (!m_dead)
         {
+            m_canMove = m_anim.GetBool(m_HashCanMove)&&!m_damageable.Freezed;
+            if (m_damageable.Freezed)
+            {
+                m_rb.velocity = Vector2.zero;
+            }
             // if the target is in the attack zone - enable attack, stop moving
             if (m_attackZone.TargetDetected)
             {
@@ -98,19 +112,20 @@ public class WalkEnemy : MonoBehaviour
                 return;
             }
             // if the target is in the detect zone, not touching walls and touching ground, and can move - chase the target
-            else if (m_detectZone.TargetDetected && m_groundZone.TargetDetected && !m_touchings.IsWalls() && m_anim.GetBool(m_HashCanMove))
+            else if (m_detectZone.TargetDetected && m_groundZone.TargetDetected && !m_touchings.IsWalls() && m_canMove)
             {
                 Chase();
             }
-            else if (m_anim.GetBool(m_HashCanMove))
+            else if (m_canMove)
             {
                 Potrol();
             }
-            m_rb.velocity = (m_anim.GetBool(m_HashCanMove)?1:0)*m_currentDir * m_speed * Vector2.right;
+
+            m_rb.velocity = (m_canMove ? 1:0)*m_currentDir * m_speed * Vector2.right;
         }
     }
 
-    void Potrol()
+    protected void Potrol()
     {
         // disable attack
         m_attackScript.EnableAttack = false;
@@ -147,13 +162,21 @@ public class WalkEnemy : MonoBehaviour
         }
         m_attackScript.EnableAttack = false;
         m_waiting = false;
-        m_speed = m_canRun && Mathf.Abs(m_detectZone.TargetLocation.x - transform.position.x)>m_col.size.x ? m_runSpeed : m_walkSpeed;
+        m_speed = m_canRun && GetDistance() >m_col.size.x ? m_runSpeed : m_walkSpeed;
+    }
+
+    protected float GetDistance()
+    {
+        return m_currentDir == 1 ?
+                (m_detectZone.TargetLocation.x - m_attackZone.RightBorder.x) :
+                (m_attackZone.LeftBorder.x - m_detectZone.TargetLocation.x);
     }
 
     virtual protected void TurnAround()
     {
         m_currentDir *= -1;
         transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
+        transform.position += Vector3.right * m_currentDir *  m_turnOffset;
     }
 
     public virtual void ReceiveDamage(int damage)
@@ -169,13 +192,13 @@ public class WalkEnemy : MonoBehaviour
                 m_platform.StartMovement();
             }
 
-            if (m_coin != null)
+            if (!m_coinsSpawned&&m_coin != null)
             {
+                m_coinsSpawned = true;
                 int coins = Random.Range(3, 7);
-                int cost = Mathf.CeilToInt(m_shop.AllPrices * m_costCoeff / (m_lvlBuilder.GetMaxRoomsCount()*m_lvlBuilder.GetEnemySpawnChance()));
                 for (int i = 0; i < coins; i++)
                 {
-                    m_container.InstantiatePrefabForComponent<Coin>(m_coin, transform.position, Quaternion.identity,null).SetCost(cost / coins);
+                    m_container.InstantiatePrefabForComponent<Coin>(m_coin, transform.position, Quaternion.identity,null).SetCost(m_cost / coins);
                 }
             }
         }

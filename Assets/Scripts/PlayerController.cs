@@ -1,4 +1,5 @@
 using Cinemachine;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
@@ -39,39 +40,45 @@ public class PlayerController : MonoBehaviour
     readonly int m_HashAttack = Animator.StringToHash("Attack");
     readonly int m_HashPet = Animator.StringToHash("Pet");
     readonly int m_HashHeavyAttack = Animator.StringToHash("HeavyAttack");
-    readonly int m_HashCantMove = Animator.StringToHash("CantMove");
+    readonly int m_HashCanMove = Animator.StringToHash("CanMove");
+    readonly int m_HashBlocking = Animator.StringToHash("Blocking");
 
-    public float m_runSpeed = 7f;
-    public float m_dashPower = 8;
-    public float m_jumpPower = 12f;
-    public float m_fallMultiplier = 3f;
-    public float m_junpMultiplier = 4f;
-    public float m_jumpTime = 0.4f;
-    public float m_dashCooldownTime = 1.5f;
-    int m_jumpsCount = 2;
+    readonly float m_runSpeed = 7f;
+    readonly float m_dashPower = 10;
+    readonly float m_jumpPower = 12f;
+    readonly float m_fallMultiplier = 3f;
+    readonly float m_junpMultiplier = 4f;
+    readonly float m_jumpTime = 0.4f;
+    readonly float m_blockCooldownTime = 0.4f;
+    readonly float m_blockDuration = 0.15f;
+    readonly float m_cameraSpeed = 6f;
 
     bool m_dead = false;
     bool m_jump = false;
     bool m_attack = false;
     bool m_dash = false;
     bool m_pet = false;
-    bool m_blockMove = false;
+    bool m_canMove = false;
 
     bool m_jumping = false;
     bool m_falling = false;
     bool m_canDash = true;
+    bool m_canBlock = true;
     bool m_isHit = false;
     bool m_canPet = false;
     bool m_onSlope = false;
+    bool m_blocking = false;
 
+    float m_dashCooldownTime = 1.5f;
+    int m_jumpsCount = 2;
     int m_currentJumps = 0;
     int m_currentDir = 1;
     float m_jumpCounter = 0f;
     float m_dashCooldown = 0f;
+    float m_blockCooldown = 0f;
     float m_baseTransposer = 2.5f;
     float m_cameraBoundsHeight;
-    float m_cameraSpeed = 7f;
-    float m_skinWidth = 0.02f;
+
     Vector2 m_gravity;
     float m_gravityScale;
     Vector3 m_fallCheckpoint;
@@ -104,9 +111,9 @@ public class PlayerController : MonoBehaviour
         if (!m_dead)
         {
             m_isHit = m_anim.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Hit";
-            m_blockMove = m_anim.GetBool(m_HashCantMove);
+            m_canMove = m_anim.GetBool(m_HashCanMove)&&!m_damagable.Freezed;
             // if dash animation is over - set gravity, start falling if air dash
-            if (!m_blockMove && m_dash)
+            if (m_canMove && m_dash)
             {
                 if (m_jumping)
                     m_falling = true;
@@ -120,17 +127,21 @@ public class PlayerController : MonoBehaviour
                 m_jump = false;
             }
 
+            if (m_canBlock&&m_canMove && !m_isHit && !m_falling &&!m_jumping  && m_input.Block)
+            {
+                m_blocking = true;
+            }
             // when attack animation is over - set back gravity 
-            if (!m_blockMove && m_attack)
+                if (m_canMove && m_attack)
             {
                 m_attack = false;
                 m_rb.gravityScale = m_gravityScale;
                 m_anim.ResetTrigger(m_HashAttack);
             }
             // dash
-            if (m_input.Dash && m_canDash && !m_blockMove && !m_isHit)
+            if (m_input.Dash && m_canDash && m_canMove && !m_isHit)
             {
-                m_blockMove = true;
+                m_canMove = false;
                 m_anim.SetTrigger(m_HashDash);
                 m_UI.SetDashSprite(0f);
                 //remove garvity
@@ -140,9 +151,9 @@ public class PlayerController : MonoBehaviour
                 m_rb.velocity = new Vector2(m_rb.velocity.x, 0f);
                 m_rb.AddForce(Vector2.right * m_currentDir * m_dashPower, ForceMode2D.Impulse);
             }
-            if (m_input.Dodge && !m_blockMove && !m_isHit)
+            if (m_input.Dodge && m_canMove && !m_isHit)
             {
-                m_blockMove = true;
+                m_canMove = false;
                 m_anim.SetTrigger(m_HashDodge);
                 m_rb.velocity = new Vector2(-m_currentDir * m_dashPower, 0f);
             }
@@ -164,12 +175,23 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (m_input.Attack && !m_isHit)
+            if (!m_canBlock)
+            {
+                m_blockCooldown += Time.deltaTime;
+
+                if (m_blockCooldown >= m_blockCooldownTime)
+                {
+                    m_canBlock = true;
+                    m_blockCooldown = 0f;
+                }
+            }
+
+            if (m_input.Attack && !m_isHit&&!m_damagable.Freezed)
             {
                 //if is not attacking -  remove gravity(for jump), remove movement
-                if (!m_blockMove)
+                if (m_canMove)
                 {
-                    m_blockMove = true;
+                    m_canMove = false;
                     m_attack = true;
                     m_rb.velocity = Vector2.zero;
                     m_rb.gravityScale = 0;
@@ -178,25 +200,26 @@ public class PlayerController : MonoBehaviour
                 m_anim.SetTrigger(m_HashAttack);
             }
 
-            if (m_input.HeavyAttack && !m_blockMove && !m_isHit && !m_jumping && !m_falling)
+            if (m_input.HeavyAttack && m_canMove && !m_isHit && !m_jumping && !m_falling)
             {
-                m_blockMove = true;
+                m_canMove = false;
                 m_attack = true;
                 m_rb.velocity = Vector2.zero;
             }
 
-            if (m_canPet && m_input.Pet)
+            if (m_canPet && m_input.Pet && !m_damagable.Freezed)
             {
                 m_catZone.ApplyPet(true);
                 m_pet = true;
             }
 
-            m_anim.SetBool(m_HashCantMove, m_blockMove);
+            m_anim.SetBool(m_HashCanMove, m_canMove);
             m_anim.SetBool(m_HashHeavyAttack, m_input.HeavyAttack);
             m_anim.SetFloat(m_HashAnimationTime, Mathf.Repeat(m_anim.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
             m_anim.SetFloat(m_HashHorizontal, Mathf.Abs(m_rb.velocity.x));
             m_anim.SetBool(m_HashJump, m_jumping);
             m_anim.SetBool(m_HashFalling, m_falling);
+            m_anim.SetBool(m_HashBlocking, m_blocking);
         }
     }
 
@@ -223,6 +246,12 @@ public class PlayerController : MonoBehaviour
             FallReset();
         }
 
+        if (m_touchings.IsGroundStuck())
+        {
+            Debug.Log("Ground stuck");
+            transform.position += Vector3.up * 0.6f;
+        }
+
         if (!m_dead)
         {
             //
@@ -240,7 +269,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // turn around
-            if (m_currentDir * m_input.Move < 0 && !m_blockMove)
+            if (m_currentDir * m_input.Move < 0 && m_canMove)
             {
                 m_currentDir *= -1;
                 transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y + m_currentDir * 180f, 0f);
@@ -251,7 +280,7 @@ public class PlayerController : MonoBehaviour
                 m_rb.velocity = new Vector2(0f, m_rb.velocity.y);
             }
             // if is not in attack or dash - move
-            else if (!m_blockMove && !m_isHit)
+            else if (m_canMove && !m_isHit)
             {
                 if (m_touchings.IsSlopeUp())
                 {
@@ -275,7 +304,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             // if is not in attack or dash  - start jump
-            if (!m_blockMove && m_input.Jump && !m_jump && m_touchings.IsGrounded())
+            if (m_canMove && m_input.Jump && !m_jump && m_touchings.IsGrounded())
             {
                 if (m_onSlope)
                 {
@@ -289,7 +318,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             // if is not in attack or dash and is jumping - make double jump 
-            if (!m_blockMove && m_jumping && m_input.Jump && !m_jump && m_currentJumps < m_jumpsCount)
+            if (m_canMove && m_jumping && m_input.Jump && !m_jump && m_currentJumps < m_jumpsCount)
             {
                 m_sound.PlaySound("Jump");
                 m_jump = true;
@@ -299,7 +328,7 @@ public class PlayerController : MonoBehaviour
                 m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpPower + 5f);
             }
             // if jumping and moving up - add vertical velocity for m_jumpTime or until jump button is up
-            if (!m_blockMove && !m_onSlope && m_rb.velocity.y > 0f && m_jumping && !m_falling)
+            if (m_canMove && !m_onSlope && m_rb.velocity.y > 0f && m_jumping && !m_falling)
             {
                 m_jumpCounter += Time.fixedDeltaTime;
                 if (m_jumpCounter > m_jumpTime)
@@ -309,7 +338,7 @@ public class PlayerController : MonoBehaviour
                 m_rb.velocity += m_junpMultiplier * Time.fixedDeltaTime * m_gravity;
             }
             // if moving down - set falling and substract vertical velocity
-            if (!m_blockMove && !m_onSlope && m_rb.velocity.y < 0f && !m_touchings.IsGrounded())
+            if ( !m_onSlope && m_rb.velocity.y < 0f && !m_touchings.IsGrounded())
             {
                 m_falling = true;
                 m_rb.velocity -= m_fallMultiplier * Time.fixedDeltaTime * m_gravity;
@@ -325,7 +354,7 @@ public class PlayerController : MonoBehaviour
 
             if (m_rb.velocity != Vector2.zero)
             {
-                Vector2 move = new Vector2(m_touchings.WallsStuck(m_skinWidth, m_rb.velocity.x * Time.fixedDeltaTime),m_touchings.GroundStuck(m_skinWidth, m_rb.velocity.y * Time.fixedDeltaTime));
+                Vector2 move = new Vector2(m_touchings.WallsStuck(m_rb.velocity.x * Time.fixedDeltaTime),m_touchings.GroundStuck(m_rb.velocity.y * Time.fixedDeltaTime));
                 if (move != Vector2.zero)
                 {
                     m_rb.MovePosition(m_rb.position + m_rb.velocity * Time.fixedDeltaTime + move);
@@ -355,6 +384,18 @@ public class PlayerController : MonoBehaviour
             m_anim.SetTrigger(m_HashPet);
         }
     }
+
+    IEnumerator Block()
+    {
+        m_rb.velocity = Vector2.zero;
+        m_canMove = false;
+        m_damagable.Invinsible = true;
+        yield return new WaitForSeconds(m_blockDuration);
+        m_damagable.Invinsible = false;
+        m_blocking = false;
+        m_canMove = true;
+        m_canBlock = false;
+    }
     /// <summary>
     /// Recieve damage 
     /// </summary>
@@ -367,13 +408,14 @@ public class PlayerController : MonoBehaviour
             m_dead = !m_dead;
             m_input.EnableRestart();
             m_UI.Die(true);
-
         }
         else if (damage < 0)
         {
+            m_blocking = false;
             m_anim.SetTrigger(m_HashHit);
             m_isHit = true;
-            m_rb.velocity += Vector2.left * m_currentDir;
+            m_rb.velocity = Vector2.zero;
+            // m_rb.velocity += Vector2.left * m_currentDir;
         }
     }
     /// <summary>
@@ -405,7 +447,7 @@ public class PlayerController : MonoBehaviour
 
     public void SetLevelCheckpoint(Vector3 checkpoint,bool start)
     {
-        m_fallCheckpoint = checkpoint + new Vector3(start? m_values.GetRightBorder(): m_values.GetLeftBorder(), m_values.GetOffset().y);
+        m_fallCheckpoint = checkpoint + new Vector3(start? m_values.GetRightBorder(): m_values.GetLeftBorder(), m_values.GetOffset().y+2);
     }
 
     public void FallReset()

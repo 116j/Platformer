@@ -22,8 +22,6 @@ public class DestroyableBrickStrategy : FillStrategy
 
     DestroyableBrick m_brick;
 
-    public int FillType { get; private set; }
-
     public DestroyableBrickStrategy(LevelTheme levelTheme, DestroyableBrick destroyableBrick) : base(levelTheme)
     {
         m_brick = destroyableBrick;
@@ -31,6 +29,7 @@ public class DestroyableBrickStrategy : FillStrategy
 
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
+        prevRoom.GetNextTransition().Clear(m_editor);
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
 
         Vector3Int start = prevRoom.GetEndPosition();
@@ -39,9 +38,9 @@ public class DestroyableBrickStrategy : FillStrategy
 
         Vector3Int end = new Vector3Int(start.x + width, start.y + height);
         Room room = new Room(start, end, transition);
-        FillType = Random.Range(0,4);
+        int fillType = Random.Range(0,4);
 
-        switch (FillType)
+        switch (fillType)
         {
             case 0:
                 CollapseStaircase(room);
@@ -71,7 +70,6 @@ public class DestroyableBrickStrategy : FillStrategy
         room.AddEnviromentObject(CreateHorizontalBounds(start, end, end.x - start.x, end.y - start.y));
         room.AddTransition(new Room(end, end));
 
-        prevRoom.GetNextTransition().Clear(m_editor);
         prevRoom.AddTransition(transition);
 
         return room;
@@ -217,6 +215,7 @@ public class DestroyableBrickStrategy : FillStrategy
         Vector3Int start = room.GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + width, start.y + height);
         Room transition = new Room(start, end);
+        transition.DontFillTiles();
 
         Vector3Int lastPoint = start + Vector3Int.right;
         int vertOffset = Random.Range(m_playerJumpHeight/2+1,GetJumpHeight(1));

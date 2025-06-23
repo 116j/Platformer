@@ -18,7 +18,7 @@ public class AttackScript : MonoBehaviour
     void Start()
     {
         m_anim = GetComponent<Animator>();
-        TryGetComponent<Rigidbody2D>(out m_rb);
+        m_rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -27,7 +27,6 @@ public class AttackScript : MonoBehaviour
         if (m_canAttack && EnableAttack)
         {
             m_anim.SetTrigger(m_animAttackParameter);
-            m_canAttack = false;
         }
         else if (!m_canAttack)
         {
@@ -48,12 +47,18 @@ public class AttackScript : MonoBehaviour
     public void AttackMoveBackwards()
     {
         if (m_rb != null)
-            transform.position-=transform.right;
+            transform.position-=transform.right*3;
     }
 
     public void AttackStop()
     {
         if (m_rb != null)
             m_rb.velocity = Vector2.zero;
+    }
+
+    public void ResetAttack()
+    {
+        m_canAttack = false;
+        m_anim.ResetTrigger(m_animAttackParameter);
     }
 }

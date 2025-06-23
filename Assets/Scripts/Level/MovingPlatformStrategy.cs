@@ -28,6 +28,7 @@ public class MovingPlatformStrategy : FillStrategy
 
     public override Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
+        prevRoom.GetNextTransition().Clear(m_editor);
         Room transition = new Room(prevRoom.GetEndPosition(), prevRoom.GetEndPosition());
 
         Vector3Int start = prevRoom.GetEndPosition();
@@ -278,12 +279,11 @@ public class MovingPlatformStrategy : FillStrategy
 
         end = new Vector3Int(Mathf.CeilToInt(lastPoint.x) - 1, Mathf.CeilToInt(lastPoint.y) - 1);
         room.SetEndPosition(end);
-        room.AddTransition(new Room(end, end));
 
         room.AddEnviromentObject(CreateHorizontalBounds(start, end, width, height));
         CreateSideBound(room, height < 0);
 
-        prevRoom.GetNextTransition().Clear(m_editor);
+        room.AddTransition(new Room(end, end));
         prevRoom.AddTransition(transition);
 
         return room;
@@ -323,6 +323,7 @@ public class MovingPlatformStrategy : FillStrategy
         }
         Vector3Int end = new Vector3Int(room.GetEndPosition().x + width, room.GetEndPosition().y + height);
         Room transition = new Room(room.GetEndPosition(), end);
+        transition.DontFillTiles();
 
         MovingPlatform platform = Object.Instantiate(m_levelTheme.m_movingPlatform, room.GetEndPosition() + new Vector3(width * 1.0f / 2, 1 - m_levelTheme.m_movingPlatform.GetHeight()), Quaternion.identity).GetComponent<MovingPlatform>();
         platform.DisableAutoMovement();

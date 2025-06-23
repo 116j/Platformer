@@ -25,7 +25,7 @@ public class LevelBuilder : MonoBehaviour
     [SerializeField]
     Vector3Int m_startPosition;
     [SerializeField]
-    int m_maxRoomsCount;
+    LevelValues m_values;
 
     LevelTheme m_currentTheme;
     [Inject]
@@ -39,7 +39,6 @@ public class LevelBuilder : MonoBehaviour
     List<FillStrategy> m_usedRoomStrategies = new List<FillStrategy>();
     List<FillStrategy> m_usedTransitionStrategies = new List<FillStrategy>();
     FillStrategy[] m_strategies;
-    float[] m_strategyWeights = { 0.6f, 0.15f, 0.3f, 0.15f, 0.3f };
     Room m_currentRoom;
     bool m_changeTransposer = false;
     bool m_transitionBounds = true;
@@ -72,7 +71,7 @@ public class LevelBuilder : MonoBehaviour
         {
             m_container.Inject(strategy);
         }
-        FillStrategy startTransitionStrategy = m_strategies[Random.Range(0, 4)];
+        FillStrategy startTransitionStrategy = m_strategies[Random.Range(0, m_strategies.Length)];
         m_rooms = new List<Room>
         {
             m_strategies[0].FillStratRoom(m_startPosition,startTransitionStrategy)
@@ -86,6 +85,7 @@ public class LevelBuilder : MonoBehaviour
         m_audio = GetComponent<AudioSource>();
         m_audio.clip = m_backgroundMusic[Random.Range(0, m_backgroundMusic.Length)];
         m_audio.Play();
+
     }
 
     // Update is called once per frame
@@ -95,13 +95,13 @@ public class LevelBuilder : MonoBehaviour
         {
             if (m_roomIndex > 0)
             {
-                if (m_usedRoomStrategies[m_roomIndex] is GridStrategy 
-                    || m_usedRoomStrategies[m_roomIndex] is MovingPlatformStrategy 
+                if (m_usedRoomStrategies[m_roomIndex] is GridStrategy
+                    || m_usedRoomStrategies[m_roomIndex] is MovingPlatformStrategy
                     || m_usedRoomStrategies[m_roomIndex] is DestroyableBrickStrategy)
                 {
                     m_roomBounds = true;
                     m_transitionBounds = false;
-                    m_player.SetLevelCheckpoint(m_rooms[m_roomIndex-1].GetEndPosition(), false);
+                    m_player.SetLevelCheckpoint(m_rooms[m_roomIndex - 1].GetEndPosition(), false);
                 }
                 else
                 {
@@ -134,7 +134,7 @@ public class LevelBuilder : MonoBehaviour
                 m_player.SetLevelCheckpoint(m_currentRoom.GetEndPosition(), false);
             }
 
-            if (m_newRoomIndex==m_roomIndex+1&& m_roomsCount <= m_maxRoomsCount)
+            if (m_newRoomIndex == m_roomIndex + 1 && m_roomsCount <= m_values.m_roomsCount)
             {
                 SpawnRoom();
                 m_newRoomIndex++;
@@ -167,18 +167,23 @@ public class LevelBuilder : MonoBehaviour
         //resize camera bounds and camera offset
         else if (m_currentRoom != null && m_player.transform.position.x >= m_currentRoom.GetStartPosition().x && m_roomBounds)
         {
-            if (m_roomsCount >= m_maxRoomsCount && m_roomIndex == m_rooms.Count - 1)
+            if (m_roomsCount >= m_values.m_roomsCount && m_roomIndex == m_rooms.Count - 1)
             {
                 m_player.SetRebornCheckpoint(m_currentRoom.GetStartPosition());
             }
 
-                if (((m_usedRoomStrategies[m_roomIndex] is GridStrategy 
+            if (m_usedRoomStrategies[m_roomIndex] is not GridStrategy
+                && m_usedRoomStrategies[m_roomIndex] is not MovingPlatformStrategy
+                && m_usedRoomStrategies[m_roomIndex] is not DestroyableBrickStrategy)
+            {
+                m_player.SetLevelCheckpoint(m_rooms[m_roomIndex].GetStartPosition(), true);
+            }
+
+            if (((m_usedRoomStrategies[m_roomIndex] is GridStrategy
                     || m_usedRoomStrategies[m_roomIndex] is MovingPlatformStrategy
                     || m_usedRoomStrategies[m_roomIndex] is DestroyableBrickStrategy)
                 && (m_currentRoom.GetEndPosition().y < m_currentRoom.GetStartPosition().y))
-                || (m_usedRoomStrategies[m_roomIndex] is DestroyableBrickStrategy
-                && (m_usedRoomStrategies[m_roomIndex] as DestroyableBrickStrategy).FillType<2)
-                && !m_changeTransposer 
+                && !m_changeTransposer
                 || m_changeTransposer)
             {
                 m_changeTransposer = !m_changeTransposer;
@@ -192,9 +197,9 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
-    public float LevelProgress() => m_roomsCount / m_maxRoomsCount;
+    public float LevelProgress() => m_roomsCount / m_values.m_roomsCount;
 
-    public int GetMaxRoomsCount() => m_maxRoomsCount;
+    public int GetMaxRoomsCount() => m_values.m_roomsCount;
 
     public void CatPetted(int cats)
     {
@@ -219,7 +224,7 @@ public class LevelBuilder : MonoBehaviour
     void SpawnRoom()
     {
         m_roomsCount++;
-        if (m_roomsCount > m_maxRoomsCount)
+        if (m_roomsCount > m_values.m_roomsCount)
         {
             m_usedRoomStrategies.Add(m_strategies[0]);
             m_usedTransitionStrategies.Add(m_strategies[0]);
@@ -228,14 +233,14 @@ public class LevelBuilder : MonoBehaviour
         else while (true)
             {
                 FillStrategy rs = m_strategies[GetStrategy()];
-                if ((m_usedRoomStrategies.Last() is GridStrategy 
+                if ((m_usedRoomStrategies.Last() is GridStrategy
                     || m_usedRoomStrategies.Last() is MovingPlatformStrategy
                     || m_usedRoomStrategies.Last() is DestroyableBrickStrategy) &&
-                    (rs is GridStrategy 
+                    (rs is GridStrategy
                     || rs is MovingPlatformStrategy
                     || rs is DestroyableBrickStrategy))
                     continue;
-                FillStrategy ts = m_strategies[Random.Range(0,m_strategies.Length)];
+                FillStrategy ts = m_strategies[Random.Range(0, m_strategies.Length)];
                 Room r = rs.FillRoom(m_rooms.Last(), ts);
                 if (r == null)
                     continue;
@@ -248,11 +253,11 @@ public class LevelBuilder : MonoBehaviour
 
     int GetStrategy()
     {
-        float value = Random.Range(0, m_strategyWeights.Sum());
+        float value = Random.Range(0, m_values.m_strategyWeights.Sum());
         float sum = 0;
         for (int i = 0; i < m_strategies.Length; i++)
         {
-            sum += m_strategyWeights[i];
+            sum += m_values.m_strategyWeights[i];
             if (value < sum)
             {
                 return i;
@@ -263,7 +268,7 @@ public class LevelBuilder : MonoBehaviour
 
     public float GetEnemySpawnChance()
     {
-        return m_strategyWeights[0] / m_strategyWeights.Sum();
+        return m_values.m_strategyWeights[0] / m_values.m_strategyWeights.Sum();
     }
     /// <summary>
     /// Removes first room if rooms count is larger than 4
@@ -276,8 +281,8 @@ public class LevelBuilder : MonoBehaviour
             m_rooms.RemoveAt(0);
             m_usedRoomStrategies.RemoveAt(0);
             m_usedTransitionStrategies.RemoveAt(0);
-            int i = m_usedRoomStrategies[0] is GridStrategy 
-                || m_usedRoomStrategies[0] is MovingPlatformStrategy 
+            int i = m_usedRoomStrategies[0] is GridStrategy
+                || m_usedRoomStrategies[0] is MovingPlatformStrategy
                 || m_usedRoomStrategies[0] is DestroyableBrickStrategy ? 1 : 0;
             m_roomIndex--;
             m_newRoomIndex--;
@@ -291,7 +296,7 @@ public class LevelBuilder : MonoBehaviour
     {
         m_player.Restart();
         m_strategies[0].ResetCats();
-        for (int i = m_roomIndex; i >=0; i--)
+        for (int i = m_roomIndex; i >= 0; i--)
         {
             m_rooms[i].Restart();
         }
@@ -301,20 +306,6 @@ public class LevelBuilder : MonoBehaviour
         m_currentRoom = m_rooms[m_roomIndex];
         m_transitionBounds = false;
         m_roomBounds = true;
-    }
-
-    public void ChangeStrategyWeight(int strategy, float weight)
-    {
-        m_strategyWeights[strategy] = weight;
-    }
-
-    public void ChangeMaxRoomsCount(int count)
-    {
-        m_maxRoomsCount = count;
-        if (m_roomsCount >= m_maxRoomsCount)
-        {
-            SpawnRoom();
-        }
     }
 
     public void RestartBricks()

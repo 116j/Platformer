@@ -12,6 +12,7 @@ public class PlayerInput : MonoBehaviour
     bool m_jump;
     bool m_dash;
     bool m_dodge;
+    bool m_block;
     bool m_pet;
     bool m_restart;
     bool m_shop;
@@ -41,6 +42,19 @@ public class PlayerInput : MonoBehaviour
             {
                 m_dodge = false;
                 return !m_inputLocked && !m_dodge;
+            }
+            else
+                return false;
+        }
+    }
+    public bool Block
+    {
+        get
+        {
+            if (m_block)
+            {
+                m_block = false;
+                return !m_inputLocked && !m_block;
             }
             else
                 return false;
@@ -172,6 +186,11 @@ public class PlayerInput : MonoBehaviour
     void OnDodge(InputValue value)
     {
         m_dodge = value.isPressed;
+    }
+
+    void OnBlock(InputValue value)
+    {
+        m_block = value.isPressed;
     }
 
     void OnPet(InputValue value)

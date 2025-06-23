@@ -131,7 +131,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_startPosition: {x: 0, y: 0, z: 0}
-  m_maxRoomsCount: 50
+  m_values: {fileID: 11400000, guid: baeeb6ea303598d44923e4906f16b7e7, type: 2}
 --- !u!82 &3544023340118429585
 AudioSource:
   m_ObjectHideFlags: 0

@@ -10,16 +10,23 @@ public class BossScript : WalkEnemy
 
     readonly int m_HashRoar = Animator.StringToHash("Roar");
 
-    float m_roarRecoverTime = 5f;
+    BoxCollider2D m_attackZoneCol;
+
+    readonly float m_roarRecoverTime = 5f;
+    readonly float m_attackChance = 0.3f;
+    readonly float m_closeAttackZoneOffsetX = 0.81308f;
+    readonly float m_baseAttackZoneOffsetX = 2.784698f;
+    readonly Vector2 m_baseColSize = new(4.28806639f, 3.34450054f);
+    readonly Vector2 m_baseColOffset = new(1.00773644f, -2.37238407f);
+    readonly Vector2 m_closeAttackColSize= new(1.55885553f, 2.93009996f);
+    readonly Vector2 m_closeAttackColOffset = new(-0.356868982f, -2.57958436f);
+    readonly float m_closeAttackCooldown = 5f;
+    readonly float m_maxLevelCount = 150f;
+
     float m_roarTimer;
     bool m_roarRecovering = false;
     bool m_showHealth = true;
-
     bool m_closeAttack = false;
-    float m_attackChance = 0.3f;
-    float m_attackZoneOffsetX = 0.81308f;
-    float m_baseAttackZoneOffsetX = 2.784698f;
-    float m_closeAttackCooldown = 5f;
     float m_closeAttackCooldownTimer;
     bool m_canCloseAttack = true;
 
@@ -29,7 +36,17 @@ public class BossScript : WalkEnemy
     protected override void Start()
     {
         base.Start();
-        m_damageable.SetHealth((int)m_bossHealth.Evaluate(m_lvlBuilder.GetMaxRoomsCount() / 150f));
+        m_damageable.SetHealth((int)m_bossHealth.Evaluate(m_lvlBuilder.GetMaxRoomsCount() / m_maxLevelCount));
+        m_attackZoneCol = m_attackZone.GetComponent<BoxCollider2D>();
+    }
+
+    private void LateUpdate()
+    {
+        if (m_closeAttack)
+        {
+             m_col.offset = m_closeAttackColOffset;
+            m_col.size = m_closeAttackColSize;
+        }
     }
 
     protected override void FixedUpdate()
@@ -55,46 +72,52 @@ public class BossScript : WalkEnemy
                     m_canCloseAttack = true;
                 }
             }
+            
+            if (m_canCloseAttack && !m_closeAttack && Random.value <= m_attackChance)
+            {
+                m_closeAttack = true;
+                m_col.offset = m_closeAttackColOffset;
+                m_col.size = m_closeAttackColSize;
+                m_attackZoneCol.offset = new Vector2(m_closeAttackZoneOffsetX, m_attackZoneCol.offset.y);
+            }
 
             if (m_roarZone.TargetDetected && !m_roarRecovering)
             {
                 m_attackScript.EnableAttack = false;
                 m_anim.SetTrigger(m_HashRoar);
+                m_speed = 0;
+                m_rb.velocity = Vector2.zero;
                 m_roarRecovering = true;
+                m_roarTimer = 0;
             }
-            else if (m_canCloseAttack && !m_closeAttack && Random.value <= m_attackChance)
+            else if (m_closeAttack)
             {
-                m_closeAttack = true;
-                m_col.isTrigger = true;
-                var zone = m_attackZone.GetComponent<BoxCollider2D>();
-                zone.offset = new Vector2(m_attackZoneOffsetX, zone.offset.y);
-            }
-            else if (m_closeAttack && m_attackZone.TargetDetected &&
-                (m_currentDir == 1 ?
-                (m_attackZone.TargetLocation.x - m_attackZone.GetComponent<BoxCollider2D>().bounds.max.x) :
-                (m_attackZone.GetComponent<BoxCollider2D>().bounds.min.x - m_attackZone.TargetLocation.x)) <= 0.1f)
-            {
-                if (!m_attackScript.EnableAttack)
+                if (m_attackZone.TargetDetected &&
+                GetDistance() <= 0.1f)
                 {
-                    m_attackScript.EnableAttack = true;
-                    m_speed = 0f;
-                    m_rb.velocity = Vector2.zero;
-                    m_waiting = false;
+                    if (!m_attackScript.EnableAttack)
+                    {
+                        m_attackScript.EnableAttack = true;
+                        m_speed = 0f;
+                        m_rb.velocity = Vector2.zero;
+                        m_waiting = false;
+                    }
+                    m_anim.SetInteger(m_HashAttackNum, 5);
+                    return;
                 }
-                m_anim.SetInteger(m_HashAttackNum, 5);
+                else if (m_attackZone.TargetDetected)
+                {
+                    Chase();
+                    m_rb.velocity = (m_canMove ? 1 : 0) * m_currentDir * m_speed * Vector2.right;
+                    return;
+                }
+                else if (!m_groundZone.TargetDetected)
+                {
+                    ResetColliders();
+                }
             }
-            else if (m_closeAttack && m_attackZone.TargetDetected)
-            {
-                Chase();
-            }
-            else if(m_closeAttack&&!m_groundZone.TargetDetected)
-            {
-                ResetColliders();
-            }
-            else
-            {
-                base.FixedUpdate();
-            }
+
+           base.FixedUpdate();
         }
     }
 
@@ -117,17 +140,19 @@ public class BossScript : WalkEnemy
         base.ReceiveDamage(damage);
     }
 
-    public void ResetColliders()
+    void ResetColliders()
     {
         m_canCloseAttack = false;
-        m_col.isTrigger = false;
+        m_closeAttackCooldownTimer = 0f;
         m_closeAttack = false;
-        var zone = m_attackZone.GetComponent<BoxCollider2D>();
-        zone.offset = new Vector2(m_baseAttackZoneOffsetX, zone.offset.y);
+        m_col.offset = m_baseColOffset;
+        m_col.size = m_baseColSize;
+        m_attackZoneCol.offset = new Vector2(m_baseAttackZoneOffsetX, m_attackZoneCol.offset.y);
     }
 
     public override void Reset()
     {
+        ResetColliders();
         m_healthBar.HideBar();
         m_showHealth = true;
         base.Reset();

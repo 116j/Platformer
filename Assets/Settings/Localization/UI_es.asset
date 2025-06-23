@@ -256,6 +256,10 @@ MonoBehaviour:
       probabilidades son:\n44% - b\xE1sico, 22% - con techo, 11% \u2013 otros."
     m_Metadata:
       m_Items: []
+  - m_Id: 13442591293095936
+    m_Localized: BLOQUE
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

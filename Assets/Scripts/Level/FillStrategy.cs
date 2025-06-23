@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -28,8 +29,10 @@ public class FillStrategy
     int m_catsLeft;
     int m_catsSpawned;
     int m_trapsNum;
+    bool m_jumper = false;
     // offset for traps spawn when there's a jumper or a platform
     protected float m_rightOffset;
+    protected float m_leftOffset;
 
     protected readonly LevelTheme m_levelTheme;
 
@@ -48,12 +51,12 @@ public class FillStrategy
     protected AnimationCurve m_trapsCount;
 
     protected float m_slopeChance = 0.7f;
+    protected float m_jumperChance = 0.4f;
 
     protected int m_playerJumpWidth = 9;
     protected int m_playerJumpHeight = 6;
     protected readonly float m_playerWidth = 1f;
 
-    protected bool m_wasLastEnemy;
     WalkEnemy m_lastEnemy;
     bool m_shopSpawned = false;
 
@@ -98,6 +101,8 @@ public class FillStrategy
     /// <returns>filled room</returns>
     public virtual Room FillRoom(Room prevRoom, FillStrategy transitionStrategy)
     {
+        prevRoom.GetNextTransition().DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(prevRoom.GetNextTransition(), groundTiles, int.MaxValue, false));
+
         Vector3Int start = prevRoom.GetNextTransition().GetEndPosition();
         Vector3Int end = new Vector3Int(start.x + Random.Range(m_minRoomWidth, m_maxRoomWidth), start.y);
         //width of start straight section
@@ -109,10 +114,9 @@ public class FillStrategy
         m_catsLeft = m_UI.AllHerats - m_UI.CurrentHearts - m_catsSpawned;
 
         int height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
-        if (height > m_playerJumpHeight)
-            m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
-        SpawnEnemyOrTrap(room, startWidth, int.MaxValue, start);
-        CreateElevations(room, start + startWidth * Vector3Int.right, height, true);
+        SetRightOffset(height);
+        m_leftOffset = m_playerWidth * 1.5f;
+        CreateElevations(room, start + startWidth * Vector3Int.right, startWidth, height, true);
         room.AddTransition(transitionStrategy.FillTransition(room));
         room.DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true));
 
@@ -151,8 +155,6 @@ public class FillStrategy
         }
         // create bounds for player's fall
         transition.AddEnviromentObject(CreateHorizontalBounds(transition.GetStartPosition(), end, width, height));
-
-        transition.DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(transition, groundTiles, int.MaxValue, false));
 
         return transition;
     }
@@ -203,15 +205,11 @@ public class FillStrategy
         // creates polygon with start width
         room.MakePolygon(startWidth, start);
         int height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
-        if (height > m_playerJumpHeight)
-            m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
-        CreateElevations(room, start + startWidth * Vector3Int.right, height, false);
+        SetRightOffset(height);
+        CreateElevations(room, start + startWidth * Vector3Int.right, startWidth, height, false);
         room.AddTransition(transitionStrategy.FillTransition(room));
-
         room.AddEnviromentObject(CreateVerticalBounds(start));
-
         room.DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true), isInitial: true);
-        //AddLandscape(room, int.MaxValue, true);
 
         return room;
     }
@@ -231,6 +229,7 @@ public class FillStrategy
     {
         BoxCollider2D bounds = new GameObject("VerticalBound").AddComponent<BoxCollider2D>();
         bounds.gameObject.transform.position = pos;
+        bounds.gameObject.layer = LayerMask.NameToLayer("Wall");
         bounds.size = new Vector2(0.5f, m_playerJumpHeight * 2);
         bounds.offset = new Vector2(-0.25f, m_playerJumpHeight);
         return bounds.gameObject;
@@ -262,7 +261,6 @@ public class FillStrategy
         room.CreateElevationOrLowland(m_finalRoomHeight, m_minStraightSection, start + new Vector3Int(m_minStraightSection + m_finalRoomWidth, -m_finalRoomHeight));
         room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_boss, new Vector3(start.x + (m_minStraightSection + m_finalRoomWidth - m_levelTheme.m_boss.GetWidth()) / 2, start.y - m_finalRoomHeight), Quaternion.identity, null));
         room.DrawTiles(m_editor, (HashSet<Vector3Int> groundTiles) => AddLandscape(room, groundTiles, int.MaxValue, true));
-        //AddLandscape(room, int.MaxValue, true);
         return room;
     }
     /// <summary>
@@ -271,16 +269,22 @@ public class FillStrategy
     /// <param name="room"></param>
     /// <param name="lastPoint">last point of the room's straight section</param>
     /// <param name="spawnEnemyOrTrap"></param>
-    protected void CreateElevations(Room room, Vector3Int lastPoint, int height, bool spawnEnemyOrTrap)
+    protected void CreateElevations(Room room, Vector3Int lastPoint, int startWidth, int height, bool spawnEnemyOrTrap)
     {
-        int width = 0;
+        int width = startWidth;
         while (room.GetEndPosition().x - lastPoint.x > m_minStraightSection)
         {
             //if slopeChance and the remaining distance is enought for a slope
             if (Random.value > m_slopeChance && m_minElevationHeight * 2 + m_minStraightSection + lastPoint.x <= room.GetEndPosition().x - m_minStraightSection)
             {
-                int slopeHeight = Random.Range(m_minElevationHeight, Mathf.Clamp((room.GetEndPosition().x - m_minStraightSection * 2 - lastPoint.x) / 2, m_minElevationHeight, m_maxSlopeHeight));
-                width = Random.Range(m_minStraightSection, room.GetEndPosition().x - m_minStraightSection - slopeHeight * 2 - lastPoint.x);
+                m_rightOffset = 0f;
+                m_jumper = false;
+                //spawn enemies or traps on previous section
+                if (spawnEnemyOrTrap)
+                    SpawnEnemyOrTrap(room, width, int.MaxValue, lastPoint-Vector3Int.right*width);
+                m_leftOffset = 0f;
+                int slopeHeight = Random.Range(m_minElevationHeight, Mathf.Clamp((room.GetEndPosition().x - m_minStraightSection * 2 - lastPoint.x - 1) / 2, m_minElevationHeight, m_maxSlopeHeight));
+                width = Random.Range(m_minStraightSection, room.GetEndPosition().x - m_minStraightSection - slopeHeight * 2 - lastPoint.x-1);
                 room.CreateSlope(slopeHeight, width, lastPoint);
                 // spawn enemies or traps on the slope
                 if (spawnEnemyOrTrap)
@@ -291,22 +295,26 @@ public class FillStrategy
 
                 lastPoint = new Vector3Int(lastPoint.x + slopeHeight * 2 + width + m_minStraightSection + 1, lastPoint.y);
                 width = m_minStraightSection;
-                m_rightOffset = 0f;
             }
             else
             {
-                width = Random.Range(m_minStraightSection, room.GetEndPosition().x - lastPoint.x);
+                //spawn enemies or traps on previous section
+                if (spawnEnemyOrTrap)
+                    SpawnEnemyOrTrap(room, width, int.MaxValue, lastPoint - Vector3Int.right * width);
 
+                width = Random.Range(m_minStraightSection, room.GetEndPosition().x - lastPoint.x);
                 room.CreateElevationOrLowland(height, width, lastPoint);
                 // create a moving platform or a jumper if the height is higher than player's jump height
                 if (height > m_playerJumpHeight)
                 {
                     if (m_rightOffset == m_levelTheme.m_movingPlatform.GetOffset().x * 2)
                     {
-                        MovingPlatform platform = Object.Instantiate(m_levelTheme.m_movingPlatform, lastPoint + m_levelTheme.m_movingPlatform.GetOffset() + Vector3.up * (height - 2 + m_levelTheme.m_movingPlatform.GetHeight()), Quaternion.identity).GetComponent<MovingPlatform>();
+                        MovingPlatform platform = Object.Instantiate(m_levelTheme.m_movingPlatform, 
+                            lastPoint + m_levelTheme.m_movingPlatform.GetOffset() + Vector3.up * (height - 2 + m_levelTheme.m_movingPlatform.GetHeight()), 
+                            Quaternion.identity).GetComponent<MovingPlatform>();
                         platform.AddCheckpoint(lastPoint + m_levelTheme.m_movingPlatform.GetOffset());
                         room.AddEnviromentObject(platform.gameObject);
-                        if (spawnEnemyOrTrap && m_wasLastEnemy)
+                        if (spawnEnemyOrTrap && m_lastEnemy!=null)
                         {
                             platform.DisableAutoMovement();
                             m_lastEnemy.ConnectPlatform(platform);
@@ -319,21 +327,43 @@ public class FillStrategy
                         room.AddEnviromentObject(jumper.gameObject);
                     }
                 }
-                if (spawnEnemyOrTrap && room.GetEndPosition().x - lastPoint.x - width > m_minStraightSection)
-                    SpawnEnemyOrTrap(room, width, int.MaxValue, lastPoint + Vector3Int.up * height);
+
+                m_lastEnemy = null;
+                m_leftOffset = m_playerWidth * 1.5f;
                 lastPoint = new Vector3Int(lastPoint.x + width, lastPoint.y + height);
-                height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
-                if (height > m_playerJumpHeight)
-                    m_rightOffset = Random.value > 0.35f ? m_levelTheme.m_movingPlatform.GetOffset().x * 2 : m_levelTheme.m_jumper.GetOffset().x * 2;
-                else
-                    m_rightOffset = 0f;
             }
+
+            height = Random.Range(m_minElevationHeight, m_maxElevationHeight) * (Random.value > 0.5f ? -1 : 1);
+            SetRightOffset(height);
         }
         // add remining tiles for the room
         room.AddTiles(m_roomHeight, room.GetEndPosition().x - lastPoint.x, lastPoint);
         m_rightOffset = -m_playerWidth;
-        if (spawnEnemyOrTrap && width > 0)
+        m_jumper = false;
+        if (spawnEnemyOrTrap)
             SpawnEnemyOrTrap(room, room.GetEndPosition().x - lastPoint.x + width, int.MaxValue, lastPoint - Vector3Int.right * width);
+    }
+
+    protected void SetRightOffset(int height)
+    {
+        if (height > m_playerJumpHeight)
+        {
+            if(Random.value > m_jumperChance)
+            {
+                m_rightOffset = m_levelTheme.m_movingPlatform.GetOffset().x * 2;
+                m_jumper = false;
+            }
+            else
+            {
+                m_rightOffset = m_levelTheme.m_jumper.GetOffset().x * 2;
+                m_jumper = true;
+            }
+        }
+        else
+        {
+            m_rightOffset = 0f;
+            m_jumper = false;
+        }
     }
 
     /// <summary>
@@ -471,29 +501,29 @@ public class FillStrategy
     /// <param name="startPos"></param>
     protected void SpawnEnemyOrTrap(Room room, int sectionWidth, int height, Vector3 startPos)
     {
-        if (m_catsLeft > 0 && (m_catsSpawned == 0 || Random.value < m_catsSpawned / m_catsLeft) && m_rightOffset != m_levelTheme.m_jumper.GetOffset().x * 2)
+        if (sectionWidth <= 0)
+            return;
+
+        if (m_catsLeft > 0 && (m_catsSpawned == 0 || Random.value < m_catsSpawned / m_catsLeft) && !m_jumper)
         {
-            room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_cat, new Vector3(startPos.x + (sectionWidth - m_levelTheme.m_cat.GetWidth() + m_rightOffset) / 2, startPos.y), Quaternion.identity, null));
+            room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_cat, new Vector3(startPos.x + (sectionWidth - m_levelTheme.m_cat.GetWidth()) / 2, startPos.y), Quaternion.identity, null));
             m_catsLeft--;
             m_catsSpawned++;
-            m_wasLastEnemy = false;
         }
         else if (!m_shopSpawned && m_UI.GetMoney() >= m_shop.GetLowestPrice() && sectionWidth + m_rightOffset > m_levelTheme.m_shop.GetWidth() && Random.value > 0.6f)
         {
             room.AddEnviromentObject(m_container.InstantiatePrefab(m_levelTheme.m_shop, new Vector3(Random.Range(startPos.x, startPos.x + sectionWidth + m_rightOffset - m_levelTheme.m_shop.GetWidth() + 1), startPos.y), Quaternion.identity, null));
             m_shopSpawned = true;
-            m_wasLastEnemy = false;
         }
-        else if (m_rightOffset != m_levelTheme.m_jumper.GetOffset().x * 2 && sectionWidth + m_rightOffset > m_minEnemyWidth && m_enemiesPerLevel > 0 && Random.value < (m_enemiesPerLevel / m_enemiesCount.Evaluate(m_lvlBuilder.LevelProgress())))
+        else if (!m_jumper && sectionWidth > m_minEnemyWidth && m_enemiesPerLevel > 0 && Random.value < (m_enemiesPerLevel / m_enemiesCount.Evaluate(m_lvlBuilder.LevelProgress())))
         {
             SpawnValues enemy = m_levelTheme.m_enemies[GetEnemyNum()];
-            Vector3 pos = new Vector3(startPos.x + (sectionWidth - enemy.GetWidth() + m_rightOffset) / 2, startPos.y);
+            Vector3 pos = new Vector3(startPos.x + (sectionWidth - enemy.GetWidth()) / 2, startPos.y);
             m_lastEnemy = m_container.InstantiatePrefabForComponent<WalkEnemy>(enemy, pos, Quaternion.identity, null);
-            m_wasLastEnemy = true;
             room.AddEnviromentObject(m_lastEnemy.gameObject);
             m_enemiesPerLevel--;
         }
-        else if (m_trapsPerLevel > 0 && Random.value < (m_trapsPerLevel / m_trapsCount.Evaluate(m_lvlBuilder.LevelProgress())) && sectionWidth > 0)
+        else if (m_trapsPerLevel > 0 && Random.value < (m_trapsPerLevel / m_trapsCount.Evaluate(m_lvlBuilder.LevelProgress())))
         {
             List<Trap> traps = new List<Trap>();
             while (traps.Count == 0)
@@ -505,9 +535,10 @@ public class FillStrategy
                 {
                     continue;
                 }
-                m_trapsNum = Random.Range(1, (int)(sectionWidth / (trap.GetWidth() + m_playerWidth)) + 1);
                 float rightBorder = startPos.x + sectionWidth + m_rightOffset;
-                float leftBorder = startPos.x + m_playerWidth;
+                float leftBorder = startPos.x + m_leftOffset;
+                m_trapsNum = Random.Range(1, (int)((rightBorder - leftBorder) / (trap.GetWidth() + m_playerWidth)) + 1);
+
 
                 if (trap.GetAttackDirection() == Vector3.right || trap.GetAttackDirection() == Vector3.forward)
                 {
@@ -531,7 +562,7 @@ public class FillStrategy
                 if (trap.IsSeries())
                 {
                     m_trapsNum = Random.Range(1, (int)Mathf.Clamp(-(trap.GetHeight() - m_playerJumpHeight) * m_playerJumpWidth * 1.0f / m_playerJumpHeight, 1, (rightBorder - trap.GetRightBorder() - leftBorder + trap.GetLeftBorder()) / trap.GetWidth()));
-                    Vector3 pos = new Vector3(Random.Range(leftBorder - trap.GetRightBorder(), rightBorder - trap.GetRightBorder() - m_trapsNum * trap.GetWidth()), startPos.y);
+                    Vector3 pos = new Vector3(Random.Range(leftBorder - trap.GetLeftBorder(), rightBorder - trap.GetRightBorder() - m_trapsNum * trap.GetWidth()), startPos.y);
                     for (int i = 0; i < m_trapsNum; i++)
                     {
                         traps.Add(m_container.InstantiatePrefabForComponent<Trap>(trap, pos + i * trap.GetWidth() * Vector3.right, Quaternion.identity, null));
@@ -548,7 +579,6 @@ public class FillStrategy
             {
                 room.AddEnviromentObject(trap.gameObject);
             }
-            m_wasLastEnemy = false;
             m_trapsPerLevel--;
         }
     }

@@ -253,6 +253,10 @@ MonoBehaviour:
       44'\xFC temel,% 22'si tavanl\u0131, her biri% 11'i farkl\u0131."
     m_Metadata:
       m_Items: []
+  - m_Id: 13442591293095936
+    m_Localized: BLOK
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

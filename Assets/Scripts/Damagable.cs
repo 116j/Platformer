@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using Zenject;
 
 public class Damagable : MonoBehaviour
 {
@@ -43,7 +44,6 @@ public class Damagable : MonoBehaviour
             if (m_freezeTime <= 0)
             {
                 Freezed = false;
-                GetComponent<PlayerInput>().LockInput(false);
             }
         }
     }
@@ -52,6 +52,7 @@ public class Damagable : MonoBehaviour
     {
         if (m_dead || m_recovering) return;
 
+        Freezed = false;
         m_recovering = true;
         m_health = Mathf.Min(m_health - damage, m_maxHealth);
 
@@ -67,7 +68,6 @@ public class Damagable : MonoBehaviour
     public void Freeze(float time)
     {
         Freezed = true;
-        GetComponent<PlayerInput>().LockInput(true);
         m_freezeTime = time;
     }
 

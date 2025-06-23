@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TouchingCheck : MonoBehaviour
@@ -19,6 +20,7 @@ public class TouchingCheck : MonoBehaviour
     readonly float m_groundHitDist = 0.05f;
     //distance to detect slope
     readonly float m_slopeHitDist = 0.2f;
+    readonly float m_skinWidth = 0.02f;
 
     RaycastHit2D[] m_rayHits = new RaycastHit2D[5];
 
@@ -28,28 +30,36 @@ public class TouchingCheck : MonoBehaviour
         m_col = GetComponent<Collider2D>();
     }
 
-    public float WallsStuck(float skinWidth, float dist)
+    public float WallsStuck(float dist)
     {
         var hit = Physics2D.BoxCast(
             transform.position,
-            m_col.bounds.size + Vector3.one * skinWidth, 0f,
+            m_col.bounds.size + Vector3.one * m_skinWidth, 0f,
             Vector3.right * Mathf.Sign(dist),
-            Mathf.Abs(dist) + skinWidth,
+            Mathf.Abs(dist) + m_skinWidth,
             m_stuckCastFilter.layerMask
         );
         return hit.collider != null ? hit.distance : 0f;
     }
 
-    public float GroundStuck(float skinWidth, float dist)
+    public float GroundStuck(float dist)
     {
         var hit = Physics2D.BoxCast(
             transform.position,
-            m_col.bounds.size + Vector3.one * skinWidth, 0f,
+            m_col.bounds.size + Vector3.one * m_skinWidth, 0f,
             Vector3.up * Mathf.Sign(dist),
-            Mathf.Abs(dist) + skinWidth,
+            Mathf.Abs(dist) + m_skinWidth,
             m_stuckCastFilter.layerMask
         );
         return hit.collider != null ? hit.distance : 0f;
+    }
+
+    public bool IsGroundStuck()
+    {
+        return m_col.Cast(-transform.up, m_stuckCastFilter, m_rayHits, m_slopeHitDist) > 0 &&
+            m_col.Cast(transform.right, m_stuckCastFilter, m_rayHits, m_slopeHitDist) > 0 && 
+            m_col.Cast(-transform.right, m_stuckCastFilter, m_rayHits, m_slopeHitDist) > 0 &&
+            m_col.Cast(transform.up, m_stuckCastFilter, m_rayHits, m_slopeHitDist) ==0;
     }
 
     public bool IsGrounded()

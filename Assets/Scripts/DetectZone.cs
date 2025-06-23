@@ -7,7 +7,15 @@ public class DetectZone : MonoBehaviour
     protected string m_tag;
     public bool TargetDetected { get; private set; }
     public Vector3 TargetLocation { get; protected set; }
+    public Vector3 RightBorder => m_col.bounds.max;
+    public Vector3 LeftBorder => m_col.bounds.min;
 
+    BoxCollider2D m_col;
+
+    private void Start()
+    {
+        m_col = GetComponent<BoxCollider2D>();
+    }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {

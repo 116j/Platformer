@@ -13,6 +13,8 @@ TagManager:
   - slope
   - shop
   - destroyable
+  - block
+  - movingPlatform
   layers:
   - Default
   - TransparentFX
