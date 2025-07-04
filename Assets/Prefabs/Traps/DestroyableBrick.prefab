@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1436852521430804147}
   - component: {fileID: 8667229227127485466}
+  - component: {fileID: 1896882757511885489}
   - component: {fileID: 939421727695418618}
+  - component: {fileID: 4859410568137209201}
   - component: {fileID: 2340521542611145314}
-  - component: {fileID: 3579649343697168497}
   - component: {fileID: -3208919903479575807}
   m_Layer: 3
   m_Name: DestroyableBrick
@@ -77,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: -2121373271
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1547541880, guid: f0f5a0be555bb804eb3e01deb6eb7473, type: 3}
+  m_Sprite: {fileID: -1547541880, guid: 789f062f4400f9e48b90cecf17cc7373, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -88,6 +89,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1896882757511885489
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963385935152420421}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: 512d0ee120753c44e8d35dc8ada617ca, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!61 &939421727695418618
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -118,13 +140,13 @@ BoxCollider2D:
     serializedVersion: 2
     m_Bits: 4294967295
   m_IsTrigger: 0
-  m_UsedByEffector: 1
+  m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -133,20 +155,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &2340521542611145314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6963385935152420421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61d0874726338644f9f536ba36fcb539, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_brickPrefab: {fileID: 7077462346468912961, guid: 450e9a9a5b93c16428c5cd5bb31d68d2, type: 3}
---- !u!114 &3579649343697168497
+--- !u!114 &4859410568137209201
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,6 +170,24 @@ MonoBehaviour:
   m_spawnOffset: {x: 0.5, y: 0.5, z: 0}
   m_metric: {x: -0.5, y: 1, z: 0.5}
   m_setOffset: 1
+--- !u!114 &2340521542611145314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963385935152420421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61d0874726338644f9f536ba36fcb539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_anims:
+  - {fileID: 9100000, guid: fcc6c9e07d6092542b35ff7c5e4dbae3, type: 2}
+  - {fileID: 22100000, guid: 512d0ee120753c44e8d35dc8ada617ca, type: 2}
+  m_offsets:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: -0.5, z: 0}
 --- !u!251 &-3208919903479575807
 PlatformEffector2D:
   m_ObjectHideFlags: 0
@@ -168,7 +195,7 @@ PlatformEffector2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6963385935152420421}
-  m_Enabled: 1
+  m_Enabled: 0
   m_UseColliderMask: 1
   m_ColliderMask:
     serializedVersion: 2

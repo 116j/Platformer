@@ -55,7 +55,7 @@ MonoBehaviour:
   - {fileID: -3547706010446205356, guid: fbe579f64607cd14e9fa6a653e31f001, type: 3}
   - {fileID: -4250489317935541011, guid: 4915db069d32a17458d4910803c66daa, type: 3}
   - {fileID: -6808080707356621749, guid: faef335a7eea7bb4a8404ed70ac565b0, type: 3}
-  m_destroyableTile: {fileID: -284937130, guid: 0228716c3eba65945bffcc5427f868f6, type: 3}
+  m_destroyableTile: {fileID: -284937130, guid: e8ea6fdd6cfd0ff4aae522d4eb3b9e06, type: 3}
   m_enemies:
   - {fileID: 842174996233164507, guid: c8069ca9e9c6f7f43b4c2ab5d936c474, type: 3}
   - {fileID: 5941363652571959847, guid: 4e6f793879d0b884ba7c8aecd87a302f, type: 3}

@@ -9,7 +9,6 @@ public class LevelTheme : ScriptableObject
     public EnviromentObject[] m_grass;
     public EnviromentObject[] m_bushes;
     public EnviromentObject[] m_trees;
-    public Sprite m_destroyableTile;
 
     public SpawnValues[] m_enemies;
     public Trap[] m_ceilTraps;

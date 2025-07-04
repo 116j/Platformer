@@ -353,6 +353,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: FallingRock_11
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f885a7d9e60289941a55acc443b4d406
+      internalID: -1765333764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -367,6 +388,7 @@ TextureImporter:
       FallingRock_0: -284937130
       FallingRock_1: -283892235
       FallingRock_10: -892700990
+      FallingRock_11: -1765333764
       FallingRock_2: -638753747
       FallingRock_3: -1539024033
       FallingRock_4: -348788993

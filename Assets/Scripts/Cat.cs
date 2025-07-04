@@ -13,6 +13,7 @@ public class Cat : MonoBehaviour
     Animator m_anim;
     TouchingCheck m_touchings;
     Rigidbody2D m_rb;
+    SoundController m_soundController;
 
     [Inject]
     LevelBuilder m_lvlBuilder;
@@ -49,6 +50,7 @@ public class Cat : MonoBehaviour
     {
         m_anim = GetComponent<Animator>();
         m_touchings = GetComponent<TouchingCheck>();
+        m_soundController = GetComponent<SoundController>();
         m_rb = GetComponent<Rigidbody2D>();
         m_walkTime = Random.Range(m_walkRecoverTimeMin, m_walkRecoverTimeMax);
         m_addHeart.AddListener(GameObject.FindGameObjectWithTag("Player").GetComponent<Damagable>().ApplyHealth);
@@ -140,6 +142,7 @@ public class Cat : MonoBehaviour
 
     public void Reset()
     {
+        m_soundController.StopSound();
         m_anim.SetBool(m_HashSleep, false);
         CanPet = true;
         m_petting = false;

@@ -215,6 +215,7 @@ public class WalkEnemy : MonoBehaviour
     public void ConnectPlatform(MovingPlatform platform)
     {
         m_platform = platform;
+        platform.DisableAutoMovement();
     }
 
     public float GetSpawnChance()

@@ -24444,6 +24444,7 @@ MonoBehaviour:
   m_resumeButton: {fileID: 811203744}
   m_displayButton: {fileID: 511072676}
   m_maimMenuTitle: {fileID: 1768418988}
+  m_mixer: {fileID: 24100000, guid: fec4151c0eb2b5444af142439c06bfcf, type: 2}
 --- !u!95 &1057542489
 Animator:
   serializedVersion: 5

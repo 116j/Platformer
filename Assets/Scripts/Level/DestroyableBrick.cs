@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public enum BrickBehaviour
@@ -12,31 +13,32 @@ public enum BrickBehaviour
 public class DestroyableBrick : MonoBehaviour
 {
     [SerializeField]
-    Trap m_brickPrefab;
+    RuntimeAnimatorController[] m_anims;
+    [SerializeField]
+    Vector3[] m_offsets;
 
     BrickBehaviour m_behaviour;
 
-    SpriteRenderer m_renderer;
-    Collider2D m_col;
+    Animator m_anim;
     List<DestroyableBrick> m_group;
 
     float m_timer;
     float m_destroyTime = 0.3f;
-    int m_brickNum;
     bool m_destroyed = false;
+
+    readonly int m_HashDestroyed = Animator.StringToHash("Destroyed");
 
     private void Awake()
     {
-        m_renderer = GetComponent<SpriteRenderer>();
-        m_col = GetComponent<Collider2D>();
+        m_anim = GetComponent<Animator>();
     }
 
-    public void SetBrickBehaviour(BrickBehaviour b, int tileNum, Sprite tile, List<DestroyableBrick> group)
+    public void SetBrickBehaviour(BrickBehaviour b, int tileNum, List<DestroyableBrick> group)
     {
         m_behaviour = b;
-        m_brickNum = tileNum;
         m_group = group;
-        m_renderer.sprite = tile;
+        m_anim.runtimeAnimatorController = m_anims[tileNum];
+        transform.position += m_offsets[tileNum];
 
         m_group?.Add(this);
     }
@@ -87,19 +89,15 @@ public class DestroyableBrick : MonoBehaviour
             if (!brick.m_destroyed)
             {
                 brick.m_destroyed = true;
-                brick.m_renderer.enabled = false;
-                brick.m_col.isTrigger = true;
-                Trap destroyable = Instantiate(brick.m_brickPrefab, brick.transform.position, Quaternion.identity);
-                destroyable.SetTrap(brick.m_brickNum);
+                brick.m_anim.SetBool(m_HashDestroyed, m_destroyed);
             }
         }
     }
 
     public void Restart()
     {
-        m_col.isTrigger = false;
-        m_renderer.enabled = true;
         m_timer = 0;
         m_destroyed = false;
+        m_anim.SetBool(m_HashDestroyed, m_destroyed);
     }
 }

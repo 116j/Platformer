@@ -203,7 +203,7 @@ public class DestroyableBrickStrategy : FillStrategy
     void CreateBrick(Room room, Vector3Int pos, BrickBehaviour behaviour, List<DestroyableBrick> group = null)
     {
         DestroyableBrick brick = Object.Instantiate(m_brick, pos, Quaternion.identity);
-        brick.SetBrickBehaviour(behaviour, m_levelTheme.m_themeNum, m_levelTheme.m_destroyableTile, group);
+        brick.SetBrickBehaviour(behaviour, m_levelTheme.m_themeNum, group);
         room.CreatePlatform(pos, 1);
         room.AddEnviromentObject(brick.gameObject);
     }

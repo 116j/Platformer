@@ -127,6 +127,7 @@ public class CeilStrategy : FillStrategy
                 trap = m_levelTheme.m_ceilTraps[Random.Range(0, m_levelTheme.m_ceilTraps.Length)];
                 m_container.Inject(trap);
                 trap.SetTrapNum();
+
                 Coin coin = m_container.InstantiatePrefabForComponent<Coin>(m_levelTheme.m_coin, ground[i], Quaternion.identity,null);
                 coin.SetCost(Random.Range(10, 100), false);
                 room.AddEnviromentObject(coin.gameObject);
